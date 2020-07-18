@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>frontend</title>
+    <script src=https://cdn.bootcss.com/require.js/2.3.6/require.js></script>
+    <script>var menuList = [
+        {name: '预约单', componentName: 'scm-order-list'},
+        {name: '门店试吃', componentName: 'adjust_record'},
+        {name: '门店盘点', componentName: 'shop_inventory_record'},
+        {name: '门店零售', componentName: 'sale_warehouseRecord'},
+        {name: '门店零售退货', componentName: 'sales_return'},
+        {name: '仓库调拨单', componentName: 'warehouse_allocation_record'},
+        {name: '销售发货单tob管理', componentName: 'sale_tob_warehouseRecord'},
+        {name: '门店调拨', componentName: 'shop_allocation_record'},
+        {name: '出库单查询', componentName: 'out_warehouse_record'},
+        {name: '入库单查询', componentName: 'in_warehouse_record'},
+        {name: '寻源日志', componentName: 'shop_replenish_allot_log'},
+        {name:'寻源结果报表',componentName:'shop_replenish_report'},
+        {name:'团购入库单',componentName:'scm-godown-entry-list'},
+        {name: '包装任务完成清单', componentName: 'scm-order-package-finish-list'},
+        {name: '包装需求管理', componentName: 'scm-order-package-request-list'},
+        {name:'补货差异单管理',componentName:'disparity_record'},
+        {name:'退货差异单管理',componentName:'disparity_record_return'},
+        {name:'退货差异单管理',componentName:'disparity_record_return'},
+        {name: '订单台', componentName: 'scm-order-board'},
+        {name: '订单详情', componentName: 'scm-order-detail'},
+        {name: '创建订单', componentName: 'scm-order-create'},
+        {name: '订单看板', componentName: 'scm-order-panel'},
+        {name: '冲销单管理', componentName: 'scm-order-reverse-list'}
+    ]</script>
+    <link href=/static/css/app.a332d3e383d9ced1b3b4ae2a6633485e.css rel=stylesheet>
+</head>
+<body>
+<div id=app></div>
+<script type=text/javascript src=/static/js/manifest.2ae2e69a05c33dfc65f8.js></script>
+<script type=text/javascript src=/static/js/vendor.b615e4f65033edce1671.js></script>
+<script type=text/javascript src=/static/js/app.463e48ee585598daf32e.js></script>
+
+
+<script type="text/javascript" >
+    require.config({
+        paths: {
+            "column-select": 'column-select.umd.min',
+            // "order-timeline-item": 'order-timeline-item.umd.min',
+            // "order-timeline": 'order-timeline.umd.min',
+            "basedata_umd_min": 'http://10.0.13.11/zt_base/basedata-channel-dev.umd.min',
+            'item_sku_component': 'http://10.0.13.11/zt_item/item-sku-component-dev.umd.min'
+        }
+    });
+    require(['basedata_umd_min','item_sku_component', 'column-select'], function () {
+    });
+</script>
+
+</body>
+</html>

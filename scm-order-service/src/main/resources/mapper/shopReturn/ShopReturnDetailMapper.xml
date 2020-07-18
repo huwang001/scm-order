@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.shopReturn.ShopReturnDetailMapper">
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.shopReturn.ShopReturnDetailE">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode"/>
+        <result column="sku_code" jdbcType="VARCHAR" property="skuCode"/>
+        <result column="line_no" jdbcType="VARCHAR" property="lineNo"/>
+        <result column="sku_qty" jdbcType="DECIMAL" property="skuQty"/>
+        <result column="real_refund_qty" jdbcType="DECIMAL" property="realRefundQty"/>
+        <result column="real_enter_qty" jdbcType="DECIMAL" property="realEnterQty"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="unit_code" jdbcType="VARCHAR" property="unitCode"/>
+        <result column="addition_rate_price" jdbcType="DECIMAL" property="additionRatePrice"/>
+        <result column="total_price" jdbcType="DECIMAL" property="totalPrice"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+        <result column="modifier" jdbcType="BIGINT" property="modifier"/>
+        <result column="is_available" jdbcType="BIT" property="isAvailable"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="version_no" jdbcType="INTEGER" property="versionNo"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+       id, record_code, sku_code, line_no, sku_qty, real_refund_qty, real_enter_qty, unit,
+       unit_code, addition_rate_price, total_price, reason, create_time, update_time, creator,
+       modifier, is_available, is_deleted, version_no, tenant_id, app_id
+     </sql>
+
+    <select id="selectByRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_shop_return_detail
+        where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <insert id="batchInsertDetail" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        insert into scm_shop_return_detail (record_code, sku_code,
+        line_no, sku_qty, unit, unit_code,
+        addition_rate_price, total_price, reason )
+        values
+        <foreach collection="batchList" item="item" separator="," close=";">
+            (#{item.recordCode,jdbcType=VARCHAR}, #{item.skuCode,jdbcType=VARCHAR},
+            #{item.lineNo,jdbcType=VARCHAR}, #{item.skuQty,jdbcType=DECIMAL}, #{item.unit,jdbcType=VARCHAR},
+            #{item.unitCode,jdbcType=VARCHAR},
+            #{item.additionRatePrice,jdbcType=DECIMAL}, #{item.totalPrice,jdbcType=DECIMAL},
+            #{item.reason,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <insert id="insert" parameterType="com.lyf.scm.core.domain.entity.shopReturn.ShopReturnDetailE">
+       insert into scm_shop_return_detail (id, record_code, sku_code,
+      line_no, sku_qty, real_refund_qty,
+      real_enter_qty, unit, unit_code,
+      addition_rate_price, total_price, reason)
+    values (#{id,jdbcType=BIGINT}, #{recordCode,jdbcType=VARCHAR}, #{skuCode,jdbcType=VARCHAR},
+      #{lineNo,jdbcType=VARCHAR}, #{skuQty,jdbcType=DECIMAL}, #{realRefundQty,jdbcType=DECIMAL},
+      #{realEnterQty,jdbcType=DECIMAL}, #{unit,jdbcType=VARCHAR}, #{unitCode,jdbcType=VARCHAR},
+      #{additionRatePrice,jdbcType=DECIMAL}, #{totalPrice,jdbcType=DECIMAL}, #{reason,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateRealRefundQty">
+        <foreach collection="frontRecordDetails" item="frd" separator=";" close=";">
+            update
+            scm_shop_return_detail
+            set
+            real_refund_qty = ifnull(real_refund_qty, 0) + #{frd.skuQty}
+            where
+            id = #{frd.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+
+    <update id="updateRealEnterQty">
+        <foreach collection="frontRecordDetails" item="frd" separator=";" close=";">
+            update
+            scm_shop_return_detail
+            set
+            real_enter_qty = ifnull(real_enter_qty, 0) + #{frd.skuQty}
+            where
+            id = #{frd.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+</mapper>

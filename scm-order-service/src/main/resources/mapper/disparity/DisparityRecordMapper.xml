@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.disparity.DisparityRecordMapper">
+
+	<!-- 差异订单对象信息 -->
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.disparity.DisparityRecordE" >
+        <result column="id" property="id" />
+        <result column="record_code" property="recordCode" />
+        <result column="front_record_id" property="frontRecordId" />
+        <result column="front_record_code" property="frontRecordCode" />
+        <result column="in_warehouse_record_id" property="inWarehouseRecordId" />
+        <result column="in_warehouse_record_code" property="inWarehouseRecordCode" />
+        <result column="out_warehouse_record_id" property="outWarehouseRecordId" />
+        <result column="out_warehouse_record_code" property="outWarehouseRecordCode" />
+        <result column="record_type" property="recordType" />
+        <result column="in_real_warehouse_id" property="inRealWarehouseId" />
+        <result column="in_factory_code" property="inFactoryCode" />
+        <result column="in_real_warehouse_out_code" property="inRealWarehouseOutCode" />
+        <result column="out_real_warehouse_id" property="outRealWarehouseId" />
+        <result column="out_factory_code" property="outFactoryCode" />
+        <result column="out_real_warehouse_out_code" property="outRealWarehouseOutCode" />
+        <result column="transporter" property="transporter" />
+        <result column="merchant_id" property="merchantId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="is_available" property="isAvailable" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="version_no" property="versionNo" />
+        <result column="tenant_id" property="tenantId" />
+        <result column="app_id" property="appId" />
+        <result column="sap_po_no" property="sapPoNo" />
+        <result column="sap_delivery_code" property="sapDeliveryCode" />
+        <result column="record_status" property="recordStatus" />
+    </resultMap>
+
+	<!-- 基础列 -->
+	<sql id="Base_Column_List">
+		id,
+		record_code,
+		front_record_id,
+		front_record_code,
+		in_warehouse_record_id,
+		in_warehouse_record_code,
+		out_warehouse_record_id,
+		out_warehouse_record_code,
+		record_type,
+		in_real_warehouse_id,
+		in_factory_code,
+		in_real_warehouse_out_code,
+		out_real_warehouse_id,
+		out_factory_code,
+		out_real_warehouse_out_code,
+		transporter,
+		merchant_id,
+		create_time,
+		update_time,
+		creator,
+		modifier,
+		is_available,
+		is_deleted,
+		version_no,
+		tenant_id,
+		app_id,
+		sap_po_no,
+		sap_delivery_code,
+		record_status
+	</sql>
+
+	<!-- 插入字段信息 -->
+	<sql id="insert_column">
+        `record_code`, `front_record_id`, `front_record_code`, `in_warehouse_record_id`,
+        `in_warehouse_record_code`,`out_warehouse_record_id`, `out_warehouse_record_code`,
+        `record_type`, `in_real_warehouse_id`,`in_factory_code`,`in_real_warehouse_out_code`, `out_real_warehouse_id`,`out_factory_code`, `out_real_warehouse_out_code`,
+        `transporter`, `merchant_id`,sap_delivery_code,
+        `creator`, `modifier`, `is_available`, `is_deleted`, `version_no`
+    </sql>
+    <!-- 保存差异定单 -->
+    <insert id="isnert" useGeneratedKeys="true" keyProperty="id">
+        insert into `sc_disparity_record` 
+        	(<include refid="insert_column"/>)
+        values(
+          #{recordCode}, #{frontRecordId}, #{frontRecordCode}, #{inWarehouseRecordId},
+          #{inWarehouseRecordCode}, #{outWarehouseRecordId}, #{outWarehouseRecordCode},
+          #{recordType}, #{inRealWarehouseId}, #{outRealWarehouseId},
+          #{transporter}, #{merchantId},#{sapDeliveryCode},
+          #{creator}, #{creator}, 1, 0, 0
+        );
+    </insert>
+    
+    <!--从已定责或失败更新为待过账-->
+    <update id="updateToWait">
+        <bind name="beforeRecordStatus1" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@HAS_DUTY"/>
+        <bind name="beforeRecordStatus2" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@FAIL"/>
+        <bind name="afterRecordStatus" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@WAIT"/>
+        update sc_disparity_detail
+        set record_status = #{afterRecordStatus.status},
+            modifier = #{modifier}
+        where id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            and record_status in (#{beforeRecordStatus1.status},#{beforeRecordStatus2.status})
+            and is_available = 1
+            and is_deleted = 0
+    </update>
+    
+    <!--从待过账更新为已处理成功-->
+    <update id="updateToComplete">
+        <bind name="beforeRecordStatus" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@WAIT"/>
+        <bind name="afterRecordStatus" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@COMPLETE"/>
+        update sc_disparity_detail
+        set record_status = #{afterRecordStatus.status},
+        modifier = #{modifier}
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        and record_status = #{beforeRecordStatus.status}
+        and is_available = 1
+        and is_deleted = 0
+    </update>
+    
+	<sql id="select_column">
+        `id`,`record_code`, `front_record_id`, `front_record_code`, `in_warehouse_record_id`,
+        `in_warehouse_record_code`,`out_warehouse_record_id`, `out_warehouse_record_code`,
+        `record_type`, `in_real_warehouse_id`,`in_factory_code`,`in_real_warehouse_out_code`, `out_real_warehouse_id`,`out_factory_code`, `out_real_warehouse_out_code`,
+        `transporter`, `merchant_id`,sap_po_no,sap_delivery_code,
+        `create_time`, `update_time`, `creator`, `modifier`, `is_available`,
+        `is_deleted`, `version_no`, `tenant_id`, `app_id`
+    </sql>
+    <!-- 根据id查询差异单 -->
+    <select id="selectDisparityRecordById" resultMap="BaseResultMap">
+        select
+        	<include refid="select_column"/>
+        from sc_disparity_record
+        where  id =#{id}
+        and is_available = 1
+        and is_deleted = 0
+    </select>
+    
+	<!-- 查询差异订单页面展示信息 -->
+    <select id="selectByCondition" resultType="com.lyf.scm.core.api.dto.disparity.DisparityRecordDetailDTO">
+        select dd.`id`,dd.`line_no`,dd.`delivery_line_no`,dr.`id` as disparityId, dr.`record_code`, dd.`front_record_id`, dd.`front_record_code`, dr.`in_warehouse_record_id`,
+        dr.`in_warehouse_record_code`,dr.`out_warehouse_record_id`, dr.`out_warehouse_record_code`,
+        dr.`record_type`,dr.`in_real_warehouse_id`,dr.`in_factory_code`,dr.`in_real_warehouse_out_code`, dr.`out_real_warehouse_id`,dr.`out_factory_code`, dr.`out_real_warehouse_out_code`,
+        dd.scale,dd.real_unit,dd.real_unit_code,
+        dd.`record_status`, dd.`responsible`, dd.`responsible_type`, dd.`reasons`,
+        dr.`transporter`, dd.`create_time`,dd.`update_time`,dd.creator,dd.modifier, dd.`sku_id`, dd.`sku_code`, dd.`unit`, dd.`unit_code`, dd.`sku_qty`,
+        dd.`in_sku_qty`, dd.`out_sku_qty`,dd.sap_po_no,dr.sap_delivery_code,dd.`handler_in_real_warehouse_id`,dd.`cost_center`,dd.`remark`
+        from `sc_disparity_record` dr inner join `sc_disparity_detail` dd
+        ON dr.`id` = dd.`disparity_id`
+        <where>
+            dr.`is_available` = 1
+            and dr.`is_deleted` = 0
+            and   dd.sku_qty > 0 <!-- 只查询差异大于0的，小于0暂时不处理-->
+            <if test="null != recordType">
+                and dr.`record_type` = #{recordType}
+            </if>
+            <if test="null != frontRecordCode and  '' != frontRecordCode">
+                and dd.`front_record_code` = #{frontRecordCode}
+            </if>
+            <if test="null != responsibleType">
+                and dd.`responsible_type`  = #{responsibleType}
+            </if>
+            <if test="null != sapPoNo and  '' != sapPoNo">
+                and dd.`sap_po_no` =#{sapPnNo}
+            </if>
+            <if test="null != sapDeliveryCodeList and  sapDeliveryCodeList.size() > 0">
+                and dr.`sap_delivery_code` in
+                <foreach collection="sapDeliveryCodeList" item="inRw" open="(" close=")" separator=",">
+                    #{inRw}
+                </foreach>
+            </if>
+            <if test="inRealWarehouseIds != null and inRealWarehouseIds.size() > 0">
+                and `in_real_warehouse_id` in
+                <foreach collection="inRealWarehouseIds" item="inRw" open="(" close=")" separator=",">
+                    #{inRw}
+                </foreach>
+            </if>
+            <if test="outRealWarehouseIds != null and outRealWarehouseIds.size() > 0">
+                and `out_real_warehouse_id` in
+                <foreach collection="outRealWarehouseIds" item="outRw" open="(" close=")" separator=",">
+                    #{outRw}
+                </foreach>
+            </if>
+            <if test="inWarehouseId != null">
+                and `in_real_warehouse_id` = #{inWarehouseId}
+            </if>
+            <if test="outWarehouseId != null ">
+                and `out_real_warehouse_id` = #{outWarehouseId}
+            </if>
+            <if test="modifier != null ">
+                and dd.`modifier` = #{modifier}
+            </if>
+            <if test="recordStatus != null ">
+                and dd.`record_status` = #{recordStatus}
+            </if>
+            <if test="skuCode != null and '' != skuCode ">
+                and dd.`sku_code` = #{skuCode}
+            </if>
+            <if test="createStartDate != null ">
+                and dd.`create_time` >= #{createStartDate}
+            </if>
+            <if test="createEndDate != null ">
+                <![CDATA[   and dd.`create_time` <= #{createEndDate} ]]>
+            </if>
+            <if test="updateStartDate != null ">
+                and dd.`update_time` >= #{updateStartDate}
+            </if>
+            <if test="updateEndDate != null ">
+                <![CDATA[   and dd.`update_time` <= #{updateEndDate} ]]>
+            </if>
+        </where>
+        order by dr.id ,dd.`sku_code`
+    </select>
+
+    <!-- 通过入库单号查询出库单号 -->
+    <select id="selectOutStockNoByPutInNo" parameterType="java.lang.String" resultType="java.lang.String">
+    	select 
+			b.record_code 
+		from sc_front_warehouse_record_relation a left join sc_warehouse_record b on a.warehouse_record_id = b.id 
+		where front_record_code = (select front_record_code from sc_front_warehouse_record_relation where record_code = #{putInNO} limit 0,1) 
+		and b.business_type = '1' 
+		and b.is_deleted = 0 limit 0,1
+    </select>
+    
+</mapper>

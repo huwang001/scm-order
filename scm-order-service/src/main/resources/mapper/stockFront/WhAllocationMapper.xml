@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.WhAllocationMapper">
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.WhAllocationE">
+    	<id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+	    <result column="sap_po_no" property="sapPoNo" jdbcType="VARCHAR" />
+	    <result column="record_type" property="recordType" jdbcType="TINYINT" />
+	    <result column="record_status" property="recordStatus" jdbcType="TINYINT" />
+	    <result column="business_type" property="businessType" jdbcType="TINYINT" />
+	    <result column="add_type" property="addType" jdbcType="TINYINT" />
+	    <result column="is_disparity" property="isDisparity" jdbcType="TINYINT" />
+	    <result column="orgin_id" property="orginId" jdbcType="BIGINT" />
+	    <result column="orgin_record" property="orginRecord" jdbcType="VARCHAR" />
+	    <result column="split_type" property="splitType" jdbcType="TINYINT" />
+	    <result column="is_return_allotcate" property="isReturnAllotcate" jdbcType="TINYINT" />
+	    <result column="is_quality_allotcate" property="isQualityAllotcate" jdbcType="TINYINT" />
+	    <result column="wh_type" property="whType" jdbcType="TINYINT" />
+	    <result column="is_diff_in" property="isDiffIn" jdbcType="TINYINT" />
+	    <result column="in_warehouse_id" property="inWarehouseId" jdbcType="BIGINT" />
+	    <result column="in_warehouse_name" property="inWarehouseName" jdbcType="VARCHAR" />
+	    <result column="in_warehouse_mobile" property="inWarehouseMobile" jdbcType="VARCHAR" />
+	    <result column="in_factory_code" property="inFactoryCode" jdbcType="VARCHAR" />
+	    <result column="in_real_warehouse_code" property="inRealWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="out_warehouse_id" property="outWarehouseId" jdbcType="BIGINT" />
+	    <result column="out_warehouse_name" property="outWarehouseName" jdbcType="VARCHAR" />
+	    <result column="out_warehouse_mobile" property="outWarehouseMobile" jdbcType="VARCHAR" />
+	    <result column="out_factory_code" property="outFactoryCode" jdbcType="VARCHAR" />
+	    <result column="out_real_warehouse_code" property="outRealWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="allot_time" property="allotTime" jdbcType="TIMESTAMP" />
+	    <result column="expe_aog_time" property="expeAogTime" jdbcType="TIMESTAMP" />
+	    <result column="auditor" property="auditor" jdbcType="BIGINT" />
+	    <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+	    <result column="remark" property="remark" jdbcType="VARCHAR" />
+	    <result column="sync_status" property="syncStatus" jdbcType="TINYINT" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="creator" property="creator" jdbcType="BIGINT" />
+	    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+	    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    	id, record_code, sap_po_no, record_type, record_status, business_type, add_type, 
+	    is_disparity, orgin_id, orgin_record, split_type, is_return_allotcate, is_quality_allotcate, 
+	    wh_type, is_diff_in, in_warehouse_id, in_warehouse_name, in_warehouse_mobile, in_factory_code, 
+	    in_real_warehouse_code, out_warehouse_id, out_warehouse_name, out_warehouse_mobile, 
+	    out_factory_code, out_real_warehouse_code, allot_time, expe_aog_time, auditor, audit_time, 
+	    remark, sync_status, create_time, update_time, creator, modifier, is_available, is_deleted, 
+	    tenant_id, app_id
+    </sql>
+
+    <!-- 根据ID查询仓库调拨单 -->
+    <select id="queryById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sc_fr_wh_allocation
+        where id = #{id} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 根据ID集合查询仓库调拨单列表 -->
+    <select id="queryByIds" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sc_fr_wh_allocation
+        where is_available = 1 and is_deleted = 0 and id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+	<!-- 根据单据编号查询调拨单 -->
+    <select id="queryByRecordCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sc_fr_wh_allocation
+        where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 保存仓库调拨单 -->
+    <insert id="saveWhAllocation" parameterType="com.lyf.scm.core.domain.entity.stockFront.WhAllocationE" useGeneratedKeys="true" keyProperty="id">
+		insert into sc_fr_wh_allocation
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        id,
+	      </if>
+	      <if test="recordCode != null" >
+	        record_code,
+	      </if>
+	      <if test="sapPoNo != null" >
+	        sap_po_no,
+	      </if>
+	      <if test="recordType != null" >
+	        record_type,
+	      </if>
+	      <if test="recordStatus != null" >
+	        record_status,
+	      </if>
+	      <if test="businessType != null" >
+	        business_type,
+	      </if>
+	      <if test="addType != null" >
+	        add_type,
+	      </if>
+	      <if test="isDisparity != null" >
+	        is_disparity,
+	      </if>
+	      <if test="orginId != null" >
+	        orgin_id,
+	      </if>
+	      <if test="orginRecord != null" >
+	        orgin_record,
+	      </if>
+	      <if test="splitType != null" >
+	        split_type,
+	      </if>
+	      <if test="isReturnAllotcate != null" >
+	        is_return_allotcate,
+	      </if>
+	      <if test="isQualityAllotcate != null" >
+	        is_quality_allotcate,
+	      </if>
+	      <if test="whType != null" >
+	        wh_type,
+	      </if>
+	      <if test="isDiffIn != null" >
+	        is_diff_in,
+	      </if>
+	      <if test="inWarehouseId != null" >
+	        in_warehouse_id,
+	      </if>
+	      <if test="inWarehouseName != null" >
+	        in_warehouse_name,
+	      </if>
+	      <if test="inWarehouseMobile != null" >
+	        in_warehouse_mobile,
+	      </if>
+	      <if test="inFactoryCode != null" >
+	        in_factory_code,
+	      </if>
+	      <if test="inRealWarehouseCode != null" >
+	        in_real_warehouse_code,
+	      </if>
+	      <if test="outWarehouseId != null" >
+	        out_warehouse_id,
+	      </if>
+	      <if test="outWarehouseName != null" >
+	        out_warehouse_name,
+	      </if>
+	      <if test="outWarehouseMobile != null" >
+	        out_warehouse_mobile,
+	      </if>
+	      <if test="outFactoryCode != null" >
+	        out_factory_code,
+	      </if>
+	      <if test="outRealWarehouseCode != null" >
+	        out_real_warehouse_code,
+	      </if>
+	      <if test="allotTime != null" >
+	        allot_time,
+	      </if>
+	      <if test="expeAogTime != null" >
+	        expe_aog_time,
+	      </if>
+	      <if test="auditor != null" >
+	        auditor,
+	      </if>
+	      <if test="auditTime != null" >
+	        audit_time,
+	      </if>
+	      <if test="remark != null" >
+	        remark,
+	      </if>
+	      <if test="syncStatus != null" >
+	        sync_status,
+	      </if>
+	      <if test="createTime != null" >
+	        create_time,
+	      </if>
+	      <if test="updateTime != null" >
+	        update_time,
+	      </if>
+	      <if test="creator != null" >
+	        creator,
+	      </if>
+	      <if test="modifier != null" >
+	        modifier,
+	      </if>
+	      <if test="isAvailable != null" >
+	        is_available,
+	      </if>
+	      <if test="isDeleted != null" >
+	        is_deleted,
+	      </if>
+	      <if test="tenantId != null" >
+	        tenant_id,
+	      </if>
+	      <if test="appId != null" >
+	        app_id,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        #{id,jdbcType=BIGINT},
+	      </if>
+	      <if test="recordCode != null" >
+	        #{recordCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="sapPoNo != null" >
+	        #{sapPoNo,jdbcType=VARCHAR},
+	      </if>
+	      <if test="recordType != null" >
+	        #{recordType,jdbcType=TINYINT},
+	      </if>
+	      <if test="recordStatus != null" >
+	        #{recordStatus,jdbcType=TINYINT},
+	      </if>
+	      <if test="businessType != null" >
+	        #{businessType,jdbcType=TINYINT},
+	      </if>
+	      <if test="addType != null" >
+	        #{addType,jdbcType=TINYINT},
+	      </if>
+	      <if test="isDisparity != null" >
+	        #{isDisparity,jdbcType=TINYINT},
+	      </if>
+	      <if test="orginId != null" >
+	        #{orginId,jdbcType=BIGINT},
+	      </if>
+	      <if test="orginRecord != null" >
+	        #{orginRecord,jdbcType=VARCHAR},
+	      </if>
+	      <if test="splitType != null" >
+	        #{splitType,jdbcType=TINYINT},
+	      </if>
+	      <if test="isReturnAllotcate != null" >
+	        #{isReturnAllotcate,jdbcType=TINYINT},
+	      </if>
+	      <if test="isQualityAllotcate != null" >
+	        #{isQualityAllotcate,jdbcType=TINYINT},
+	      </if>
+	      <if test="whType != null" >
+	        #{whType,jdbcType=TINYINT},
+	      </if>
+	      <if test="isDiffIn != null" >
+	        #{isDiffIn,jdbcType=TINYINT},
+	      </if>
+	      <if test="inWarehouseId != null" >
+	        #{inWarehouseId,jdbcType=BIGINT},
+	      </if>
+	      <if test="inWarehouseName != null" >
+	        #{inWarehouseName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="inWarehouseMobile != null" >
+	        #{inWarehouseMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="inFactoryCode != null" >
+	        #{inFactoryCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="inRealWarehouseCode != null" >
+	        #{inRealWarehouseCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outWarehouseId != null" >
+	        #{outWarehouseId,jdbcType=BIGINT},
+	      </if>
+	      <if test="outWarehouseName != null" >
+	        #{outWarehouseName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outWarehouseMobile != null" >
+	        #{outWarehouseMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outFactoryCode != null" >
+	        #{outFactoryCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outRealWarehouseCode != null" >
+	        #{outRealWarehouseCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="allotTime != null" >
+	        #{allotTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="expeAogTime != null" >
+	        #{expeAogTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="auditor != null" >
+	        #{auditor,jdbcType=BIGINT},
+	      </if>
+	      <if test="auditTime != null" >
+	        #{auditTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="remark != null" >
+	        #{remark,jdbcType=VARCHAR},
+	      </if>
+	      <if test="syncStatus != null" >
+	        #{syncStatus,jdbcType=TINYINT},
+	      </if>
+	      <if test="createTime != null" >
+	        #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="updateTime != null" >
+	        #{updateTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="creator != null" >
+	        #{creator,jdbcType=BIGINT},
+	      </if>
+	      <if test="modifier != null" >
+	        #{modifier,jdbcType=BIGINT},
+	      </if>
+	      <if test="isAvailable != null" >
+	        #{isAvailable,jdbcType=TINYINT},
+	      </if>
+	      <if test="isDeleted != null" >
+	        #{isDeleted,jdbcType=TINYINT},
+	      </if>
+	      <if test="tenantId != null" >
+	        #{tenantId,jdbcType=BIGINT},
+	      </if>
+	      <if test="appId != null" >
+	        #{appId,jdbcType=VARCHAR},
+	      </if>
+	    </trim>
+	</insert>
+
+	<!-- 修改仓库调拨单 -->
+    <update id="updateWhAllocation" parameterType="com.lyf.scm.core.domain.entity.stockFront.WhAllocationE">
+        update sc_fr_wh_allocation
+	    <set >
+	      <if test="recordCode != null" >
+	        record_code = #{recordCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="sapPoNo != null" >
+	        sap_po_no = #{sapPoNo,jdbcType=VARCHAR},
+	      </if>
+	      <if test="recordType != null" >
+	        record_type = #{recordType,jdbcType=TINYINT},
+	      </if>
+	      <if test="recordStatus != null" >
+	        record_status = #{recordStatus,jdbcType=TINYINT},
+	      </if>
+	      <if test="businessType != null" >
+	        business_type = #{businessType,jdbcType=TINYINT},
+	      </if>
+	      <if test="addType != null" >
+	        add_type = #{addType,jdbcType=TINYINT},
+	      </if>
+	      <if test="isDisparity != null" >
+	        is_disparity = #{isDisparity,jdbcType=TINYINT},
+	      </if>
+	      <if test="orginId != null" >
+	        orgin_id = #{orginId,jdbcType=BIGINT},
+	      </if>
+	      <if test="orginRecord != null" >
+	        orgin_record = #{orginRecord,jdbcType=VARCHAR},
+	      </if>
+	      <if test="splitType != null" >
+	        split_type = #{splitType,jdbcType=TINYINT},
+	      </if>
+	      <if test="isReturnAllotcate != null" >
+	        is_return_allotcate = #{isReturnAllotcate,jdbcType=TINYINT},
+	      </if>
+	      <if test="isQualityAllotcate != null" >
+	        is_quality_allotcate = #{isQualityAllotcate,jdbcType=TINYINT},
+	      </if>
+	      <if test="whType != null" >
+	        wh_type = #{whType,jdbcType=TINYINT},
+	      </if>
+	      <if test="isDiffIn != null" >
+	        is_diff_in = #{isDiffIn,jdbcType=TINYINT},
+	      </if>
+	      <if test="inWarehouseId != null" >
+	        in_warehouse_id = #{inWarehouseId,jdbcType=BIGINT},
+	      </if>
+	      <if test="inWarehouseName != null" >
+	        in_warehouse_name = #{inWarehouseName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="inWarehouseMobile != null" >
+	        in_warehouse_mobile = #{inWarehouseMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="inFactoryCode != null" >
+	        in_factory_code = #{inFactoryCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="inRealWarehouseCode != null" >
+	        in_real_warehouse_code = #{inRealWarehouseCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outWarehouseId != null" >
+	        out_warehouse_id = #{outWarehouseId,jdbcType=BIGINT},
+	      </if>
+	      <if test="outWarehouseName != null" >
+	        out_warehouse_name = #{outWarehouseName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outWarehouseMobile != null" >
+	        out_warehouse_mobile = #{outWarehouseMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outFactoryCode != null" >
+	        out_factory_code = #{outFactoryCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="outRealWarehouseCode != null" >
+	        out_real_warehouse_code = #{outRealWarehouseCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="allotTime != null" >
+	        allot_time = #{allotTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="expeAogTime != null" >
+	        expe_aog_time = #{expeAogTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="auditor != null" >
+	        auditor = #{auditor,jdbcType=BIGINT},
+	      </if>
+	      <if test="auditTime != null" >
+	        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="remark != null" >
+	        remark = #{remark,jdbcType=VARCHAR},
+	      </if>
+	      <if test="syncStatus != null" >
+	        sync_status = #{syncStatus,jdbcType=TINYINT},
+	      </if>
+	      <if test="createTime != null" >
+	        create_time = #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="updateTime != null" >
+	        update_time = #{updateTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="creator != null" >
+	        creator = #{creator,jdbcType=BIGINT},
+	      </if>
+	      <if test="modifier != null" >
+	        modifier = #{modifier,jdbcType=BIGINT},
+	      </if>
+	      <if test="isAvailable != null" >
+	        is_available = #{isAvailable,jdbcType=TINYINT},
+	      </if>
+	      <if test="isDeleted != null" >
+	        is_deleted = #{isDeleted,jdbcType=TINYINT},
+	      </if>
+	      <if test="tenantId != null" >
+	        tenant_id = #{tenantId,jdbcType=BIGINT},
+	      </if>
+	      <if test="appId != null" >
+	        app_id = #{appId,jdbcType=VARCHAR},
+	      </if>
+	    </set>
+		where id = #{id,jdbcType=BIGINT} and is_available = 1 and is_deleted = 0
+    </update>
+    
+	<!-- 根据ID修改为派车成功 -->
+    <update id="updateDispatchSuccess">
+        update sc_fr_wh_allocation
+        set record_status = 4
+        where id = #{id} and record_status = 1 and is_available = 1 and is_deleted = 0
+    </update>
+
+   	<!-- 根据ID修改为审核成功 -->
+    <update id="updateAuditSuccess" parameterType="com.lyf.scm.core.domain.entity.stockFront.WhAllocationE">
+        update sc_fr_wh_allocation
+        set record_status = 1, sync_status = #{syncStatus}, modifier = #{modifier}, wh_type = #{whType}, auditor = #{modifier}, audit_time = NOW()
+        where id = #{id} and record_status = 0 and is_available = 1 and is_deleted = 0
+    </update>
+	
+	<!-- 根据ID修改为审核失败 -->
+    <update id="updateAuditFail">
+        update sc_fr_wh_allocation
+        set record_status = 2, modifier = #{userId}
+        where id = #{id} and ( record_status in( 0, 1, 4) || (record_status = 10 and wh_type = 3)) and is_available = 1 and is_deleted = 0
+    </update>
+
+	<!-- 根据ID修改为出库完成 -->
+    <update id="updateDeliverySuccess">
+        update sc_fr_wh_allocation
+        set record_status = 10
+        where id = #{id} and record_status = 4 and is_available = 1 and is_deleted = 0
+    </update>
+
+	<!-- 根据ID修改为入库完成 -->
+    <update id="updateToInWh">
+        update sc_fr_wh_allocation
+        set record_status = 11
+        where id = #{id} and record_status = 10 and is_diff_in = 0 and is_available = 1 and is_deleted = 0
+    </update>
+
+	<!-- 根据ID修改差异状态 -->
+    <update id="updateDisparityStatus">
+        update sc_fr_wh_allocation
+        set is_disparity = #{isDisparity}
+        where id = #{id} and is_available = 1 and is_deleted = 0
+    </update>
+
+	<!-- 根据条件查询仓库调拨单列表 -->
+    <select id="queryWhAllocationByCondition" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sc_fr_wh_allocation
+        WHERE is_available = 1 and is_deleted = 0
+        <if test="whAllocationE.recordCode != null and whAllocationE.recordCode != ''">
+            and record_code = #{whAllocationE.recordCode}
+        </if>
+        <if test="whAllocationE.sapPoNo != null and whAllocationE.sapPoNo != ''">
+            and sap_po_no = #{whAllocationE.sapPoNo}
+        </if>
+        <if test="whAllocationE.recordStatus != null">
+            and record_status = #{whAllocationE.recordStatus}
+        </if>
+        <if test="whAllocationE.businessType != null">
+            and business_type = #{whAllocationE.businessType}
+        </if>
+        <if test="whAllocationE.isDiffIn != null">
+            and is_diff_in = #{whAllocationE.isDiffIn}
+        </if>
+		<if test="whAllocationE.inWarehouseId != null">
+            and in_warehouse_id = #{whAllocationE.inWarehouseId}
+        </if>
+        <if test="whAllocationE.inRealWarehouseCode != null and whAllocationE.inRealWarehouseCode != ''">
+            and in_real_warehouse_code = #{whAllocationE.inRealWarehouseCode}
+        </if>
+        <if test="whAllocationE.inFactoryCode != null and whAllocationE.inFactoryCode != ''">
+            and in_factory_code = #{whAllocationE.inFactoryCode}
+        </if>
+		<if test="whAllocationE.outWarehouseId != null">
+            and out_warehouse_id = #{whAllocationE.outWarehouseId}
+        </if>
+        <if test="whAllocationE.outRealWarehouseCode != null and whAllocationE.outRealWarehouseCode != ''">
+            and out_real_warehouse_code = #{whAllocationE.outRealWarehouseCode}
+        </if>
+        <if test="whAllocationE.outFactoryCode != null and whAllocationE.outFactoryCode != ''">
+            and out_factory_code = #{whAllocationE.outFactoryCode}
+        </if>
+        <if test="whAllocationE.creator != null">
+            and creator = #{whAllocationE.creator}
+        </if>
+        <if test="whAllocationE.startDate != null">
+            <![CDATA[ AND create_time >= date_format(#{whAllocationE.startDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="whAllocationE.endDate != null">
+            <![CDATA[ AND create_time <= date_format(#{whAllocationE.endDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="recordCodes != null and recordCodes.size()>0">
+            AND record_code IN
+            <foreach collection="recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="whAllocationE.isDisparity != null">
+            and is_disparity = #{whAllocationE.isDisparity}
+        </if>
+        <if test="whAllocationE.isQualityAllotcate != null">
+            and is_quality_allotcate = #{whAllocationE.isQualityAllotcate}
+        </if>
+        <if test="whAllocationE.addType != null">
+            and add_type = #{whAllocationE.addType}
+        </if>
+        order by id desc
+    </select>
+
+	<!-- 查询待下发的仓库调拨单 -->
+    <select id="queryWaitSyncOrder" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sc_fr_wh_allocation
+        where sync_status = 1 and record_status != 2 and is_available = 1 and is_deleted = 0
+        <if test="startTime != null ">
+	    	and create_time &gt;= #{startTime}
+	    </if>
+	    <if test="endTime != null ">
+	        and create_time &lt;= #{endTime}
+	    </if>
+        limit #{page},#{maxResult}
+    </select>
+
+	<!-- 修改为下发成功 -->
+    <update id="updateSyncSucc">
+		update sc_fr_wh_allocation
+		set sync_status = 2, sap_po_no = #{sapCode}
+		where id = #{id} and sync_status = 1 and is_available = 1 and is_deleted = 0
+	</update>
+	
+	<!-- 根据ID集合查询仓库调拨单列表 -->
+    <select id="queryWhAllocationByIds" resultMap="BaseResultMap">
+        select id, record_code, record_type
+        from sc_fr_wh_allocation
+        where is_available = 1 and is_deleted = 0 and id in
+        <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <!-- 根据ID撤销派车 -->
+   	<update id="updateCancelDispatch">
+   		update sc_fr_wh_allocation
+        set record_status = 1
+        where id = #{id} and record_status = 4 and is_available = 1 and is_deleted = 0
+   	</update>
+
+    <select id="queryFrontRecordByIds" resultMap="BaseResultMap">
+        select id, record_code, record_type
+        from sc_fr_wh_allocation
+        where is_available = 1 and is_deleted = 0 and id in
+        <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <!-- 根据ID修改为出库完成 -->
+    <update id="updateToOutWh">
+    	update sc_fr_wh_allocation
+        set record_status = 10
+        where id = #{id} and record_status = 1 and is_available = 1 and is_deleted = 0
+    </update>
+    
+    <!-- 根据单据编号集合查询未出库的仓库调拨单列表 -->
+    <select id="queryNotOutByRecordCodes" resultMap="BaseResultMap">
+    	select <include refid="Base_Column_List"/>
+        from sc_fr_wh_allocation
+        where is_available = 1 and is_deleted = 0 and record_status in (0, 1, 4) and record_code in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.online.WDTSaleDetailMapper">
+
+
+    <resultMap id="SaleDetailMap" type="com.lyf.scm.core.domain.entity.online.WDTSaleDetailE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="front_record_id" property="frontRecordId"/>
+        <result column="line_no" property="lineNo"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="gift_type" property="giftType"/>
+        <result column="parent_sku_code" property="parentSkuCode"/>
+        <result column="split_status" property="splitStatus"/>
+        <result column="sku_qty" property="skuQty"/>
+        <result column="unit" property="unit"/>
+        <result column="unit_code" property="unitCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+    <sql id="BASE_COLUMN">
+		  id, record_code, front_record_id, line_no,sku_id,sku_code,gift_type,parent_sku_code,split_status, sku_qty, unit, unit_code, create_time, update_time, creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+    <!--保存 -->
+    <insert id="saveFrSaleRecordDetails" parameterType="java.util.List">
+        insert into
+        sc_fr_sale_wdt_detail(record_code,front_record_id,sku_id,sku_code,sku_qty,unit,unit_code,gift_type,parent_sku_code,split_status,line_no)
+        values
+        <foreach collection="frSaleDOList" item="frd" separator="," close=";">
+            (#{frd.recordCode},#{frd.frontRecordId},#{frd.skuId},#{frd.skuCode},#{frd.skuQty},#{frd.unit},#{frd.unitCode},#{frd.giftType},#{frd.parentSkuCode},#{frd.splitStatus},#{frd.lineNo})
+        </foreach>
+    </insert>
+
+
+    <!--查询-->
+    <select id="selectFrSaleRecordDetailById" resultMap="SaleDetailMap" parameterType="java.lang.Long">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt_detail
+        where
+        front_record_id=#{ frontRecordId }
+        AND is_deleted=0
+        AND is_available=1
+    </select>
+    <!--查询-->
+    <select id="selectFrSaleRecordDetailByIds" resultMap="SaleDetailMap" parameterType="java.lang.Long">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt_detail
+        where
+        front_record_id in
+        <foreach collection="frontRecordIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND is_deleted=0
+        AND is_available=1
+    </select>
+    <!--查询-->
+    <select id="selectFrSaleRecordDetailByCode" resultMap="SaleDetailMap" parameterType="java.lang.String">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt_detail
+        where
+        record_code=#{ frontRecordCode }
+        AND is_deleted=0
+        AND is_available=1
+    </select>
+
+
+    <!--查询-->
+    <select id="selectFrontIdsBySkuCodes" resultType="java.lang.Long">
+        select
+        distinct front_record_id
+        from sc_fr_sale_wdt_detail
+        where is_deleted=0
+        AND is_available=1
+        and sku_code in
+        <foreach collection="skuList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--查询需要拆单的明细-->
+    <select id="selectDetailByIdForSplit" resultMap="SaleDetailMap" parameterType="java.lang.Long">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt_detail
+        where
+        front_record_id=#{ frontRecordId }
+        and split_status = 0
+        AND is_deleted=0
+        AND is_available=1
+        and sku_qty > 0
+    </select>
+
+    <update id="updateToHasSplitForDetailsByRecordId">
+		update
+		sc_fr_sale_wdt_detail
+		set split_status = 1
+		where front_record_id = #{frontRecordId}
+		AND is_deleted=0
+		AND is_available=1
+		and split_status = 0
+	</update>
+    <update id="updateToHasSplitForDetailsByDetailIds">
+        update
+        sc_fr_sale_wdt_detail
+        set split_status = 1
+        where is_deleted=0
+        AND is_available=1
+        and split_status = 0
+        and id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
+    <update id="updateToCancel">
+        update
+        sc_fr_sale_wdt_detail
+        set sku_qty = 0
+        where is_deleted=0
+        AND is_available=1
+        and split_status = 0
+        and id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
+</mapper>

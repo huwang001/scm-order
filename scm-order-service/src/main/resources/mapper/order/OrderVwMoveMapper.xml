@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.order.OrderVwMoveMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.order.OrderVwMoveE">
+		<id column="id" property="id"/>
+		<result column="vw_move_code" property="vwMoveCode"/>
+		<result column="order_code" property="orderCode"/>
+		<result column="factory_code" property="factoryCode"/>
+		<result column="real_warehouse_code" property="realWarehouseCode"/>
+		<result column="in_vw_warehouse_code" property="inVwWarehouseCode"/>
+		<result column="out_vw_warehouse_code" property="outVwWarehouseCode"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="creator" property="creator"/>
+		<result column="modifier" property="modifier"/>
+		<result column="is_available" property="isAvailable"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="version_no" property="versionNo"/>
+		<result column="tenant_id" property="tenantId"/>
+		<result column="app_id" property="appId"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+      id, vw_move_code, order_code, factory_code, real_warehouse_code, in_vw_warehouse_code,
+      out_vw_warehouse_code, create_time, update_time, creator, modifier, is_available,
+      is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+	<!--保存 -->
+    <insert id="saveOrderVwMove" parameterType="com.lyf.scm.core.domain.entity.order.OrderVwMoveE" useGeneratedKeys="true" keyProperty="id">
+		insert into scm_order_vw_move
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="vwMoveCode != null">
+				vw_move_code,
+			</if>
+			<if test="orderCode != null">
+				order_code,
+			</if>
+			<if test="factoryCode != null">
+				factory_code,
+			</if>
+			<if test="realWarehouseCode != null">
+				real_warehouse_code,
+			</if>
+			<if test="inVwWarehouseCode != null">
+				in_vw_warehouse_code,
+			</if>
+			<if test="outVwWarehouseCode != null">
+				out_vw_warehouse_code,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="creator != null">
+				creator,
+			</if>
+			<if test="modifier != null">
+				modifier,
+			</if>
+			<if test="isAvailable != null">
+				is_available,
+			</if>
+			<if test="isDeleted != null">
+				is_deleted,
+			</if>
+			<if test="versionNo != null">
+				version_no,
+			</if>
+			<if test="tenantId != null">
+				tenant_id,
+			</if>
+			<if test="appId != null">
+				app_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id},
+			</if>
+			<if test="vwMoveCode != null">
+				#{vwMoveCode},
+			</if>
+			<if test="orderCode != null">
+				#{orderCode},
+			</if>
+			<if test="factoryCode != null">
+				#{factoryCode},
+			</if>
+			<if test="realWarehouseCode != null">
+				#{realWarehouseCode},
+			</if>
+			<if test="inVwWarehouseCode != null">
+				#{inVwWarehouseCode},
+			</if>
+			<if test="outVwWarehouseCode != null">
+				#{outVwWarehouseCode},
+			</if>
+			<if test="createTime != null">
+				#{createTime},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime},
+			</if>
+			<if test="creator != null">
+				#{creator},
+			</if>
+			<if test="modifier != null">
+				#{modifier},
+			</if>
+			<if test="isAvailable != null">
+				#{isAvailable},
+			</if>
+			<if test="isDeleted != null">
+				#{isDeleted},
+			</if>
+			<if test="versionNo != null">
+				#{versionNo},
+			</if>
+			<if test="tenantId != null">
+				#{tenantId},
+			</if>
+			<if test="appId != null">
+				#{appId},
+			</if>
+		</trim>
+	</insert>
+
+</mapper>

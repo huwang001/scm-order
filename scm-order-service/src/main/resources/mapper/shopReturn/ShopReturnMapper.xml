@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.shopReturn.ShopReturnMapper">
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.shopReturn.ShopReturnE">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode"/>
+        <result column="out_record_code" jdbcType="VARCHAR" property="outRecordCode"/>
+        <result column="cmp_record_code" jdbcType="VARCHAR" property="cmpRecordCode"/>
+        <result column="sap_po_no" jdbcType="VARCHAR" property="sapPoNo"/>
+        <result column="shop_code" jdbcType="VARCHAR" property="shopCode"/>
+        <result column="shop_type" jdbcType="TINYINT" property="shopType"/>
+        <result column="merchant_id" jdbcType="BIGINT" property="merchantId"/>
+        <result column="channel_code" jdbcType="VARCHAR" property="channelCode"/>
+        <result column="record_type" jdbcType="TINYINT" property="recordType"/>
+        <result column="record_status" jdbcType="TINYINT" property="recordStatus"/>
+        <result column="in_real_warehouse_id" jdbcType="BIGINT" property="inRealWarehouseId"/>
+        <result column="in_factory_code" jdbcType="VARCHAR" property="inFactoryCode"/>
+        <result column="in_real_warehouse_code" jdbcType="VARCHAR" property="inRealWarehouseCode"/>
+        <result column="in_cold_real_warehouse_id" jdbcType="BIGINT" property="inColdRealWarehouseId"/>
+        <result column="in_cold_factory_code" jdbcType="VARCHAR" property="inColdFactoryCode"/>
+        <result column="in_cold_real_warehouse_code" jdbcType="VARCHAR" property="inColdRealWarehouseCode"/>
+        <result column="out_real_warehouse_code" jdbcType="VARCHAR" property="outRealWarehouseCode"/>
+        <result column="out_factory_code" jdbcType="VARCHAR" property="outFactoryCode"/>
+        <result column="out_real_warehouse_id" jdbcType="BIGINT" property="outRealWarehouseId"/>
+        <result column="is_need_dispatch" jdbcType="TINYINT" property="isNeedDispatch"/>
+        <result column="out_create_time" jdbcType="TIMESTAMP" property="outCreateTime"/>
+        <result column="trans_status" jdbcType="INTEGER" property="transStatus"/>
+        <result column="is_appoint" jdbcType="BIT" property="isAppoint"/>
+        <result column="expect_date" jdbcType="TIMESTAMP" property="expectDate"/>
+        <result column="picked_time" jdbcType="TIMESTAMP" property="pickedTime"/>
+        <result column="pos_return_info" jdbcType="VARCHAR" property="posReturnInfo"/>
+        <result column="request_no" jdbcType="VARCHAR" property="requestNo"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+        <result column="modifier" jdbcType="BIGINT" property="modifier"/>
+        <result column="is_available" jdbcType="BIT" property="isAvailable"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="version_no" jdbcType="INTEGER" property="versionNo"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, record_code, out_record_code, cmp_record_code, sap_po_no, shop_code, shop_type, 
+    merchant_id, record_type, record_status,channel_code, in_real_warehouse_id, in_factory_code, in_real_warehouse_code,
+    in_cold_real_warehouse_id, in_cold_factory_code, in_cold_real_warehouse_code,out_real_warehouse_code, out_factory_code,
+     out_real_warehouse_id, is_need_dispatch,  out_create_time, trans_status, is_appoint, expect_date, picked_time, pos_return_info,
+    request_no, create_time, update_time, creator, modifier, is_available, is_deleted, tenant_id, app_id, version_no
+  </sql>
+
+    <select id="queryShopReturnById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_shop_return where id = #{id} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <select id="selectByRecordCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_shop_return
+        where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <select id="selectByOutRecordCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_shop_return
+        where out_record_code = #{outRecordCod} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.lyf.scm.core.domain.entity.shopReturn.ShopReturnE">
+    insert into scm_shop_return (record_code, out_record_code,
+      cmp_record_code, sap_po_no, shop_code,
+      shop_type, merchant_id, record_type,
+      record_status, channel_code,in_real_warehouse_id, in_factory_code,
+      in_real_warehouse_code, in_cold_real_warehouse_id, in_cold_factory_code,
+      in_cold_real_warehouse_code,out_real_warehouse_code,
+      out_factory_code, out_real_warehouse_id,
+      out_create_time, is_appoint,
+      expect_date, picked_time, pos_return_info,
+      request_no)
+    values ( #{recordCode,jdbcType=VARCHAR}, #{outRecordCode,jdbcType=VARCHAR},
+      #{cmpRecordCode,jdbcType=VARCHAR}, #{sapPoNo,jdbcType=VARCHAR}, #{shopCode,jdbcType=VARCHAR},
+      #{shopType,jdbcType=TINYINT}, #{merchantId,jdbcType=BIGINT}, #{recordType,jdbcType=TINYINT},
+      #{recordStatus,jdbcType=TINYINT},#{channelCode} ,#{inRealWarehouseId,jdbcType=BIGINT}, #{inFactoryCode,jdbcType=VARCHAR},
+      #{inRealWarehouseCode,jdbcType=VARCHAR},#{inColdRealWarehouseId,jdbcType=BIGINT}, #{inColdFactoryCode,jdbcType=VARCHAR},
+      #{inColdRealWarehouseCode,jdbcType=VARCHAR} ,#{outRealWarehouseCode,jdbcType=VARCHAR},
+      #{outFactoryCode,jdbcType=VARCHAR}, #{outRealWarehouseId,jdbcType=BIGINT},
+      #{outCreateTime,jdbcType=TIMESTAMP}, #{isAppoint,jdbcType=BIT},
+      #{expectDate,jdbcType=TIMESTAMP}, #{pickedTime,jdbcType=TIMESTAMP}, #{posReturnInfo,jdbcType=VARCHAR},
+      #{requestNo,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateToOutAllocation">
+        update
+          `scm_shop_return`
+        set
+          `record_status` = 10
+        where
+          `id` = #{id} and `record_status` = 4
+          and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateToInAllocation">
+        update
+          `scm_shop_return`
+        set
+          `record_status` = 11
+        where
+          `id` = #{id} and `record_status` = 10
+          and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateRecordStatus">
+        update
+          `scm_shop_return`
+        set
+          `record_status` = 2
+        where
+          `record_code` = #{recordCode} and `record_status` = 0
+          and is_available = 1 and is_deleted = 0
+  </update>
+
+    <update id="updateRecordTransStatusToUnPush">
+         update
+          `scm_shop_return`
+        set
+          `trans_status` = 1
+        where
+          `id` = #{id} and `trans_status` = 0
+          and is_available = 1 and is_deleted = 0
+    </update>
+
+    <select id="queryShopReturnByIdS" resultMap="BaseResultMap">
+        select id ,record_code,record_type
+        from scm_shop_return
+        where is_available = 1
+        and is_deleted = 0
+        <if test="idList!=null and idList.size()>0">
+            and id in
+            <foreach collection="idList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <update id="updateIsNeedDispatchComplete">
+        update
+        scm_shop_return
+        set
+        record_status = 4
+        where
+        is_available = 1
+        and is_deleted = 0
+        and record_status = 0
+        and id in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="queryUnPushTradeShopReturnRecord" resultType="java.lang.String">
+        select record_code from scm_shop_return
+        where is_deleted = 0 and is_available = 1
+        and trans_status = 1 and record_status = 11
+        and create_time > DATE_SUB(CURRENT_TIMESTAMP,INTERVAL 7 day)
+        order by id desc
+        limit #{page}, #{maxResult}
+    </select>
+
+    <update id="updateShopReturnTransStatusPushed">
+        update scm_shop_return
+        set trans_status = 2
+        where is_deleted = 0 and is_available = 1
+        and id = #{id} and trans_status = 1
+    </update>
+</mapper>

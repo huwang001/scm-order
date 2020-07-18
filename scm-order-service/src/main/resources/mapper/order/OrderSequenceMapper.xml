@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.order.OrderSequenceMapper" >
+
+  <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.order.OrderSequenceE" >
+      <id column="id" jdbcType="BIGINT" property="id" />
+      <result column="section_num" jdbcType="BIGINT" property="sectionNum" />
+      <result column="version" jdbcType="BIGINT" property="version" />
+      <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, section_num, update_time, version
+  </sql>
+
+  <!-- 获取订单序列号 -->
+  <select id="getOrderSequence" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from scm_order_sequence
+  </select>
+  
+  <!-- 更新订单序列号 -->
+  <update id="updateOrderSequenceId" parameterType="com.lyf.scm.core.domain.entity.order.OrderSequenceE">
+  	update
+  	  scm_order_sequence
+  	set
+  	  section_num = #{sectionNum,jdbcType=BIGINT},
+  	  version = version + 1,
+  	  update_time =#{currentDate}
+  	where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.AllotRecordRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.AllotRecordRelationE" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="allot_code" property="allotCode" jdbcType="VARCHAR" />
+    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="line_no" property="lineNo" jdbcType="VARCHAR" />
+    <result column="order_line_no" property="orderLineNo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="BIGINT" />
+    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, allot_code, record_code, type, line_no, order_line_no, create_time, update_time, creator, modifier,
+    is_available, is_deleted, version_no, tenant_id, app_id
+  </sql>
+  
+  <!-- 保存调拨业务单据关系 -->
+  <insert id="insertAllotRecordRelation" parameterType="com.lyf.scm.core.domain.entity.stockFront.AllotRecordRelationE" >
+    insert into scm_allot_record_relation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="allotCode != null" >
+        allot_code,
+      </if>
+      <if test="recordCode != null" >
+        record_code,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="lineNo != null" >
+        line_no,
+      </if>
+      <if test="orderLineNo != null" >
+        order_line_no,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+      <if test="isAvailable != null" >
+        is_available,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="versionNo != null" >
+        version_no,
+      </if>
+      <if test="tenantId != null" >
+        tenant_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="allotCode != null" >
+        #{allotCode,jdbcType=VARCHAR},
+      </if>
+      <if test="recordCode != null" >
+        #{recordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="lineNo != null" >
+        #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderLineNo != null" >
+        #{orderLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 批量保存调拨业务单据关系 -->
+  <insert id="batchInsertAllotRecordRelation" >
+  	insert into scm_allot_record_relation (allot_code, record_code, type, line_no, order_line_no) values
+      <foreach collection="list" item="item" separator="," >
+      	(#{item.allotCode}, #{item.recordCode}, #{item.type}, #{item.lineNo}, #{item.orderLineNo})
+      </foreach>
+  </insert>
+  
+  <!-- 修改调拨业务单据关系 -->
+  <update id="updateAllotRecordRelation" parameterType="com.lyf.scm.core.domain.entity.stockFront.AllotRecordRelationE" >
+    update scm_allot_record_relation
+    <set >
+      <if test="allotCode != null" >
+        allot_code = #{allotCode,jdbcType=VARCHAR},
+      </if>
+      <if test="recordCode != null" >
+        record_code = #{recordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="lineNo != null" >
+        line_no = #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderLineNo != null" >
+        order_line_no = #{orderLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        is_available = #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        version_no = #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and is_available = 1 and is_deleted = 0
+  </update>
+  
+  <!-- 根据单据编号查询调拨业务单据关系列表 -->
+  <select id="queryAllotRecordRelationByRecordCode" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from scm_allot_record_relation
+    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据调拨单号查询调拨业务单据关系列表 -->
+  <select id="queryAllotRecordRelationByAllotCode" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from scm_allot_record_relation
+    where allot_code = #{allotCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据类型查询调拨业务单据关系列表 -->
+  <select id="queryAllotRecordRelationByType" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from scm_allot_record_relation
+    where type = #{type} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据单据编号查询调拨单号列表 -->
+  <select id="queryAllotCodeByRecordCode" resultType="java.lang.String">
+    select distinct allot_code
+    from scm_allot_record_relation
+    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据行号（调拨单明细关联主键）查询调拨业务单据关系列表 -->
+  <select id="queryAllotRecordRelationByLineNos" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+    from scm_allot_record_relation
+    where is_available = 1 and is_deleted = 0 and line_no in
+    <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+    	#{item}
+    </foreach>
+  </select>
+  
+</mapper>

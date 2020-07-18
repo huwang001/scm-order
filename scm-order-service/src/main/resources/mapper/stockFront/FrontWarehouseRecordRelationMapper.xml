@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.FrontWarehouseRecordRelationMapper">
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.FrontWarehouseRecordRelationE">
+        <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+	    <result column="front_record_id" property="frontRecordId" jdbcType="BIGINT" />
+	    <result column="front_record_code" property="frontRecordCode" jdbcType="VARCHAR" />
+	    <result column="warehouse_record_id" property="warehouseRecordId" jdbcType="BIGINT" />
+	    <result column="front_record_type" property="frontRecordType" jdbcType="TINYINT" />
+        <result column="depend_record_code" property="dependRecordCode" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="creator" property="creator" jdbcType="BIGINT" />
+	    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+	    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+	    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    	id, record_code, front_record_id, front_record_code, warehouse_record_id, front_record_type, depend_record_code,
+    	create_time, update_time, creator, modifier, is_available, is_deleted, version_no, 
+    	tenant_id, app_id
+    </sql>
+
+	<!-- 保存前置单与仓库单关系 -->
+    <insert id="insertFrontWarehouseRecordRelation" parameterType="com.lyf.scm.core.domain.entity.stockFront.FrontWarehouseRecordRelationE" useGeneratedKeys="true" keyProperty="id">
+        insert into sc_front_warehouse_record_relation(front_record_id,warehouse_record_id,front_record_type,record_code,front_record_code,depend_record_code)
+        values(#{frontRecordId},#{warehouseRecordId},#{frontRecordType},#{recordCode},#{frontRecordCode},#{dependRecordCode})
+    </insert>
+	
+	<!-- 查询出入库id -->
+    <select id="queryWarehouseIdByFrontId" resultType="java.lang.Long">
+      select warehouse_record_id
+      from sc_front_warehouse_record_relation
+      where front_record_id = #{frontRecordId} and front_record_type = #{recordType} and is_available = 1 and is_deleted = 0
+    </select>
+	
+	<!-- 根据id和查询关联关系 -->
+    <select id="getByWrId" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>        
+		from sc_front_warehouse_record_relation
+		where warehouse_record_id = ${warehouseRecordId} and is_available = 1 and is_deleted = 0
+    </select>
+	
+	<!-- 根据出入库单id集合查询前置单号id -->
+    <select id="queryFrontRecordListByIdList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sc_front_warehouse_record_relation
+        WHERE is_available = 1 and is_deleted = 0
+        <if test="idList != null and idList.size()!= 0">
+            and warehouse_record_id in
+            <foreach collection="idList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!--根据前置单号查询出入库单号-->
+    <select id="getRecordCodeByFrontRecordCode" resultType="java.lang.String">
+        select DISTINCT record_code
+        from sc_front_warehouse_record_relation
+	    where front_record_code = #{frontRecordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!--根据出入库单号查询前置单号-->
+    <select id="getFrontRecordCodeByRecordCode" resultType="java.lang.String">
+        select front_record_code 
+        from sc_front_warehouse_record_relation
+	    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!--根据出入库单号查询前置单ID-->
+    <select id="getFrontRecordIdByRecordCode" resultType="java.lang.Long">
+        select front_record_id
+        from sc_front_warehouse_record_relation
+	    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+	<!-- 根据前置单出入库单id -->
+    <select id="queryWarehouseRecordIdByRecord" resultType="java.lang.Long">
+        select warehouse_record_id
+        from sc_front_warehouse_record_relation
+		where front_record_code = #{frontRecordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+
+    
+    <select id="getRecordCodesByFrontRecordCodes" resultType="java.lang.String">
+        SELECT DISTINCT record_code 
+        FROM sc_front_warehouse_record_relation 
+        where is_available = 1 and is_deleted = 0
+        <if test="frontRecordCodes != null and frontRecordCodes.size()>0">
+            AND front_record_code IN
+            <foreach collection="frontRecordCodes" close=")" open="(" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    
+    <select id="getFrontRelationByRecordCodes" resultMap="BaseResultMap">
+    	select <include refid="Base_Column_List"/>
+        FROM sc_front_warehouse_record_relation
+        where is_available = 1 and is_deleted = 0
+        <if test="recordCodes != null and recordCodes.size()>0">
+            AND record_code IN
+            <foreach collection="recordCodes" close=")" open="(" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    
+    <select id="getRecordRelationByFrontRecordCodes" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        FROM sc_front_warehouse_record_relation where is_available = 1 and is_deleted = 0
+        <if test="frontRecordCodes != null and frontRecordCodes.size()>0">
+            AND front_record_code IN
+            <foreach collection="frontRecordCodes" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getFrontRelationByRecordCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from sc_front_warehouse_record_relation
+        where record_code = #{recordCode} and is_available= 1 and is_deleted= 0
+    </select>
+
+    <select id="queryRecordRelationByFrontIdAndType" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from sc_front_warehouse_record_relation
+        where front_record_id = #{frontId} and front_record_type = #{recordType} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 根据后置单id删除关联关系 -->
+    <update id="deleteRelationByWrId">
+        UPDATE sc_front_warehouse_record_relation
+        set is_deleted = 1
+        where warehouse_record_id = ${warehouseRecordId} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateDependRecordCodeById">
+          UPDATE sc_front_warehouse_record_relation set depend_record_code = #{dependRecordCode} where id = #{id} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!--根据出入库单号查询前置单号-->
+    <select id="getFrontRecordCodeListByRecordCode" resultType="java.lang.String">
+        select DISTINCT front_record_code
+        from sc_front_warehouse_record_relation
+	    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+</mapper>

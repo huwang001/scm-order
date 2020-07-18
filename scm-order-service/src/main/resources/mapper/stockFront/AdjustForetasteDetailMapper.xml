@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.AdjustForetasteDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.AdjustForetasteDetailE">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode"/>
+        <result column="front_record_id" jdbcType="BIGINT" property="frontRecordId"/>
+        <result column="sku_id" jdbcType="BIGINT" property="skuId"/>
+        <result column="sku_code" jdbcType="VARCHAR" property="skuCode"/>
+        <result column="sku_qty" jdbcType="DECIMAL" property="skuQty"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="unit_code" jdbcType="VARCHAR" property="unitCode"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+        <result column="modifier" jdbcType="BIGINT" property="modifier"/>
+        <result column="is_available" jdbcType="BIT" property="isAvailable"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="version_no" jdbcType="INTEGER" property="versionNo"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, record_code, front_record_id, sku_id, sku_code, sku_qty, unit, unit_code, create_time,
+      update_time, creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+    <select id="queryAdjustForetasteDetailByRecordId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_adjust_foretaste_detail
+        where front_record_id = #{recordId,jdbcType=BIGINT} and is_deleted = 0 and is_available = 1
+    </select>
+
+    <insert id="saveFrAdjustForetasteDetailList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into sc_fr_adjust_foretaste_detail
+        (record_code, front_record_id, sku_id, sku_code, sku_qty, unit, unit_code)
+        values
+        <foreach collection="frontRecordDetails" item="frd" separator="," close=";">
+            (#{frd.recordCode}, #{frd.frontRecordId},#{frd.skuId},#{frd.skuCode}, #{frd.skuQty},
+            #{frd.unit},#{frd.unitCode})
+        </foreach>
+    </insert>
+</mapper>

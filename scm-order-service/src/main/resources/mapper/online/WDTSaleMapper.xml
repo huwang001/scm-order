@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.online.WDTSaleMapper">
+    <resultMap id="SaleMap" type="com.lyf.scm.core.domain.entity.online.WDTSaleE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="split_type" property="splitType"/>
+        <result column="allot_status" property="allotStatus"/>
+        <result column="real_warehouse_id" property="realWarehouseId"/>
+        <result column="real_warehouse_code" property="realWarehouseCode"/>
+        <result column="virtual_warehouse_id" property="virtualWarehouseId"/>
+        <result column="virtual_warehouse_code" property="virtualWarehouseCode"/>
+        <result column="logistics_code" property="logisticsCode"/>
+        <result column="mobile" property="mobile"/>
+        <result column="out_record_code" property="outRecordCode"/>
+        <result column="origin_order_code" property="originOrderCode"/>
+        <result column="out_create_time" property="outCreateTime"/>
+        <result column="user_code" property="userCode"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+        <result column="trans_type" property="transType"/>
+    </resultMap>
+
+    <resultMap id="InfoMap" type="com.lyf.scm.core.domain.entity.online.WDTPageInfoE">
+        <id column="id" property="id"/>
+        <result column="origin_order_code" property="originOrderCode"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="out_record_code" property="outRecordCode"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="real_warehouse_id" property="realWarehouseId"/>
+        <result column="virtual_warehouse_id" property="virtualWarehouseId"/>
+        <result column="logistics_code" property="logisticsCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="province" property="province"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="city" property="city"/>
+        <result column="city_code" property="cityCode"/>
+        <result column="name" property="name"/>
+        <result column="mobile" property="mobile"/>
+        <result column="county" property="county"/>
+        <result column="county_code" property="countyCode"/>
+        <result column="address" property="address"/>
+        <result column="allot_status" property="allotSatus"/>
+        <result column="split_type" property="splitType"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="merchant_id" property="merchantId"/>
+    </resultMap>
+
+    <sql id="BASE_COLUMN">
+		id,record_code,channel_code,merchant_id,record_type,record_status,virtual_warehouse_id,real_warehouse_id,virtual_warehouse_code
+		,real_warehouse_code,logistics_code,mobile,split_type,allot_status,out_record_code,out_create_time,user_code,pay_time,trans_type
+		,create_time,update_time,creator,modifier,is_available,is_deleted,tenant_id,app_id,version_no,origin_order_code
+    </sql>
+
+    <sql id="INFO_COLUMN">
+		wdt.`id` ,wdt.`origin_order_code`,wdt.`record_code`,wdt.`out_record_code`,wdt.`channel_code`,
+        wdt.`real_warehouse_id` , wdt.`virtual_warehouse_id`,wdt.`logistics_code`,addr.`province`,addr.`province_code`,addr.`city`,addr.`city_code`,
+        addr.`name`,addr.`mobile`,addr.`county`,addr.`county_code`,addr.`address`,wdt.`allot_status`,
+        wdt.`split_type`,wdt.`pay_time`,wdt.`update_time` ,wdt.`create_time`,wdt.record_status,wdt.merchant_id
+    </sql>
+
+    <!--保存 -->
+    <insert id="saveFrSaleRecord" parameterType="com.lyf.scm.core.domain.entity.online.WDTSaleE"
+            useGeneratedKeys="true" keyProperty="id">
+		insert into sc_fr_sale_wdt(record_code,channel_code,merchant_id,record_type,record_status,real_warehouse_id,virtual_warehouse_id,split_type,allot_status,mobile,out_record_code,out_create_time,user_code,trans_type,origin_order_code,pay_time)
+		values(#{recordCode},#{channelCode},#{merchantId},#{recordType},#{recordStatus},#{realWarehouseId},#{virtualWarehouseId},#{splitType},#{allotStatus},#{mobile},#{outRecordCode},#{outCreateTime},#{userCode},#{transType},#{originOrderCode},#{payTime})
+
+	</insert>
+
+
+    <!--查询-->
+    <select id="selectFrSaleRecordById" resultMap="SaleMap" parameterType="java.lang.Long">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt
+        where
+        id=#{ id }
+        and is_deleted=0
+        and is_available=1
+    </select>
+
+    <!--查询： outRecordCode-->
+    <select id="selectFrSaleRecordByOutRecordCode" resultMap="SaleMap" parameterType="java.lang.String">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt
+        where is_deleted = 0
+        and is_available=1
+        and out_record_code =#{outRecordCode}
+    </select>
+
+    <!--查询： outRecordCode-->
+    <select id="selectFrSaleRecordByRecordCode" resultMap="SaleMap" parameterType="java.lang.String">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt
+        where is_deleted = 0
+        and is_available=1
+        and record_code =#{recordCode}
+    </select>
+
+    <!--查询： outRecordCode-->
+    <select id="selectFrSaleRecordByRecordCodes" resultMap="SaleMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_fr_sale_wdt
+        where is_deleted = 0
+        and is_available=1
+        and record_code in
+        <foreach collection="recordCodes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <!--更新前置SO单状态为已取消-->
+    <update id="updateToCanceled">
+        <bind name="afterRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@DISABLED"/>
+        update `sc_fr_sale_wdt` set `record_status` = #{afterRecordStatus.status}
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <!--更新前置SO单状态为已取消-->
+    <update id="updateVersion">
+        update `sc_fr_sale_wdt` set `version_no` = `version_no` + 1
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1 and `version_no` = #{version}
+    </update>
+
+    <!--更新前置SO单状态为已出库-->
+    <update id="updateToOutAllocation">
+        <bind name="beforeRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@SO_PAID"/>
+        <bind name="afterRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@OUT_ALLOCATION"/>
+        update `sc_fr_sale_wdt` set `record_status` = #{afterRecordStatus.status}
+        where `id` = #{id} and `record_status` = #{beforeRecordStatus.status}
+        and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <!--更新前置SO单维度的物流公司编码-->
+    <update id="saveLogisticsCode">
+        update `sc_fr_sale_wdt` set `logistics_code` = #{logisticsCode}
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1 and logistics_code is null
+    </update>
+
+    <!-- 修改单据信息,重新寻源用 -->
+    <update id="updateOrderForRecalHouse"
+            parameterType="com.lyf.scm.core.domain.entity.online.WDTSaleE">
+        update `sc_fr_sale_wdt`
+        set `logistics_code` = #{logisticsCode} ,
+        real_warehouse_id = #{realWarehouseId},
+        virtual_warehouse_id = #{virtualWarehouseId},
+        split_type = 0 ,
+        allot_status = 1
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1 and split_type in(1,2) and  allot_status = 0
+    </update>
+
+    <!-- 修改单据信息,改仓和物流公司用 -->
+    <update id="updateOrderForChangeHouse"
+            parameterType="com.lyf.scm.core.domain.entity.online.WDTSaleE">
+        update `sc_fr_sale_wdt`
+        set
+        <if test="null != logisticsCode and  ''!= logisticsCode">
+            logistics_code = #{logisticsCode},
+        </if>
+        real_warehouse_id = #{realWarehouseId},
+        virtual_warehouse_id = #{virtualWarehouseId}
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <!--更新前置SO单维度的物流公司编码-->
+    <update id="updateToHasSplitForOrder">
+        update `sc_fr_sale_wdt` set `allot_status` = 1
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1 and  `allot_status`  = 0
+    </update>
+
+    <select id="queryForPage" resultMap="InfoMap">
+        select
+        <include refid="INFO_COLUMN"/>
+        from
+        `sc_fr_sale_wdt` wdt ,
+        `sc_address` addr
+        where wdt.`is_available` = 1
+        and wdt.`is_deleted`= 0
+        and addr.`record_code` = wdt.`record_code`
+        and addr.is_available =1
+        and addr.`is_deleted`= 0
+        <if test="channelCodeList != null and channelCodeList.size()>0 ">
+            and wdt.channel_code in
+            <foreach item="item" index="index" collection="channelCodeList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="null != outRecordCodeList  and  outRecordCodeList.size()>0">
+            and wdt.`out_record_code` in
+            <foreach collection="outRecordCodeList" item="code" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </if>
+        <if test="null != originOrderCodeList  and   originOrderCodeList.size()>0">
+            and wdt.`origin_order_code` in
+            <foreach collection="originOrderCodeList" item="code" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </if>
+        <if test="null != realWarehouseId">
+            and wdt.`real_warehouse_id` = #{realWarehouseId}
+        </if>
+        <if test="null != recordStatus">
+            and wdt.record_status = #{recordStatus}
+        </if>
+        <if test="null != logisticsCode and  ''!= logisticsCode">
+            and wdt.`logistics_code` = #{logisticsCode}
+        </if>
+        <if test="null != provinceCodes and  provinceCodes.size() > 0">
+            and addr.`province_code` in
+            <foreach collection="provinceCodes" item="code" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </if>
+        <if test="null != allotStatus and allotStatus == 1">
+            and (wdt.`allot_status` = 1 or wdt.`split_type` = 0)
+        </if>
+        <if test="null != allotStatus and allotStatus == 0">
+            and wdt.`allot_status` = 0 and wdt.`split_type` in(1,2)
+        </if>
+        <if test="null != startTime">
+            and wdt.`pay_time` >= #{startTime}
+        </if>
+
+        <if test="splitTypeList != null and splitTypeList.size() > 0">
+            and wdt.`split_type` in
+            <foreach collection="splitTypeList" item="plitType" open="(" close=")" separator=",">
+                #{plitType}
+            </foreach>
+        </if>
+        <if test="null != endTime">
+            <![CDATA[ 	and wdt.`pay_time`  <= #{endTime} ]]>
+        </if>
+        <if test="frontRecordIds != null and frontRecordIds.size() > 0">
+            and wdt.`id` in
+            <foreach collection="frontRecordIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        order by wdt.id desc
+    </select>
+
+    <!--根据订单编号list查询后置单单据编码集合
+     <select id="queryWdtFrSaleFrontAndWarehouseRelation"
+             resultMap="com.rome.stock.core.api.dto.warehouserecord.WdtWarehouseRecordDTO"
+             parameterType="com.rome.stock.core.api.dto.qry.SaleWarehouseRecordCondition">
+         select distinct
+         re.warehouse_record_id as warehouseRecordId ,re.front_record_id as front,sale.out_record_code as
+         orderCode,sale.origin_order_code originOrderCode
+         from sc_front_warehouse_record_relation re ,sc_fr_sale_wdt sale
+         where re.is_deleted = 0 and sale.is_deleted = 0
+         and re.is_available=1 and sale.is_available=1
+         and re.front_record_id = sale.id
+         and re.front_record_type =100 &lt;!&ndash;31门店零售 99电商零售&ndash;&gt;
+         &lt;!&ndash;<if test="condition.orderCode != null">&ndash;&gt;
+         &lt;!&ndash;and sale.out_record_code = #{condition.orderCode}&ndash;&gt;
+         &lt;!&ndash;</if>&ndash;&gt;
+         <if test="condition.orderCodeList != null and condition.orderCodeList.size() > 0">
+             and sale.out_record_code in
+             <foreach item="items" index="index" collection="condition.orderCodeList" open="(" separator="," close=")">
+                 #{items}
+             </foreach>
+         </if>
+         <if test="condition.warehouseRecordIds != null and condition.warehouseRecordIds.size() > 0">
+             and re.warehouse_record_id in
+             <foreach item="item" index="index" collection="condition.warehouseRecordIds" open="(" separator=","
+                      close=")">
+                 #{item}
+             </foreach>
+         </if>
+         <if test="condition.originOrderCodeList != null and condition.originOrderCodeList.size() > 0">
+             and sale.origin_order_code in
+             <foreach item="originOrderCode" index="index" collection="condition.originOrderCodeList" open="("
+                      separator="," close=")">
+                 #{originOrderCode}
+             </foreach>
+         </if>
+     </select>-->
+
+    <!-- 根据id集合查询零售单据 -->
+    <select id="queryFrontRecordByIds"
+            resultType="com.lyf.scm.core.domain.entity.online.WDTSaleE">
+        select id,record_code,out_record_code,record_type,origin_order_code from sc_fr_sale_wdt where id in
+        <foreach collection="idList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

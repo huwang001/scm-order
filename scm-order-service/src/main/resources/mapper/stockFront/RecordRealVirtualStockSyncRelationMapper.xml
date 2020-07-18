@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.RecordRealVirtualStockSyncRelationMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.RecordRealVirtualStockSyncRelationE" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+	    <result column="real_warehouse_id" property="realWarehouseId" jdbcType="BIGINT" />
+	    <result column="factory_code" property="factoryCode" jdbcType="VARCHAR" />
+	    <result column="real_warehouse_code" property="realWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="virtual_warehouse_id" property="virtualWarehouseId" jdbcType="BIGINT" />
+	    <result column="virtual_warehouse_code" property="virtualWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+	    <result column="sync_rate" property="syncRate" jdbcType="DECIMAL" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="creator" property="creator" jdbcType="BIGINT" />
+	    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+	    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+	    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+	    <result column="allot_type" property="allotType" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		id, record_code, real_warehouse_id, factory_code, real_warehouse_code, virtual_warehouse_id, 
+	    virtual_warehouse_code, sku_id, sync_rate, create_time, update_time, creator, modifier, 
+	    is_available, is_deleted, version_no, tenant_id, app_id, allot_type
+	</sql>
+
+
+	<!-- 根据单据编码查询单据级别的sku实仓虚仓同步比例 -->
+    <select id="queryByRecordCode" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+        from sc_record_real_virtual_stock_sync_relation
+        where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+	<!-- 批量保存单据级别的sku实仓虚仓分配关系 -->
+    <insert id="insertRecordRealVirtualStockRelation" parameterType="java.util.List">
+        insert into sc_record_real_virtual_stock_sync_relation(record_code,real_warehouse_id,real_warehouse_code,factory_code,virtual_warehouse_id,virtual_warehouse_code,sku_id,sync_rate,creator,modifier,allot_type)
+        values
+        <foreach collection="relationList" item="item" separator="," close=";">
+            (#{item.recordCode},#{item.realWarehouseId},#{item.realWarehouseCode},#{item.factoryCode},#{item.virtualWarehouseId},#{item.virtualWarehouseCode},#{item.skuId},#{item.syncRate},#{item.creator},#{item.modifier},#{item.allotType})
+        </foreach>
+    </insert>
+
+	<!-- 批量修改单据级别的sku实仓虚仓分配关系 -->
+    <update id="updateRecordRealVirtualStockRelation">
+        <foreach collection="relationList" item="item" index="index" open="" close="" separator=";">
+            update sc_record_real_virtual_stock_sync_relation
+            set allot_type = #{item.allotType} ,
+            sync_rate = #{item.syncRate} ,
+            modifier = #{item.modifier}
+            where is_available = 1 and is_deleted = 0
+            and record_code =#{item.recordCode}
+            and real_warehouse_id = #{item.realWarehouseId}
+            and real_warehouse_code = #{item.realWarehouseCode}
+            and factory_code = #{item.factoryCode}
+            and virtual_warehouse_id = #{item.virtualWarehouseId}
+            and virtual_warehouse_code = #{item.virtualWarehouseCode}
+            and sku_id = #{item.skuId}
+        </foreach>
+    </update>
+
+    <delete id="deleteRelationByRecordCodeAndRid" >
+        delete from sc_record_real_virtual_stock_sync_relation
+        where record_code = #{recordCode} and real_warehouse_id = #{realWarehouseId} and is_available = 1 and is_deleted = 0 
+    </delete>
+
+</mapper>

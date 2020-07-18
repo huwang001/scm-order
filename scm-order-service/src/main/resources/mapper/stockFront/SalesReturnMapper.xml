@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.SalesReturnMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.SalesReturnE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="record_status_reason" property="recordStatusReason"/>
+        <result column="in_real_warehouse_id" property="inRealWarehouseId"/>
+        <result column="in_factory_code" property="inFactoryCode"/>
+        <result column="in_real_warehouse_code" property="inRealWarehouseCode"/>
+        <result column="out_real_warehouse_id" property="outRealWarehouseId"/>
+        <result column="out_factory_code" property="outFactoryCode"/>
+        <result column="out_real_warehouse_code" property="outRealWarehouseCode"/>
+        <result column="reason" property="reason"/>
+        <result column="mobile" property="mobile"/>
+        <result column="out_record_code" property="outRecordCode"/>
+        <result column="out_create_time" property="outCreateTime"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="user_code" property="userCode"/>
+        <result column="shop_code" property="shopCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id, record_code, channel_code, record_type, record_status, record_status_reason,
+        in_real_warehouse_id, in_factory_code, in_real_warehouse_code, out_real_warehouse_id,
+        out_factory_code, out_real_warehouse_code, reason, mobile, out_record_code, out_create_time,
+        merchant_id, user_code, shop_code, create_time, update_time, creator, modifier, is_available,
+        is_deleted, tenant_id, app_id
+    </sql>
+
+    <!--查询： outRecordCode-->
+    <select id="selectFrSalesReturnRecordByOutRecordCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_sales_return
+        where is_deleted = 0
+        and out_record_code = #{outRecordCode}
+        and is_available = 1
+    </select>
+
+    <!--保存 -->
+    <insert id="saveFrSalesReturnRecord" parameterType="com.lyf.scm.core.domain.entity.stockFront.SalesReturnE"
+            useGeneratedKeys="true" keyProperty="id">
+		insert into sc_fr_sales_return(record_code,channel_code,merchant_id,record_type,record_status,record_status_reason,
+		in_real_warehouse_id,in_factory_code,in_real_warehouse_code,reason,mobile,out_record_code,out_create_time,user_code,shop_code)
+		values(#{recordCode},#{channelCode},#{merchantId},#{recordType},#{recordStatus},#{recordStatusReason},
+		#{inRealWarehouseId},#{inFactoryCode},#{inRealWarehouseCode},#{reason},#{mobile},#{outRecordCode},#{outCreateTime},#{userCode},#{shopCode})
+	</insert>
+
+    <!--更新前置SO单状态为已取消-->
+    <update id="updateToCanceled">
+        update `sc_fr_sales_return` set `record_status` = #{afterRecordStatus}
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <select id="queryFrontRecordByIds" resultType="com.lyf.scm.core.domain.entity.stockFront.SalesReturnE">
+        select id,record_code,out_record_code,record_type from sc_fr_sales_return
+        where is_available = 1 and is_deleted = 0 and id in
+        <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

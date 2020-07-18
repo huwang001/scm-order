@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.ReplenishRecordMapper">
+    <resultMap id="baseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode" />
+        <result column="channel_code" jdbcType="VARCHAR" property="channelCode" />
+        <result column="shop_code" jdbcType="VARCHAR" property="shopCode" />
+        <result column="shop_name" jdbcType="VARCHAR" property="shopName" />
+        <result column="shop_type" jdbcType="TINYINT" property="shopType" />
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+        <result column="require_type" jdbcType="TINYINT" property="requireType" />
+        <result column="record_type" jdbcType="INTEGER" property="recordType" />
+        <result column="record_status" jdbcType="INTEGER" property="recordStatus" />
+        <result column="out_real_warehouse_id" jdbcType="BIGINT" property="outRealWarehouseId" />
+        <result column="out_factory_code" jdbcType="VARCHAR" property="outFactoryCode" />
+        <result column="out_real_warehouse_code" jdbcType="VARCHAR" property="outRealWarehouseCode" />
+        <result column="in_real_warehouse_id" jdbcType="BIGINT" property="inRealWarehouseId" />
+        <result column="in_factory_code" jdbcType="VARCHAR" property="inFactoryCode" />
+        <result column="in_real_warehouse_code" jdbcType="VARCHAR" property="inRealWarehouseCode" />
+        <result column="is_need_allot" jdbcType="TINYINT" property="isNeedAllot" />
+        <result column="is_need_dispatch" jdbcType="TINYINT" property="isNeedDispatch" />
+        <result column="sap_po_no" jdbcType="VARCHAR" property="sapPoNo" />
+        <result column="out_record_code" jdbcType="VARCHAR" property="outRecordCode" />
+        <result column="out_create_time" jdbcType="TIMESTAMP" property="outCreateTime" />
+        <result column="replenish_time" jdbcType="TIMESTAMP" property="replenishTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="creator" jdbcType="BIGINT" property="creator" />
+        <result column="modifier" jdbcType="BIGINT" property="modifier" />
+        <result column="is_available" jdbcType="BIT" property="isAvailable" />
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, record_code, channel_code, shop_code, shop_name, shop_type, factory_code, require_type,
+      record_type, record_status, out_real_warehouse_id, out_factory_code, out_real_warehouse_code,
+      in_real_warehouse_id, in_factory_code, in_real_warehouse_code, is_need_allot, is_need_dispatch,
+      sap_po_no, out_record_code, out_create_time, replenish_time, create_time, update_time,
+      creator, modifier, is_available, is_deleted, tenant_id, app_id
+    </sql>
+
+    <sql id="Base_Condition">
+        and is_deleted = 0
+        and is_available = 1
+    </sql>
+
+    <select id="queryByOutCode" resultMap="baseResultMap">
+      select
+        <include refid="Base_Column_List" />
+      from
+        sc_fr_replenish_record
+      where
+        out_record_code = #{outRecordCode}
+        <include refid="Base_Condition"/>
+    </select>
+
+    <select id="getWaitAllotRecord" resultMap="baseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          sc_fr_replenish_record
+        where is_available = 1
+        and is_deleted = 0
+        and record_type = 15
+        and record_status != 2
+        and is_need_allot = 1
+        <choose>
+            <when test="allotDTO.channelCode != null and allotDTO.channelCode != ''">
+                AND channel_code = #{allotDTO.channelCode}  AND factory_code = #{allotDTO.factoryCode}
+            </when>
+            <otherwise>
+                <if test="allotDTO.factoryCode != null and allotDTO.factoryCode != ''">
+                    AND factory_code = #{allotDTO.factoryCode} and channel_code != #{allotDTO.defaultChannelCode}
+                </if>
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="allotDTO.poList != null and allotDTO.poList.size > 0">
+                and out_create_time >= curdate() - 7
+                AND out_record_code in
+                <foreach collection="allotDTO.poList" item="po" open="(" separator="," close=")">
+                    #{po}
+                </foreach>
+            </when>
+            <otherwise>
+                and out_create_time >= curdate()
+            </otherwise>
+        </choose>
+        ORDER BY id ASC
+        limit #{startRow}, #{rows}
+    </select>
+
+    <insert id="insertReplenishRecord" parameterType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE" useGeneratedKeys="true" keyProperty="id">
+      insert into `sc_fr_replenish_record` (   record_code, out_record_code, channel_code,
+        shop_code, shop_name,shop_type, require_type, record_type, record_status, out_real_warehouse_id,
+        in_real_warehouse_id, out_create_time, replenish_time, creator, modifier, is_available, is_deleted,is_need_allot,
+        is_need_dispatch,sap_po_no,factory_code, out_factory_code, out_real_warehouse_code, in_factory_code, in_real_warehouse_code)
+      values (
+        #{recordCode},#{outRecordCode},#{channelCode},#{shopCode},#{shopName},#{shopType},
+        #{requireType},#{recordType},#{recordStatus},#{outRealWarehouseId},#{inRealWarehouseId},
+        #{outCreateTime},#{replenishTime},#{creator},#{creator},
+        1,0,#{isNeedAllot},#{isNeedDispatch},#{sapPoNo},#{factoryCode},#{outFactoryCode},#{outRealWarehouseCode},#{inFactoryCode},#{inRealWarehouseCode}
+      )
+    </insert>
+
+    <update id="updateSapPoCode">
+        update sc_fr_replenish_record
+        set sap_po_no = #{sapPoNo}
+        where
+        id = #{id}
+        and record_status = 0
+    </update>
+
+    <update id="updateToCancel">
+        update sc_fr_replenish_record
+          set record_status = 2
+        where
+          is_available = 1
+          and is_deleted = 0
+          and id in
+          <foreach collection="ids" item="item" open="(" close=")" separator=",">
+            #{item}
+          </foreach>
+          and record_status in(0, 4)
+    </update>
+
+    <update id="updateAllotStatus">
+      update
+        sc_fr_replenish_record
+      set
+        out_real_warehouse_id = #{outWarehouse.id},
+        out_factory_code = #{outWarehouse.factoryCode},
+        out_real_warehouse_code = #{outWarehouse.realWarehouseOutCode},
+        is_need_allot = #{allotStatus}
+      where
+        id = #{frontId}
+        and out_real_warehouse_id is null
+    </update>
+
+    <update id="updateToOutAllocation">
+        update
+          `sc_fr_replenish_record`
+        set
+          `record_status` = 10
+        where
+          `id` = #{id}
+          and `record_status` = 4
+    </update>
+
+    <update id="updateToInAllocation">
+        update
+          `sc_fr_replenish_record`
+        set
+          `record_status` = 11
+        where
+          `id` = #{id}
+          and `record_status` = 10
+    </update>
+
+    <select id="queryReplenishRecordByIds" resultMap="baseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          sc_fr_replenish_record
+        where
+          is_available = 1
+          and is_deleted = 0
+        <if test="idList != null and idList.size()>0">
+            and id in
+            <foreach collection="idList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="queryReplenishRecordById" resultMap="baseResultMap">
+      select
+        <include refid="Base_Column_List" />
+      from
+        sc_fr_replenish_record
+      where
+        is_available = 1
+        and is_deleted = 0
+        and id = #{id}
+    </select>
+
+    <update id="updateIsNeedDispatchComplete">
+        update
+          sc_fr_replenish_record
+        set
+          is_need_dispatch = 1,
+          record_status = 4
+        where
+        is_available = 1
+        and is_deleted = 0
+        and is_need_dispatch = 0
+        and record_status = 0
+        and id in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

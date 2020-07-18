@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.ReplenishAllotLogMapper">
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.ReplenishAllotLogE">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="allot_type" jdbcType="TINYINT" property="allotType" />
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="times" jdbcType="INTEGER" property="times" />
+        <result column="total_records" jdbcType="INTEGER" property="totalRecords" />
+        <result column="success_records" jdbcType="INTEGER" property="successRecords" />
+        <result column="is_available" jdbcType="BIT" property="isAvailable" />
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="creator" jdbcType="BIGINT" property="creator" />
+        <result column="modifier" jdbcType="BIGINT" property="modifier" />
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+        <result column="channel_code" jdbcType="VARCHAR" property="channelCode" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, allot_type, start_time, end_time, times, total_records, success_records, is_available,
+      is_deleted, create_time, update_time, creator, modifier, factory_code, channel_code
+    </sql>
+
+    <!--保存 -->
+    <insert id="saveReplenishAllotLog" parameterType="com.lyf.scm.core.domain.entity.stockFront.ReplenishAllotLogE" useGeneratedKeys="true" keyProperty="id">
+		insert into sc_replenish_allot_log(allot_type, start_time, end_time
+		, times, total_records, success_records, is_available, is_deleted, create_time, update_time
+		, creator, modifier,channel_code,factory_code)
+		values
+		(#{allotType}, #{startTime}, #{endTime}, #{times}, #{totalRecords}, #{successRecords}, #{isAvailable}
+		, #{isDeleted}, #{createTime}, #{updateTime}, #{creator}, #{modifier}
+		,#{channelCode},#{factoryCode})
+	</insert>
+
+    <!-- 修改成功记录数 -->
+    <update id="updateSuccessRecords">
+        update sc_replenish_allot_log set end_time = #{endTime}, success_records = #{successRecords}, update_time = #{endTime} where id = #{id}
+    </update>
+
+    <!-- 查询寻源执行日志 -->
+    <select id="queryAllotLogCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_replenish_allot_log
+        where is_available = 1
+        and is_deleted = 0
+        <if test="condition.allotType != null">
+            AND allot_type = #{condition.allotType}
+        </if>
+        <if test="condition.startTime != null">
+            AND start_time <![CDATA[  >=  ]]> #{condition.startTime}
+        </if>
+        <if test="condition.endTime != null">
+            AND start_time <![CDATA[  <=  ]]> #{condition.endTime}
+        </if>
+        <if test="condition.channelCode != null">
+            AND channel_code=#{condition.channelCode}
+        </if>
+        <if test="condition.factoryCode != null">
+            AND factory_code=#{condition.factoryCode}
+        </if>
+        order by start_time desc
+    </select>
+</mapper>

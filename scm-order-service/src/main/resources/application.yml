@@ -1,0 +1,19 @@
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml,classpath*:mapper/**/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.lyf.scm.core.domain  # 注意：对应实体类的路径
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+    #returnPageInfo: check
+
+scm:
+  redis:
+    key:
+      prefix:
+        scm_order_service_

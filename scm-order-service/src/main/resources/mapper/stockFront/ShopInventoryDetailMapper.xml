@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.ShopInventoryDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.ShopInventoryDetailE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="front_record_id" property="frontRecordId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="sku_qty" property="skuQty"/>
+        <result column="unit" property="unit"/>
+        <result column="unit_code" property="unitCode"/>
+        <result column="acc_qty" property="accQty"/>
+        <result column="diff_qty" property="diffQty"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		  id, record_code, front_record_id, sku_id, sku_code, sku_qty, unit, unit_code, acc_qty, diff_qty, create_time, update_time,
+		  creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+    <insert id="insertShopInventoryDetails" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        sc_fr_shop_inventory_detail(record_code,front_record_id,sku_id,sku_qty,unit,unit_code,acc_qty,diff_qty,sku_code)
+        values
+        <foreach collection="frShopInventoryDetails" item="fsid" separator="," close=";">
+            (#{fsid.recordCode},#{fsid.frontRecordId},#{fsid.skuId},#{fsid.skuQty},#{fsid.unit},
+            #{fsid.unitCode},#{fsid.accQty},#{fsid.diffQty},#{fsid.skuCode})
+        </foreach>
+    </insert>
+
+    <select id="queryShopInventoryDetailList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from sc_fr_shop_inventory_detail
+        where front_record_id =#{frontRecordId} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <select id="queryShopInventoryDetailListByIds" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from sc_fr_shop_inventory_detail
+        where is_available = 1 and is_deleted = 0 and front_record_id in
+        <foreach collection="frontRecordIds" item="recordId" open="(" close=")" separator=",">
+            #{recordId}
+        </foreach>
+    </select>
+
+    <select id="queryShopInventoryDetailListById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from sc_fr_shop_inventory_detail
+        where is_available = 1 and is_deleted = 0 and front_record_id = #{id}
+    </select>
+</mapper>

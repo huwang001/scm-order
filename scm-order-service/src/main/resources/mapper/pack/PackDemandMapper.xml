@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.pack.PackDemandMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.pack.PackDemandE">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode"/>
+        <result column="sale_code" jdbcType="VARCHAR" property="saleCode"/>
+        <result column="pack_type" jdbcType="TINYINT" property="packType"/>
+        <result column="record_status" jdbcType="TINYINT" property="recordStatus"/>
+        <result column="pick_status" jdbcType="TINYINT" property="pickStatus"/>
+        <result column="create_type" jdbcType="TINYINT" property="createType"/>
+        <result column="channel_code" jdbcType="VARCHAR" property="channelCode"/>
+        <result column="demand_date" jdbcType="DATE" property="demandDate"/>
+        <result column="department" jdbcType="VARCHAR" property="department"/>
+        <result column="in_real_warehouse_id" jdbcType="VARCHAR" property="inRealWarehouseId"/>
+        <result column="in_factory_code" jdbcType="VARCHAR" property="inFactoryCode"/>
+        <result column="in_real_warehouse_code" jdbcType="VARCHAR" property="inRealWarehouseCode"/>
+        <result column="in_virtual_warehouse_code" jdbcType="VARCHAR" property="inVirtualWarehouseCode"/>
+        <result column="out_real_warehouse_id" jdbcType="VARCHAR" property="outRealWarehouseId"/>
+        <result column="out_factory_code" jdbcType="VARCHAR" property="outFactoryCode"/>
+        <result column="out_real_warehouse_code" jdbcType="VARCHAR" property="outRealWarehouseCode"/>
+        <result column="out_virtual_warehouse_code" jdbcType="VARCHAR" property="outVirtualWarehouseCode"/>
+        <result column="is_out" jdbcType="TINYINT" property="isOut"/>
+        <result column="out_code" jdbcType="VARCHAR" property="outCode"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="priority" jdbcType="INTEGER" property="priority"/>
+        <result column="introducer" jdbcType="VARCHAR" property="introducer"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+        <result column="modifier" jdbcType="BIGINT" property="modifier"/>
+        <result column="is_available" jdbcType="TINYINT" property="isAvailable"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="version_no" jdbcType="INTEGER" property="versionNo"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, record_code, sale_code, pack_type, record_status, pick_status,create_type,channel_code,
+      demand_date, department, in_real_warehouse_id, in_factory_code, in_real_warehouse_code,
+      in_virtual_warehouse_code, out_real_warehouse_id, out_factory_code, out_real_warehouse_code,
+      out_virtual_warehouse_code, is_out, out_code, remark, priority, introducer, creator,
+      modifier, is_available, is_deleted, version_no, tenant_id, app_id, create_time, update_time
+    </sql>
+
+    <select id="queryByRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_demand
+        where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <select id="batchQueryByRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_demand
+        where is_available = 1 and is_deleted = 0 and record_code in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--单条插入需求单-->
+    <insert id="insert" parameterType="com.lyf.scm.core.domain.entity.pack.PackDemandE">
+    insert into scm_pack_demand (record_code, sale_code,
+      pack_type, channel_code, demand_date,
+      department, is_out, in_real_warehouse_id,
+      in_factory_code, in_real_warehouse_code, in_virtual_warehouse_code,
+      out_real_warehouse_id, out_factory_code, out_real_warehouse_code,
+      out_virtual_warehouse_code, remark, record_status,create_type,
+      priority, introducer,
+      pick_status, creator, modifier )
+    values ( #{recordCode,jdbcType=VARCHAR}, #{saleCode,jdbcType=VARCHAR},
+      #{packType,jdbcType=TINYINT}, #{channelCode,jdbcType=VARCHAR}, #{demandDate,jdbcType=DATE},
+      #{department,jdbcType=VARCHAR}, #{isOut,jdbcType=TINYINT}, #{inRealWarehouseId,jdbcType=VARCHAR},
+      #{inFactoryCode,jdbcType=VARCHAR}, #{inRealWarehouseCode,jdbcType=VARCHAR}, #{inVirtualWarehouseCode,jdbcType=VARCHAR},
+      #{outRealWarehouseId,jdbcType=VARCHAR}, #{outFactoryCode,jdbcType=VARCHAR}, #{outRealWarehouseCode,jdbcType=VARCHAR},
+      #{outVirtualWarehouseCode,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{recordStatus,jdbcType=TINYINT},#{createType,jdbcType=TINYINT},
+      #{priority,jdbcType=INTEGER}, #{introducer,jdbcType=VARCHAR},
+      #{pickStatus,jdbcType=TINYINT}, #{creator,jdbcType=BIGINT}, #{modifier,jdbcType=BIGINT})
+  </insert>
+
+    <!--批量插入需求单-->
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into scm_pack_demand ( record_code, sale_code,
+        pack_type, channel_code, demand_date,
+        department, is_out, in_real_warehouse_id,
+        in_factory_code, in_real_warehouse_code, in_virtual_warehouse_code,
+        out_real_warehouse_id, out_factory_code, out_real_warehouse_code,
+        out_virtual_warehouse_code, remark, record_status,create_type,
+        priority, introducer,
+        pick_status, creator, modifier )
+        values
+        <foreach collection="batchList" item="item" separator=",">
+            values ( #{item.recordCode,jdbcType=VARCHAR}, #{item.saleCode,jdbcType=VARCHAR},
+            #{item.packType,jdbcType=TINYINT}, #{item.channelCode,jdbcType=VARCHAR}, #{item.demandDate,jdbcType=DATE},
+            #{item.department,jdbcType=VARCHAR}, #{item.isOut,jdbcType=TINYINT},
+            #{item.inRealWarehouseId,jdbcType=VARCHAR},
+            #{item.inFactoryCode,jdbcType=VARCHAR}, #{item.inRealWarehouseCode,jdbcType=VARCHAR},
+            #{item.inVirtualWarehouseCode,jdbcType=VARCHAR},
+            #{item.outRealWarehouseId,jdbcType=VARCHAR}, #{item.outFactoryCode,jdbcType=VARCHAR},
+            #{item.outRealWarehouseCode,jdbcType=VARCHAR},
+            #{item.outVirtualWarehouseCode,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR},
+            #{item.recordStatus,jdbcType=TINYINT},#{item.createType,jdbcType=TINYINT},
+            #{item.priority,jdbcType=INTEGER},
+            #{item.introducer,jdbcType=VARCHAR},
+            #{item.pickStatus,jdbcType=TINYINT}, #{item.creator,jdbcType=BIGINT}, #{item.modifier,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
+    <!--通过主键Id修改需求单基础信息-->
+    <update id="updateById" parameterType="com.lyf.scm.core.domain.entity.pack.PackDemandE">
+        update scm_pack_demand
+        <set>
+            <if test="recordCode != null">
+                record_code = #{recordCode,jdbcType=VARCHAR},
+            </if>
+            <if test="saleCode != null">
+                sale_code = #{saleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="packType != null">
+                pack_type = #{packType,jdbcType=TINYINT},
+            </if>
+            <if test="recordStatus != null">
+                record_status = #{recordStatus,jdbcType=TINYINT},
+            </if>
+            <if test="pickStatus != null">
+                pick_status = #{pickStatus,jdbcType=TINYINT},
+            </if>
+            <if test="channelCode != null">
+                channel_code = #{channelCode,jdbcType=VARCHAR},
+            </if>
+            <if test="demandDate != null">
+                demand_date = #{demandDate,jdbcType=DATE},
+            </if>
+            <if test="createType != null">
+                create_type = #{createType,jdbcType=BIGINT},
+            </if>
+            <if test="department != null">
+                department = #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="inRealWarehouseId != null">
+                in_real_warehouse_id = #{inRealWarehouseId,jdbcType=VARCHAR},
+            </if>
+            <if test="inFactoryCode != null">
+                in_factory_code = #{inFactoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="inRealWarehouseCode != null">
+                in_real_warehouse_code = #{inRealWarehouseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="inVirtualWarehouseCode != null">
+                in_virtual_warehouse_code = #{inVirtualWarehouseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="outRealWarehouseId != null">
+                out_real_warehouse_id = #{outRealWarehouseId,jdbcType=VARCHAR},
+            </if>
+            <if test="outFactoryCode != null">
+                out_factory_code = #{outFactoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="outRealWarehouseCode != null">
+                out_real_warehouse_code = #{outRealWarehouseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="outVirtualWarehouseCode != null">
+                out_virtual_warehouse_code = #{outVirtualWarehouseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isOut != null">
+                is_out = #{isOut,jdbcType=TINYINT},
+            </if>
+            <if test="outCode != null">
+                out_code = #{outCode,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                priority = #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="introducer != null">
+                introducer = #{introducer,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=BIGINT},
+            </if>
+            <if test="modifier != null">
+                modifier = #{modifier,jdbcType=BIGINT},
+            </if>
+            <if test="isAvailable != null">
+                is_available = #{isAvailable,jdbcType=TINYINT},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="versionNo != null">
+                version_no = #{versionNo,jdbcType=INTEGER},
+            </if>
+            <if test="tenantId != null">
+                tenant_id = #{tenantId,jdbcType=BIGINT},
+            </if>
+            <if test="appId != null">
+                app_id = #{appId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateRecordStatusToCompletePackByRecordCode" parameterType="java.lang.String">
+        update scm_pack_demand set record_status = 4
+        where record_code = #{recordCode} and record_status in (1,3)  and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateRecordStatusToConfirmedByRecordCode" parameterType="java.lang.String">
+        update scm_pack_demand set record_status = 1
+        where record_code = #{recordCode} and record_status = 0  and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updatePackDemandPartPacked">
+        update scm_pack_demand set record_status = 3 where id = #{id} and record_status = 1 and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updatePackDemandCancel">
+          update scm_pack_demand set record_status = 2 where id = #{id} and record_status = #{beforeStatus} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <select id="queryBySaleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_demand
+        where sale_code = #{saleCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <sql id="Query_List">
+      pack.id, pack.record_code, pack.sale_code, pack.pack_type, pack.record_status, pack.pick_status,pack.create_type,pack.channel_code,
+      pack.demand_date, pack.department, pack.in_real_warehouse_id, pack.in_factory_code, pack.in_real_warehouse_code,
+      pack.in_virtual_warehouse_code, pack.out_real_warehouse_id, pack.out_factory_code, pack.out_real_warehouse_code,
+      pack.out_virtual_warehouse_code, pack.is_out, out_code, pack.remark, priority, pack.introducer, pack.creator, pack.modifier,
+      pack.is_available, pack.is_deleted, pack.version_no, pack.tenant_id, pack.app_id, pack.create_time, pack.update_time
+    </sql>
+
+    <select id="queryPackDemandPage" parameterType="com.lyf.scm.core.api.dto.pack.QueryPackDemandDTO"
+            resultMap="BaseResultMap">
+        select distinct
+        <include refid="Query_List"/>
+        from scm_pack_demand pack
+        LEFT JOIN scm_pack_demand_detail detail ON pack.record_code = detail.record_code
+        WHERE pack.is_available = 1 AND pack.is_deleted = 0
+        AND detail.is_available = 1 AND detail.is_deleted = 0
+        <if test="condition.skuCodes != null and condition.skuCodes.size() > 0">
+            AND detail.sku_code IN
+            <foreach collection="condition.skuCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.pickStatus != null">
+            AND pack.pick_status = #{condition.pickStatus}
+        </if>
+        <if test="condition.recordCodes != null and condition.recordCodes.size() > 0">
+            AND pack.record_code IN
+            <foreach collection="condition.recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.channelCodes != null and condition.channelCodes.size() > 0">
+            AND pack.channel_code IN
+            <foreach collection="condition.channelCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.recordStatus != null">
+            AND pack.record_status = #{condition.recordStatus}
+        </if>
+        <if test="condition.packType != null">
+            AND pack.pack_type = #{condition.packType}
+        </if>
+        <if test="condition.saleCodes != null and condition.saleCodes.size() > 0">
+            AND pack.sale_code IN
+            <foreach collection="condition.saleCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.outFactoryCode != null and condition.outFactoryCode != ''">
+            AND pack.out_factory_code = #{condition.outFactoryCode}
+        </if>
+        <if test="condition.outRealWarehouseCode != null and condition.outRealWarehouseCode != ''">
+            AND pack.out_real_warehouse_code = #{condition.outRealWarehouseCode}
+        </if>
+        <if test="condition.creator != null">
+            AND pack.creator = #{condition.creator}
+        </if>
+        <if test="condition.startTime != null">
+            AND #{condition.startTime} &lt;= pack.create_time
+        </if>
+        <if test="condition.endTime!= null">
+            AND #{condition.endTime} &gt;= pack.create_time
+        </if>
+        <if test="condition.requiredStartTime != null">
+            AND #{condition.requiredStartTime} &lt;= pack.demand_date
+        </if>
+        <if test="condition.requiredEndTime != null">
+            AND #{condition.requiredEndTime} &gt;= pack.demand_date
+        </if>
+        order by pack.create_time desc
+    </select>
+
+    <!-- 根据需求编码修改领料状态 -->
+    <update id="updatePickStatusByRecordCode">
+    	update scm_pack_demand 
+    	set pick_status = #{pickStatus}
+        where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 根据ID查询需求单 -->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_demand
+        where id = #{id} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 根据ID查询需求单 -->
+    <select id="queryPackDemandList" parameterType="com.lyf.scm.core.api.dto.pack.QueryPackDemandDTO"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_demand
+        where is_available = 1 and is_deleted = 0
+        <if test="condition.recordCodes != null and condition.recordCodes.size() > 0">
+            AND record_code IN
+            <foreach collection="condition.recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.channelCodes != null and condition.channelCodes.size() > 0">
+            AND channel_code IN
+            <foreach collection="condition.channelCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="queryPackDemandListByCondition" parameterType="com.lyf.scm.core.api.dto.pack.QueryPackDemandDTO"
+            resultMap="BaseResultMap">
+        select distinct
+        <include refid="Query_List"/>
+        from scm_pack_demand pack
+        WHERE pack.is_available = 1 AND pack.is_deleted = 0
+        <if test="condition.pickStatus != null">
+            AND pack.pick_status = #{condition.pickStatus}
+        </if>
+        <if test="condition.recordCodes != null and condition.recordCodes.size() > 0">
+            AND pack.record_code IN
+            <foreach collection="condition.recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.channelCodes != null and condition.channelCodes.size() > 0">
+            AND pack.channel_code IN
+            <foreach collection="condition.channelCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.recordStatus != null">
+            AND pack.record_status = #{condition.recordStatus}
+        </if>
+        <if test="condition.packType != null">
+            AND pack.pack_type = #{condition.packType}
+        </if>
+        <if test="condition.saleCodes != null and condition.saleCodes.size() > 0">
+            AND pack.sale_code IN
+            <foreach collection="condition.saleCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.outFactoryCode != null and condition.outFactoryCode != ''">
+            AND pack.out_factory_code = #{condition.outFactoryCode}
+        </if>
+        <if test="condition.outRealWarehouseCode != null and condition.outRealWarehouseCode != ''">
+            AND pack.out_real_warehouse_code = #{condition.outRealWarehouseCode}
+        </if>
+        <if test="condition.creator != null">
+            AND pack.creator = #{condition.creator}
+        </if>
+        <if test="condition.startTime != null">
+            AND #{condition.startTime} &lt;= pack.create_time
+        </if>
+        <if test="condition.endTime!= null">
+            AND #{condition.endTime} &gt;= pack.create_time
+        </if>
+        <if test="condition.requiredStartTime != null">
+            AND #{condition.requiredStartTime} &lt;= pack.demand_date
+        </if>
+        <if test="condition.requiredEndTime != null">
+            AND #{condition.requiredEndTime} &gt;= pack.demand_date
+        </if>
+        order by pack.create_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.pack.PackTaskFinishMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.pack.PackTaskFinishE">
+        <id column="id" property="id"/>
+        <result column="require_code" property="requireCode"/>
+        <result column="task_code" property="taskCode"/>
+        <result column="task_detail_operate_code" property="taskDetailOperateCode"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="out_real_warehouse_id" property="outRealWarehouseId"/>
+        <result column="out_factory_code" property="outFactoryCode"/>
+        <result column="out_real_warehouse_code" property="outRealWarehouseCode"/>
+        <result column="pack_line" property="packLine"/>
+        <result column="pack_type" property="packType"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="pack_num" property="packNum"/>
+        <result column="pack_time" property="packTime"/>
+        <result column="require_finish_time" property="requireFinishTime"/>
+        <result column="batch_no" property="batchNo"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, require_code, task_code, task_detail_operate_code, record_code, record_type,
+        record_status, out_real_warehouse_id, out_factory_code, out_real_warehouse_code,
+        pack_line, pack_type, channel_code, sku_code, pack_num, pack_time, require_finish_time,
+        batch_no, remark, create_time, update_time, creator, modifier, is_available,
+        is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+    <select id="batchQueryByTaskOperationCodes" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_task_finish
+        where is_available = 1 and is_deleted = 0 and task_detail_operate_code in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="saveTaskOperationOrder" parameterType="com.lyf.scm.core.domain.entity.pack.PackTaskFinishE"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into scm_pack_task_finish(require_code, task_code, task_detail_operate_code, record_code, record_type,
+        record_status, out_real_warehouse_id, out_factory_code, out_real_warehouse_code, pack_line, pack_type,
+        channel_code, sku_code, pack_num, pack_time, require_finish_time, batch_no, remark, creator, modifier)
+        values (#{requireCode}, #{taskCode}, #{taskDetailOperateCode}, #{recordCode}, #{recordType},
+        #{recordStatus}, #{outRealWarehouseId}, #{outFactoryCode}, #{outRealWarehouseCode}, #{packLine}, #{packType},
+        #{channelCode}, #{skuCode}, #{packNum}, #{packTime}, #{requireFinishTime}, #{batchNo}, #{remark}, #{creator}, #{modifier})
+    </insert>
+
+    <select id="queryTaskFinishPage" parameterType="com.lyf.scm.core.api.dto.pack.TaskFinishPageDTO"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_task_finish
+        WHERE is_available = 1 and is_deleted = 0
+        <if test="requireCodeList != null and requireCodeList.size() > 0">
+            and require_code in
+            <foreach item="requireCode" index="index" collection="requireCodeList" open="(" separator="," close=")">
+                #{requireCode}
+            </foreach>
+        </if>
+        <if test="taskCodeList != null and taskCodeList.size() > 0">
+            and task_code in
+            <foreach item="taskCode" index="index" collection="taskCodeList" open="(" separator="," close=")">
+                #{taskCode}
+            </foreach>
+        </if>
+        <if test="channelCodeList != null and channelCodeList.size() > 0">
+            and channel_code in
+            <foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
+                #{channelCode}
+            </foreach>
+        </if>
+        <if test="realWarehouseId != null">
+            and out_real_warehouse_id = #{realWarehouseId}
+        </if>
+        <if test="packType != null">
+            and pack_type = #{packType}
+        </if>
+        <if test="skuCodeList != null and skuCodeList.size() > 0">
+            and sku_code in
+            <foreach item="skuCode" index="index" collection="skuCodeList" open="(" separator="," close=")">
+                #{skuCode}
+            </foreach>
+        </if>
+        <if test="createTimeStart != null and createTimeEnd != null">
+            AND create_time between #{createTimeStart} and #{createTimeEnd}
+        </if>
+        <if test="packTimeStart != null and packTimeEnd != null">
+            AND pack_time between #{packTimeStart} and #{packTimeEnd}
+        </if>
+        order by id desc
+    </select>
+</mapper>

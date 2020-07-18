@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.online.SaleMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.online.SaleE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="record_status_reason" property="recordStatusReason"/>
+        <result column="real_warehouse_id" property="realWarehouseId"/>
+        <result column="factory_code" property="factoryCode"/>
+        <result column="real_warehouse_code" property="realWarehouseCode"/>
+        <result column="mobile" property="mobile"/>
+        <result column="out_record_code" property="outRecordCode"/>
+        <result column="out_create_time" property="outCreateTime"/>
+        <result column="user_code" property="userCode"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="shop_code" property="shopCode"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="trans_type" property="transType"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+        <result column="expect_receive_date_start" property="expectReceiveDateStart"/>
+        <result column="expect_receive_date_end" property="expectReceiveDateEnd"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id
+		,record_code
+		,channel_code
+		,record_type
+		,record_status
+		,record_status_reason
+		,real_warehouse_id
+		,factory_code
+		,real_warehouse_code
+		,mobile
+		,expect_receive_date_start
+		,expect_receive_date_end
+		,out_record_code
+		,out_create_time
+		,user_code
+		,pay_time
+		,shop_code
+		,merchant_id
+		,trans_type
+		,create_time
+		,update_time
+		,creator
+		,modifier
+		,is_available
+		,is_deleted
+		,tenant_id
+		,app_id
+    </sql>
+
+    <!--保存 -->
+    <insert id="saveFrSaleRecord" parameterType="com.lyf.scm.core.domain.entity.online.SaleE"
+            useGeneratedKeys="true" keyProperty="id">
+		insert into sc_fr_sale(record_code,channel_code,merchant_id,record_type,record_status,record_status_reason,
+		real_warehouse_id,factory_code,real_warehouse_code,mobile,out_record_code,out_create_time,user_code,shop_code,
+		trans_type,expect_receive_date_start,expect_receive_date_end)
+		values(#{recordCode},#{channelCode},#{merchantId},#{recordType},#{recordStatus},#{recordStatusReason},
+		#{realWarehouseId},#{factoryCode},#{realWarehouseCode},#{mobile},#{outRecordCode},#{outCreateTime},#{userCode},#{shopCode},
+		#{transType},#{expectReceiveDateStart},#{expectReceiveDateEnd})
+	</insert>
+
+    <!--查询-->
+    <select id="selectFrSaleRecordById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_sale
+        where
+        id=#{ id }
+        and is_deleted=0
+        and is_available=1
+    </select>
+
+    <!--查询： outRecordCode-->
+    <select id="selectFrSaleRecordByOutRecordCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_sale
+        where is_deleted = 0
+        and is_available = 1
+        and out_record_code = #{outRecordCode}
+    </select>
+
+    <update id="updateCompleteStatus">
+		update sc_fr_sale set  record_status= 14
+		 where id=#{id} and record_status=9 and is_deleted=0
+		 and is_available=1
+	</update>
+
+    <!--根据订单编号list查询后置单单据编码集合-->
+    <select id="queryFrSaleFrontAndWarehouseRelation" resultType="java.util.Map" parameterType="hashMap">
+        select distinct
+        re.warehouse_record_id as warehouseRecordId ,re.front_record_id as front,sale.out_record_code as orderCode
+        from sc_front_warehouse_record_relation re ,sc_fr_sale sale
+        where re.is_deleted = 0 and sale.is_deleted = 0
+        and re.is_available=1 and sale.is_available=1
+        and re.front_record_id = sale.id
+        and re.front_record_type = 99
+        <if test="orderCode != null">
+            and sale.out_record_code = #{orderCode}
+        </if>
+        <if test="warehouseRecordIds != null">
+            and re.warehouse_record_id in
+            <foreach item="item" index="index" collection="warehouseRecordIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!--更新前置SO单状态为已支付-->
+    <update id="updateToPaid">
+        update `sc_fr_sale` set `record_status` = 18 ,pay_time = #{payTime}
+        where `id` = #{id} and `record_status` = 17
+        and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <!--更新前置SO单状态为已取消-->
+    <update id="updateToCanceled">
+        update `sc_fr_sale` set `record_status` = 2
+        where `id` = #{id} and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <!--更新前置SO单状态为已出库-->
+    <update id="updateToOutAllocation">
+        update `sc_fr_sale` set `record_status` = 10
+        where `id` = #{id} and `record_status` = 18
+        and `is_deleted` = 0 and `is_available` = 1
+    </update>
+
+    <!-- 根据id集合查询零售单据 -->
+    <select id="queryFrontRecordByIds" resultMap="BaseResultMap">
+        select id,record_code,out_record_code,record_type from sc_fr_sale where id in
+        <foreach collection="idList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--查询根据单据类型和小于指定的时间,主要用在冷热数据迁移-->
+    <select id="selectFrSaleRecordByTypeEndTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_sale
+        where
+        record_type=#{recordType} and create_time  <![CDATA[<= ]]> #{endTime}
+        and `is_deleted` = 0 and `is_available` = 1 limit #{pageSize}
+    </select>
+</mapper>

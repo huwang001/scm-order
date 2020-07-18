@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.order.OrderVwMoveDetailMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.order.OrderVwMoveDetailE">
+		<id column="id" property="id"/>
+		<result column="vw_move_code" property="vwMoveCode"/>
+		<result column="sku_code" property="skuCode"/>
+		<result column="move_qty" property="moveQty"/>
+		<result column="unit" property="unit"/>
+		<result column="unit_code" property="unitCode"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="creator" property="creator"/>
+		<result column="modifier" property="modifier"/>
+		<result column="is_available" property="isAvailable"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="version_no" property="versionNo"/>
+		<result column="tenant_id" property="tenantId"/>
+		<result column="app_id" property="appId"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+      id, vw_move_code, sku_code, move_qty, unit, unit_code, create_time, update_time,
+      creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+	<insert id="batchSaveOrderVwMoveDetail">
+		insert into scm_order_vw_move_detail (id, vw_move_code, sku_code,
+		  move_qty, unit, unit_code
+		  ) values
+		  <foreach collection="detailEList" item="item" separator=",">
+			  (#{item.id}, #{item.vwMoveCode}, #{item.skuCode},
+			  #{item.moveQty}, #{item.unit}, #{item.unitCode}
+			  )
+		  </foreach>
+	</insert>
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.CustomizeTableRowMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.CustomizeTableRowE" >
+		<id column="ID" property="id" jdbcType="BIGINT" />
+	    <result column="user_id" property="userId" jdbcType="BIGINT" />
+	    <result column="table_code" property="tableCode" jdbcType="VARCHAR" />
+	    <result column="row_code" property="rowCode" jdbcType="VARCHAR" />
+	    <result column="is_show" property="isShow" jdbcType="TINYINT" />
+	    <result column="order_num" property="orderNum" jdbcType="INTEGER" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="creator" property="creator" jdbcType="BIGINT" />
+	    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	</resultMap>
+	  
+	<sql id="Base_Column_List" >
+		ID, user_id, table_code, row_code, is_show, order_num, create_time, update_time, 
+	    creator, modifier, is_available, is_deleted
+	</sql>
+    
+    <!-- 根据table_code和用户获取自定义数据 -->
+    <select id="getDetailByTableCodeAndUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM sc_customize_table_row WHERE is_available = 1 AND is_deleted = 0
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="tableCode != null and tableCode != ''">
+            AND table_code = #{tableCode}
+        </if>
+    </select>
+    
+    <!-- 删除有关该标题的数据 -->
+    <update id="deleteDetailByTableCode">
+        UPDATE sc_customize_table_row 
+        SET is_deleted = 1, modifier = #{userId}
+        WHERE table_code = #{tableCode} and is_available = 1 AND is_deleted = 0
+    </update>
+    
+    <!-- 写入该标题数据 -->
+    <insert id="insertDetailByDates">
+        INSERT INTO sc_customize_table_row (user_id,table_code,row_code,is_show,order_num,creator,modifier) VALUES
+        <foreach collection="customizeTableRowEs" item="item" index="index" separator=",">
+            (#{item.userId},#{item.tableCode},#{item.rowCode},#{item.isShow},#{item.orderNum},#{item.userId},#{item.userId})
+        </foreach>
+    </insert>
+    
+</mapper>

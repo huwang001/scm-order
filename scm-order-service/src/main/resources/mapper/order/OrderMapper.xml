@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.order.OrderMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.order.OrderE" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="parent_order_code" property="parentOrderCode" jdbcType="VARCHAR" />
+	    <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+	    <result column="order_type" property="orderType" jdbcType="TINYINT" />
+	    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+	    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+	    <result column="sale_code" property="saleCode" jdbcType="VARCHAR" />
+	    <result column="custom_name" property="customName" jdbcType="VARCHAR" />
+	    <result column="custom_mobile" property="customMobile" jdbcType="VARCHAR" />
+	    <result column="province_code" property="provinceCode" jdbcType="VARCHAR" />
+	    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+	    <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+	    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+	    <result column="county_code" property="countyCode" jdbcType="VARCHAR" />
+	    <result column="county_name" property="countyName" jdbcType="VARCHAR" />
+	    <result column="custom_address" property="customAddress" jdbcType="VARCHAR" />
+	    <result column="package_type" property="packageType" jdbcType="TINYINT" />
+	    <result column="need_package" property="needPackage" jdbcType="TINYINT" />
+	    <result column="expect_date" property="expectDate" jdbcType="DATE" />
+	    <result column="factory_code" property="factoryCode" jdbcType="VARCHAR" />
+	    <result column="real_warehouse_code" property="realWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="vm_warehouse_code" property="vmWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="has_trade_audit" property="hasTradeAudit" jdbcType="TINYINT" />
+	    <result column="has_allot" property="hasAllot" jdbcType="TINYINT" />
+	    <result column="allot_code" property="allotCode" jdbcType="VARCHAR" />
+	    <result column="allot_factory_code" property="allotFactoryCode" jdbcType="VARCHAR" />
+	    <result column="allot_real_warehouse_code" property="allotRealWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="has_do" property="hasDo" jdbcType="TINYINT" />
+	    <result column="do_code" property="doCode" jdbcType="VARCHAR" />
+	    <result column="do_factory_code" property="doFactoryCode" jdbcType="VARCHAR" />
+	    <result column="do_real_warehouse_code" property="doRealWarehouseCode" jdbcType="VARCHAR" />
+	    <result column="is_leaf" property="isLeaf" jdbcType="TINYINT" />
+	    <result column="sync_trade_status" property="syncTradeStatus" jdbcType="TINYINT" />
+	    <result column="package_num" property="packageNum" jdbcType="INTEGER" />
+	    <result column="remark" property="remark" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="creator" property="creator" jdbcType="BIGINT" />
+	    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+	    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+	    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+	  </resultMap>
+
+    <sql id="Base_Column_List">
+        id, parent_order_code, order_code, order_type, order_status, channel_code, sale_code,
+        custom_name, custom_mobile, province_code, province_name, city_code, city_name, county_code,
+	    county_name, custom_address, package_type, need_package, expect_date, factory_code, 
+	    real_warehouse_code, vm_warehouse_code, has_trade_audit, has_allot, allot_code, allot_factory_code, 
+	    allot_real_warehouse_code, has_do, do_code, do_factory_code, do_real_warehouse_code, 
+	    is_leaf, sync_trade_status, package_num, remark, create_time, update_time, creator, 
+	    modifier, is_available, is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+    <sql id="where_base_column">
+      and `is_deleted` = 0 and `is_available` = 1
+    </sql>
+
+    <select id="queryOrderByRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where order_code = #{orderCode}
+        <include refid="where_base_column"/>
+    </select>
+
+
+    <update id="updateOrderAllocationStatus" parameterType="com.lyf.scm.core.domain.entity.order.OrderE">
+        update scm_order
+        <set>
+	        has_allot = #{hasAllot},
+	        <if test="orderStatus != null">
+	        	order_status = #{orderStatus}, 
+	        </if> 
+	        allot_factory_code = #{allotFactoryCode}, 
+	        allot_real_warehouse_code = #{allotRealWarehouseCode}, 
+	        allot_code = #{allotCode}, 
+	        version_no = #{versionNo} + 1
+        </set>
+        where id = #{id} and order_status in (1, 2) and version_no = #{versionNo} and has_trade_audit = 1 and has_allot = 0
+        <include refid="where_base_column"/>
+    </update>
+
+    <select id="queryOrderByAllotCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where allot_code = #{allotCode}
+        <include refid="where_base_column"/>
+    </select>
+
+    <update id="updateOrderAllocationOutStatusByRecordCode">
+        update scm_order
+        set order_status=11
+        where order_code=#{orderCode} and  order_status=10
+        <include refid="where_base_column"/>
+    </update>
+    
+    <update id="updateOrderAllocationInStatusByRecordCode">
+        update scm_order
+        set order_status=12
+        where order_code=#{orderCode} and  order_status=11
+        <include refid="where_base_column"/>
+    </update>
+
+    <insert id="insertOrder" useGeneratedKeys="true" keyProperty="id" parameterType="com.lyf.scm.core.domain.entity.order.OrderE">
+        insert into scm_order (order_code, order_type, order_status, channel_code, sale_code, custom_name, custom_mobile,
+        province_code, province_name, city_code, city_name, county_code, county_name, custom_address, need_package,
+        expect_date, package_num, remark, creator)
+        values (#{orderCode}, #{orderType}, #{orderStatus}, #{channelCode}, #{saleCode}, #{customName}, #{customMobile},
+        #{provinceCode}, #{provinceName}, #{cityCode}, #{cityName}, #{countyCode}, #{countyName}, #{customAddress}, #{needPackage},
+        #{expectDate}, #{packageNum}, #{remark}, #{creator})
+    </insert>
+
+    <update id="updateOrder" parameterType="com.lyf.scm.core.domain.entity.order.OrderE">
+        update scm_order
+        <set>
+            <if test="parentOrderCode != null and parentOrderCode != ''">
+                parent_order_code = #{parentOrderCode},
+            </if>
+            <if test="orderCode != null and orderCode != ''">
+                order_code = #{orderCode},
+            </if>
+            <if test="orderType != null">
+                order_type = #{orderType},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus},
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                channel_code = #{channelCode},
+            </if>
+            <if test="saleCode != null and saleCode != ''">
+                sale_code = #{saleCode},
+            </if>
+            <if test="customName != null and customName != ''">
+                custom_name = #{customName},
+            </if>
+            <if test="customMobile != null and customMobile != ''">
+                custom_mobile = #{customMobile},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                province_code = #{provinceCode},
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                province_name = #{provinceName},
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                city_code = #{cityCode},
+            </if>
+            <if test="cityName != null and cityName != ''">
+                city_name = #{cityName},
+            </if>
+            <if test="countyCode != null and countyCode != ''">
+                county_code = #{countyCode},
+            </if>
+            <if test="countyName != null and countyName != ''">
+                county_name = #{countyName},
+            </if>
+            <if test="customAddress != null and customAddress != ''">
+                custom_address = #{customAddress},
+            </if>
+            <if test="needPackage != null">
+                need_package = #{needPackage},
+            </if>
+            <if test="expectDate != null">
+                expect_date = #{expectDate},
+            </if>
+            <if test="factoryCode != null and factoryCode != ''">
+                factory_code = #{factoryCode},
+            </if>
+            <if test="realWarehouseCode != null and realWarehouseCode != ''">
+                real_warehouse_code = #{realWarehouseCode},
+            </if>
+            <if test="vmWarehouseCode != null and vmWarehouseCode != ''">
+                vm_warehouse_code = #{vmWarehouseCode},
+            </if>
+            <if test="hasTradeAudit != null">
+                has_trade_audit = #{hasTradeAudit},
+            </if>
+            <if test="hasAllot != null">
+                has_allot = #{hasAllot},
+            </if>
+            <if test="allotCode != null and allotCode != ''">
+                allot_code = #{allotCode},
+            </if>
+            <if test="allotFactoryCode != null and allotFactoryCode != ''">
+                allot_factory_code = #{allotFactoryCode},
+            </if>
+            <if test="allotRealWarehouseCode != null and allotRealWarehouseCode != ''">
+                allot_real_warehouse_code = #{allotRealWarehouseCode},
+            </if>
+            <if test="hasDo != null">
+                has_do = #{hasDo},
+            </if>
+            <if test="doCode != null and doCode != ''">
+                do_code = #{doCode},
+            </if>
+            <if test="doFactoryCode != null and doFactoryCode != ''">
+                do_factory_code = #{doFactoryCode},
+            </if>
+            <if test="doRealWarehouseCode != null and doRealWarehouseCode != ''">
+                do_real_warehouse_code = #{doRealWarehouseCode},
+            </if>
+            <if test="isLeaf != null">
+                is_leaf = #{isLeaf},
+            </if>
+            <if test="syncTradeStatus != null">
+                sync_trade_status = #{syncTradeStatus},
+            </if>
+            <if test="packageNum != null">
+                package_num = #{packageNum},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="modifier != null">
+                modifier = #{modifier},
+            </if>
+        </set>
+        where order_code = #{orderCode} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <select id="findByCondition" parameterType="com.lyf.scm.core.api.dto.order.QueryOrderDTO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        <if test="orderCode != null and orderCode != ''">
+            and order_code = #{orderCode}
+        </if>
+        <if test="saleCode != null and saleCode != ''">
+            and sale_code = #{saleCode}
+        </if>
+        <if test="orderStatus != null">
+            and order_status = #{orderStatus}
+        </if>
+        <if test="custom != null and custom != ''">
+            and (custom_name = #{custom} or custom_mobile = #{custom})
+        </if>
+        <if test="startTime != null and endTime != null">
+            and create_time between #{startTime} and #{endTime}
+        </if>
+        <if test="orderType != null">
+            and order_type = #{orderType}
+        </if>
+        order by id desc
+    </select>
+
+    <select id="findPageByCondition" parameterType="com.lyf.scm.core.api.dto.order.QueryOrderDTO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        <if test="orderCode != null and orderCode != ''">
+            and order_code = #{orderCode}
+        </if>
+        <if test="saleCode != null and saleCode != ''">
+            and sale_code = #{saleCode}
+        </if>
+        <if test="orderStatus != null">
+            and order_status = #{orderStatus}
+        </if>
+        <if test="custom != null and custom != ''">
+            and (custom_name like CONCAT(#{custom},'%') or custom_mobile like CONCAT(#{custom},'%'))
+        </if>
+        <if test="startTime != null and endTime != null">
+            and create_time between date_format(#{startTime},'%Y-%m-%d 00:00:00') and date_format(#{endTime},'%Y-%m-%d 23:59:59')
+        </if>
+        <if test="orderType != null">
+            and order_type = #{orderType}
+        </if>
+        order by id desc
+    </select>
+
+    <select id="findByOrderCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        <if test="orderCode != null and orderCode != ''">
+            and order_code = #{orderCode}
+        </if>
+    </select>
+
+    <select id="findBySaleCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        <if test="saleCode != null and saleCode != ''">
+            and sale_code = #{saleCode}
+        </if>
+    </select>
+
+    <update id="updateOrderStatusProcessCompletedByOrderCode">
+        update scm_order set order_status = 20,modifier = #{userId}
+        where order_code = #{orderCode} and order_status = 12 and need_package = 1
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateOrderStatusDeliveryWaitWhenNeedPackageByOrderCode">
+        update scm_order set order_status = 30
+        where order_code = #{orderCode} and order_status = 20 and need_package = 1
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateOrderStatusDeliveryWaitWhenNonNeedPackageByOrderCode">
+        update scm_order set order_status = 30
+        where order_code = #{orderCode} and order_status = 12 and need_package = 0
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateOrderStatusDeliveryDoneByOrderCode">
+        update scm_order set order_status = 31
+        where order_code = #{orderCode} and order_status = 30
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateTradeAuditStatusPassedByOrderCode">
+        update scm_order set has_trade_audit = 1
+        where order_code = #{orderCode} and has_trade_audit = 0
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateSyncTradeStatusLockDoneByOrderCode">
+        update scm_order set sync_trade_status = 2
+        where order_code = #{orderCode} and sync_trade_status = 1
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateSyncTradeStatusLockWaitByOrderCode">
+        update scm_order set sync_trade_status = 1
+        where order_code = #{orderCode} and sync_trade_status = 0
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateSyncTradeStatusDoDoneByOrderCode">
+        update scm_order set sync_trade_status = 11
+        where order_code = #{orderCode} and sync_trade_status = 10
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateSyncTradeStatusDoWaitByOrderCode">
+        update scm_order set sync_trade_status = 10
+        where order_code = #{orderCode} and sync_trade_status = 2
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <select id="findBySyncTradeStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        and sync_trade_status = #{syncTradeStatus} and order_status != 40
+        and create_time <![CDATA[  >=  ]]> #{createTime}
+    </select>
+
+    <!-- 根据销售单号查询预约单 -->
+    <select id="queryOrderBySaleCode" resultMap="BaseResultMap">
+    	select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        and sale_code = #{saleCode}
+    </select>
+
+    <select id="findByDoCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        and do_code = #{doCode}
+    </select>
+
+    <update id="updateOrderDeliveryStatusByRecordCode">
+        update scm_order set order_status = 31
+        where order_code = #{orderCode} and order_status = 30
+        and is_available = 1 and is_deleted = 0
+    </update>
+    
+    <!-- 更新预约单交易审核状态为已取消 -->
+    <update id="updateOrderStatusCancelByOrderCode">
+    	update scm_order set order_status = 40
+        where order_code = #{orderCode} and order_status not in (31, 40)
+        and is_available = 1 and is_deleted = 0
+    </update>
+    
+    <!-- 根据预约单号查询预约单 -->
+    <select id="queryByOrderCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from scm_order
+        where order_code = #{orderCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 根据预约单ID查询预约单 -->
+    <select id="queryOrderById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from scm_order
+        where id = #{orderId} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 根据预约单号修改预约单状态(改为31已发货) -->
+    <update id="updateOrderStatusByOrderCode">
+        update scm_order
+        set order_status = 31
+        where order_code = #{orderCode} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 创建出库单后更新是否创建出库单状态为已创建 -->
+    <update id="updateHasNoByOrderCode">
+        update scm_order
+        set has_do = 1
+        where order_code = #{orderCode} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateOrderStatusBySaleCode">
+        update scm_order set order_status = 20
+        where order_code = #{saleCode} and order_status = 12
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 根据idList查询预约单 -->
+    <select id="queryOrderByIds" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from scm_order
+        where is_available = 1 and is_deleted = 0
+        <if test="idList != null and idList.size() > 0">
+            and id in
+            <foreach collection="idList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 查询待锁定的预约单列表 -->
+    <select id="queryWaitLockOrder" resultType="java.lang.String">
+	    select order_code
+	    from scm_order
+	    where order_status in (0, 1)
+	    <if test="startTime != null ">
+	    	and create_time &gt;= #{startTime}
+	    </if>
+	    <if test="endTime != null ">
+	        and create_time &lt;= #{endTime}
+	    </if>
+	    and is_available = 1 and is_deleted = 0
+	    order by id desc
+    </select>
+    
+    <!-- 根据ID修改预约单锁定状态 -->
+    <update id="updateLockStatus">
+    	update scm_order
+    	set order_status = #{orderStatus}, version_no = #{versionNo} + 1
+        where id = #{id} and order_status in (0, 1) and version_no = #{versionNo} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateSyncTradeStatusByOrderCode">
+        update scm_order set sync_trade_status = 10
+        where order_code = #{orderCode} and sync_trade_status = 1
+        and is_available = 1 and is_deleted = 0
+    </update>
+    
+    <!-- 根据ID修改单据状态、同步交易状态（待同步-锁定） -->
+    <update id="updateOrderStatusAndSyncTradeStatus">
+    	update scm_order
+    	set order_status = #{orderStatus}, sync_trade_status = 1, version_no = #{versionNo} + 1
+        where id = #{id} and order_status = #{oldOrderStatus} and sync_trade_status = 0 and version_no = #{versionNo} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 更新预约单的仓库信息、交易状态和单据状态 -->
+    <update id="updateOrderByCondition" parameterType="com.lyf.scm.core.api.dto.order.UpdateOrderDTO">
+    	update scm_order
+    	set factory_code = #{factoryCode}, real_warehouse_code = #{realWarehouseOutCode}, allot_factory_code = #{allotFactoryCode},
+    	allot_real_warehouse_code = #{allotRealWarehouseCode}, order_status = #{orderStatus}, sync_trade_status = 1, version_no = #{versionNo} + 1
+        where id = #{id} and order_status = #{oldOrderStatus} and sync_trade_status = 0 and version_no = #{versionNo} and is_available = 1 and is_deleted = 0
+    </update>
+    
+</mapper>

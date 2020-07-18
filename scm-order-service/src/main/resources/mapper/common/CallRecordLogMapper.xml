@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.common.CallRecordLogMapper" >
+  <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.common.CallRecordLogE" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+    <result column="system_name" property="systemName" jdbcType="VARCHAR" />
+    <result column="request_service" property="requestService" jdbcType="VARCHAR" />
+    <result column="request_url" property="requestUrl" jdbcType="VARCHAR" />
+    <result column="request_content" property="requestContent" jdbcType="VARCHAR" />
+    <result column="response_content" property="responseContent" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="BIGINT" />
+    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, record_code, system_name, request_service, request_url, request_content, response_content,
+    status, create_time, update_time, creator, modifier, is_available, is_deleted, version_no, 
+    tenant_id, app_id
+  </sql>
+  
+  <!-- 保存回调记录日志 -->
+  <insert id="insertCallRecordLog" parameterType="com.lyf.scm.core.domain.entity.common.CallRecordLogE" >
+    insert into scm_call_record_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="recordCode != null" >
+        record_code,
+      </if>
+      <if test="systemName != null" >
+        system_name,
+      </if>
+      <if test="requestService != null" >
+        request_service,
+      </if>
+      <if test="requestUrl != null" >
+        request_url,
+      </if>
+      <if test="requestContent != null" >
+        request_content,
+      </if>
+      <if test="responseContent != null" >
+        response_content,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+      <if test="isAvailable != null" >
+        is_available,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="versionNo != null" >
+        version_no,
+      </if>
+      <if test="tenantId != null" >
+        tenant_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="recordCode != null" >
+        #{recordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="systemName != null" >
+        #{systemName,jdbcType=VARCHAR},
+      </if>
+      <if test="requestService != null" >
+        #{requestService,jdbcType=VARCHAR},
+      </if>
+      <if test="requestUrl != null" >
+        #{requestUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="requestContent != null" >
+        #{requestContent,jdbcType=VARCHAR},
+      </if>
+      <if test="responseContent != null" >
+        #{responseContent,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.ShopInventoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.ShopInventoryE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="shop_code" property="shopCode"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="business_type" property="businessType"/>
+        <result column="record_type" property="recordType"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="remark" property="remark"/>
+        <result column="record_status_reason" property="recordStatusReason"/>
+        <result column="real_warehouse_id" property="realWarehouseId"/>
+        <result column="factory_code" property="factoryCode"/>
+        <result column="real_warehouse_code" property="realWarehouseCode"/>
+        <result column="out_record_code" property="outRecordCode"/>
+        <result column="out_create_time" property="outCreateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id, record_code, merchant_id, shop_code, shop_name, business_type, record_type, record_status, remark,
+        record_status_reason, real_warehouse_id, factory_code, real_warehouse_code, out_record_code, out_create_time,
+        create_time, update_time, creator, modifier, is_deleted, is_available, app_id
+    </sql>
+
+    <insert id="insertShopInventoryRecord" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.ShopInventoryE">
+      insert into sc_fr_shop_inventory(record_code,merchant_id,shop_code,business_type,record_type,
+      record_status,remark,record_status_reason,real_warehouse_id,factory_code,real_warehouse_code,out_record_code,out_create_time)
+      values(#{recordCode},#{merchantId},#{shopCode},#{businessType},#{recordType},
+      #{recordStatus},#{remark},#{recordStatusReason},#{realWarehouseId},#{factoryCode},#{realWarehouseCode},#{outRecordCode},#{outCreateTime})
+    </insert>
+
+    <!-- 更新状态为完成 -->
+    <!-- 状态从枚举中获取 -->
+    <update id="updateCompleteStatus">
+        update sc_fr_shop_inventory set record_status = #{recordStatus} where id = #{id} and record_status = #{initRecordStatus} and is_deleted = 0 and is_available = 1
+    </update>
+
+    <select id="selectShopInventoryList" parameterType="com.lyf.scm.core.domain.entity.stockFront.ShopInventoryE" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>  from sc_fr_shop_inventory
+        WHERE is_available = 1 and is_deleted = 0
+        <if test="recordCode != null and recordCode != '' ">
+            and record_code = #{recordCode}
+        </if>
+        <if test="shopCode != null and shopCode != '' ">
+            and shop_code =#{shopCode}
+        </if>
+        <if test="startDate != null">
+            <![CDATA[ AND out_create_time >= date_format(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="endDate != null">
+            <![CDATA[ AND out_create_time <= date_format(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        order by id desc
+    </select>
+
+    <select id="queryFrontRecordByIds" resultType="com.lyf.scm.core.domain.entity.stockFront.ShopInventoryE">
+        select id,record_code,out_record_code,record_type,remark,shop_code from sc_fr_shop_inventory
+        where is_deleted = 0 and is_available = 1 and id in
+        <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="judgeExistByOutRecordCodes" resultType="java.lang.String">
+        select concat(out_record_code, '_', shop_code) from sc_fr_shop_inventory
+        where is_deleted = 0 and is_available = 1 and out_record_code in
+        <foreach collection="outRecordCodes" item="outRecordCode" open="(" close=")" separator=",">
+            #{outRecordCode}
+        </foreach>
+    </select>
+
+    <select id="queryFrontRecordById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from sc_fr_shop_inventory
+        where is_deleted = 0 and is_available = 1 and record_status = #{recordStatus} and id = #{id}
+    </select>
+
+    <select id="queryInitShopInventoryRecordPage" resultType="java.lang.Long">
+        select id from sc_fr_shop_inventory
+        where is_deleted = 0 and is_available = 1 and record_status = #{recordStatus}
+        <![CDATA[ AND out_create_time >= date_format(#{date},'%Y-%m-%d 00:00:00')]]>
+        <![CDATA[ AND out_create_time <= date_format(#{date},'%Y-%m-%d 23:59:59')]]>
+        order by id desc
+        limit #{startPage},#{endPage}
+    </select>
+
+</mapper>

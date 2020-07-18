@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.online.AddressMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.online.AddressE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="user_type" property="userType"/>
+        <result column="address_type" property="addressType"/>
+        <result column="postcode" property="postcode"/>
+        <result column="mobile" property="mobile"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="id_type" property="idType"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="country" property="country"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="county" property="county"/>
+        <result column="area" property="area"/>
+        <result column="country_code" property="countryCode"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="city_code" property="cityCode"/>
+        <result column="county_code" property="countyCode"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="address" property="address"/>
+        <result column="name" property="name"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`, `record_code`, `user_type`, `address_type`, `postcode`, `mobile`, `phone`,
+        `email`, `id_type`, `id_number`, `country`, `province`, `city`, `county`, `area`,
+        `country_code`, `province_code`, `city_code`, `county_code`, `area_code`,
+        `address`, `name`, `create_time`, `update_time`, `creator`, `modifier`,
+        `version_no`, `tenant_id`, `app_id`, `remark`
+    </sql>
+
+    <!--根据单据号修改地址 -->
+    <update id="updateAddressByRecordCode">
+        update sc_address
+        <set>
+            <if test="mobile != null">
+                mobile = #{mobile},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="postcode != null">
+                postcode = #{postcode},
+            </if>
+            <if test="remark != null">
+                remark = #{ remark },
+            </if>
+            <if test="email != null">
+                email = #{ email },
+            </if>
+            <if test="province != null">
+                province = #{ province },
+            </if>
+            <if test="provinceCode != null">
+                province_code = #{ provinceCode },
+            </if>
+            <if test="city != null">
+                city = #{ city },
+            </if>
+            <if test="cityCode != null">
+                city_code = #{ cityCode },
+            </if>
+            <if test="county != null">
+                county = #{ county },
+            </if>
+            <if test="areaCode != null">
+                area_code = #{ areaCode },
+            </if>
+        </set>
+        <where>
+            record_code = #{ recordCode }
+            and is_deleted = 0
+            and is_available=1
+        </where>
+    </update>
+
+    <select id="getDeliveryAddressByEntity" parameterType="com.lyf.scm.core.domain.entity.online.AddressE"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        sc_address
+        where
+        record_code = #{ recordCode }
+        and
+        address_type = #{ addressType }
+        and is_available = 1
+        and is_deleted = 0
+    </select>
+
+    <insert id="saveAddress">
+        insert into `sc_address`(
+          `record_code`, `user_type`, `address_type`, `postcode`, `mobile`, `phone`,
+          `email`, `id_type`, `id_number`, `country`, `province`, `city`, `county`, `area`,
+          `country_code`, `province_code`, `city_code`, `county_code`, `area_code`, `address`,
+          `name`, `creator`, `modifier`, `is_available`, `is_deleted`, `version_no`, `remark`
+        ) values(
+          #{recordCode},#{userType},#{addressType},#{postcode},#{mobile},#{phone},
+          #{email},#{idType},#{idNumber},#{country},#{province},#{city},#{county},#{area},
+          #{countryCode},#{provinceCode},#{cityCode},#{countyCode},#{areaCode},#{address},
+          #{name},#{creator},#{creator},1,0,0,#{remark}
+        );
+    </insert>
+
+    <select id="queryByRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_address`
+        <where>
+            `record_code` = #{recordCode}
+            and `is_available` = 1
+            and `is_deleted` = 0
+        </where>
+    </select>
+
+    <select id="queryByRecordCodes" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        `sc_address`
+        where
+        `is_available` = 1
+        and `is_deleted` = 0
+        and record_code in
+        <foreach collection="recordCodes" open="(" item="item" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.WarehouseRecordDetailMapper">
+
+    <resultMap id="resultMap" type="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordDetailE">
+        <id property="id" column="id"/>
+        <result property="deliveryData" column="delivery_data"/>
+        <result property="recordCode" column="record_code"/>
+        <result property="warehouseRecordId" column="warehouse_record_id"/>
+        <result property="userCode" column="user_code"/>
+        <result property="channelCode" column="channel_code"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="planQty" column="plan_qty"/>
+        <result property="unit" column="unit"/>
+        <result property="unitCode" column="unit_code"/>
+        <result property="actualQty" column="actual_qty"/>
+        <result property="skuItemAmount" column="sku_item_amount"/>
+        <result property="skuPriceFinal" column="sku_price_final"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="thirdMerchantProductCode" column="third_merchant_product_code"/>
+        <result property="virtualWarehouseId" column="virtual_warehouse_id"/>
+        <result property="realWarehouseId" column="real_warehouse_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="creator" column="creator"/>
+        <result property="modifier" column="modifier"/>
+        <result property="isAvailable" column="is_available"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="versionNo" column="version_no"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="appId" column="app_id"/>
+        <result property="sapPoNo" column="sap_po_no"/>
+        <result property="lineNo" column="line_no"/>
+        <result property="deliveryLineNo" column="delivery_line_no"/>
+    </resultMap>
+
+    <sql id="allColumn">
+        id,
+        delivery_data,
+        record_code,
+        warehouse_record_id,
+        user_code,
+        channel_code,
+        sku_id,
+        sku_code,
+        plan_qty,
+        unit,
+        unit_code,
+        actual_qty,
+        sku_item_amount,
+        sku_price_final,
+        sku_code,
+        third_merchant_product_code,
+        virtual_warehouse_id,
+        real_warehouse_id,
+        create_time,
+        update_time,
+        creator,
+        modifier,
+        is_available,
+        is_deleted,
+        version_no,
+        tenant_id,
+        app_id,
+        sap_po_no,
+        line_no,
+        delivery_line_no
+    </sql>
+
+	<!-- 批量保存出入库单明细 -->
+    <insert id="insertWarehouseRecordDetails" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" >
+        insert into sc_warehouse_record_detail(record_code,warehouse_record_id,channel_code,sku_id,sku_code,plan_qty,actual_qty,unit,unit_code,sap_po_no,line_no,delivery_line_no,user_code,virtual_warehouse_id,real_warehouse_id,delivery_data) values
+        <foreach collection="list" item="item" separator="," close=";">
+            (#{item.recordCode},#{item.warehouseRecordId},#{item.channelCode},#{item.skuId},#{item.skuCode},#{item.planQty},#{item.actualQty},#{item.unit},#{item.unitCode},#{item.sapPoNo},#{item.lineNo},#{item.deliveryLineNo},#{item.userCode},#{item.virtualWarehouseId},#{item.realWarehouseId},#{item.deliveryData})
+        </foreach>
+    </insert>
+
+	<!-- 批量保存出入库单明细,外采专用，带deleted状态 -->
+    <insert id="insertWarehouseRecordDetailsForPurchase" parameterType="java.util.List">
+        insert into sc_warehouse_record_detail(record_code,warehouse_record_id,channel_code,sku_id,sku_code,plan_qty,actual_qty,unit,unit_code,sap_po_no,line_no,delivery_line_no,user_code,virtual_warehouse_id,real_warehouse_id,delivery_data,is_deleted) values
+        <foreach collection="detailList" item="item" separator="," close=";">
+            (#{item.recordCode},#{item.warehouseRecordId},#{item.channelCode},#{item.skuId},#{item.skuCode},#{item.planQty},#{item.actualQty},#{item.unit},#{item.unitCode},#{item.sapPoNo},#{item.lineNo},#{item.deliveryLineNo},#{item.userCode},#{item.virtualWarehouseId},#{item.realWarehouseId},#{item.deliveryData},#{item.isDeleted})
+        </foreach>
+    </insert>
+
+
+    <!-- 批量更新详情 -->
+    <update id="updateDetails" parameterType="java.util.List">
+        <foreach collection="detailList" item="item" index="index" open="" close="" separator=";">
+            update sc_warehouse_record_detail
+            set plan_qty = #{item.planQty} ,
+            unit = #{item.unit},
+            delivery_data =#{item.deliveryData} ,
+            is_deleted = #{item.isDeleted},
+            unit_code = #{item.unitCode}
+            where is_available=1
+            and sku_code =#{item.skuCode}
+            and warehouse_record_id = #{item.warehouseRecordId}
+            and line_no = #{item.lineNo}
+        </foreach>
+    </update>
+
+    <select id="queryListByRecordId" parameterType="java.lang.Long" resultMap="resultMap">
+        select
+        <include refid="allColumn"/>
+        from sc_warehouse_record_detail
+        where is_deleted =0 and is_available = 1 and warehouse_record_id =#{recordId}
+    </select>
+
+    <!-- 修改外采单时用-->
+    <select id="queryListByRecordIdWithDeleted" parameterType="java.lang.Long" resultMap="resultMap">
+        select
+        <include refid="allColumn"/>
+        from sc_warehouse_record_detail
+        where  is_available = 1 and warehouse_record_id =#{recordId}
+    </select>
+
+	<!-- 增加实际商品数量 -->
+    <update id="increaseActualQty">
+        update sc_warehouse_record_detail
+        set actual_qty = actual_qty + #{actualQty}
+        where warehouse_record_id = #{warehouseRecordId} and sku_id = #{skuId}
+        <!-- 有的业务可能没有行号，则通过sku维度去更新-->
+        <if test="lineNo != null and lineNo != ''">
+        and line_no = #{lineNo}
+        </if>
+    </update>
+	
+	<!-- 通过ID更新实收数量 -->
+    <update id="increaseActualQtyById">
+        update
+          sc_warehouse_record_detail
+        set
+          actual_qty = actual_qty + #{basicSkuQty}
+        where
+          id= #{lineNo}
+          and record_code= #{recordCode}
+          and sku_code= #{skuCode}
+    </update>
+
+
+
+	<!-- 根据单据id查询单据明细 -->
+    <select id="queryListByRecordIds" resultMap="resultMap">
+        select
+        <include refid="allColumn"/>
+        from sc_warehouse_record_detail
+        where is_available =1 and is_deleted =0
+        and warehouse_record_id in
+        <foreach collection="recordIds" item="recordId" separator="," open="(" close=")">
+            #{recordId}
+        </foreach>
+    </select>
+
+	<!-- 根据单据ids 和实仓id 查询sku总出库数 -->
+    <select id="queryStatisticInfoListByRecordIds" resultType="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordDetailE">
+        select
+        sku_id,sku_code,sum(actual_qty) as actual_qty
+        from sc_warehouse_record_detail
+        where is_available =1 and is_deleted =0
+        and warehouse_record_id in
+        <foreach collection="recordIds" item="recordId" separator="," open="(" close=")">
+            #{recordId}
+        </foreach>
+        group by  sku_id
+    </select>
+
+    <!-- 更新交货单修改出库单的数量 -->
+    <update id="updateDetailByDeliveryOrder" parameterType="java.util.List">
+        <foreach collection="detailList" item="item" separator=";" close=";">
+            update
+            sc_warehouse_record_detail
+            set
+            plan_qty = #{item.planQty},
+            delivery_line_no = #{item.deliveryLineNo}
+            where
+            id = #{item.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+
+    <!-- 更新交货单修改出库单的数量 -->
+    <update id="updateDeliveryLineNo" parameterType="java.util.List">
+        <foreach collection="detailList" item="item" separator=";" close=";">
+            update
+            sc_warehouse_record_detail
+            set
+            delivery_line_no = #{item.deliveryLineNo}
+            where
+            id = #{item.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+
+	<!-- 通过PO行号更新 -->
+    <update id="increaseActualQtyByLineNo">
+      update
+          sc_warehouse_record_detail
+        set
+          actual_qty = actual_qty + #{basicSkuQty}
+        where
+          line_no= #{lineNo}
+          and record_code= #{recordCode}
+          and sku_code= #{skuCode}
+    </update>
+
+	<!-- 通过交货单行号更新 -->
+    <update id="increaseActualQtyByDeliveryLineNo">
+      update
+          sc_warehouse_record_detail
+        set
+          actual_qty = actual_qty + #{basicSkuQty}
+        where
+          delivery_line_no= #{deliveryLineNo}
+          and record_code= #{recordCode}
+          and sku_code= #{skuCode}
+    </update>
+	
+	<!-- 根据单据编号查询单据明细 -->
+    <select id="queryListByRecordCode" parameterType="java.lang.String" resultMap="resultMap">
+        select <include refid="allColumn"/>
+        from sc_warehouse_record_detail
+        where record_code = #{recordCode}
+        and is_available = 1 and is_deleted = 0
+    </select>
+    
+    <!-- 根据单据codes查询明细 -->
+    <select id="selectListByRecordCodes" parameterType="java.util.List" resultMap="resultMap">
+      select <include refid="allColumn"/>
+        from sc_warehouse_record_detail
+        where record_code in
+		<foreach collection="recordCodes" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach> 
+        and is_available =1 and is_deleted =0
+    </select>
+
+    <!--批量修改sapPoNo -->
+    <update id="updateDetailSapNo" parameterType="java.util.List">
+        <foreach collection="detailList" item="item" separator=";" close=";">
+            update
+            sc_warehouse_record_detail
+            set
+            sap_po_no = #{item.sapPoNo}
+            where
+            id = #{item.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+    
+    <!-- 更新出入库单明细实际收货数量 -->
+    <update id="updateActualQty">
+    	update
+        sc_warehouse_record_detail
+        set
+        actual_qty = #{actualQty}
+        where
+        and delivery_line_no = #{deliveryLineNo}
+        record_code = #{recordCode}
+        and is_available = 1
+        and is_deleted = 0
+    </update>
+
+</mapper>

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.orderReturn.OrderReturnDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.orderReturn.OrderReturnDetailE" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="after_sale_code" property="afterSaleCode" jdbcType="VARCHAR" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="return_qty" property="returnQty" jdbcType="DECIMAL" />
+    <result column="delivery_qty" property="deliveryQty" jdbcType="DECIMAL" />
+    <result column="entry_qty" property="entryQty" jdbcType="DECIMAL" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="unit_code" property="unitCode" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="BIGINT" />
+    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, after_sale_code, sku_code, return_qty, delivery_qty, entry_qty, unit, unit_code,
+    create_time, update_time, creator, modifier, is_available, is_deleted, version_no, 
+    tenant_id, app_id
+  </sql>
+  
+  <!-- 保存退货单详情 -->
+  <insert id="insertOrderReturnDetail" parameterType="com.lyf.scm.core.domain.entity.orderReturn.OrderReturnDetailE" >
+    insert into scm_order_return_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="afterSaleCode != null" >
+        after_sale_code,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="returnQty != null" >
+        return_qty,
+      </if>
+      <if test="deliveryQty != null" >
+        delivery_qty,
+      </if>
+      <if test="entryQty != null" >
+        entry_qty,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="unitCode != null" >
+        unit_code,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+      <if test="isAvailable != null" >
+        is_available,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="versionNo != null" >
+        version_no,
+      </if>
+      <if test="tenantId != null" >
+        tenant_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="afterSaleCode != null" >
+        #{afterSaleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="returnQty != null" >
+        #{returnQty,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryQty != null" >
+        #{deliveryQty,jdbcType=DECIMAL},
+      </if>
+      <if test="entryQty != null" >
+        #{entryQty,jdbcType=DECIMAL},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="unitCode != null" >
+        #{unitCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 修改退货单详情 -->
+  <update id="updateOrderReturnDetail" parameterType="com.lyf.scm.core.domain.entity.orderReturn.OrderReturnDetailE" >
+    update scm_order_return_detail
+    <set >
+      <if test="afterSaleCode != null" >
+        after_sale_code = #{afterSaleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="returnQty != null" >
+        return_qty = #{returnQty,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryQty != null" >
+        delivery_qty = #{deliveryQty,jdbcType=DECIMAL},
+      </if>
+      <if test="entryQty != null" >
+        entry_qty = #{entryQty,jdbcType=DECIMAL},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="unitCode != null" >
+        unit_code = #{unitCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        is_available = #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        version_no = #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and is_available = 1 and is_deleted = 0
+  </update>
+  
+  <!-- 批量保存退货单详情 -->
+  <insert id="batchInsertOrderReturnDetail" useGeneratedKeys="true" keyProperty="id">
+  	insert into scm_order_return_detail (after_sale_code, sku_code, delivery_qty, return_qty, unit, unit_code) values
+      <foreach collection="list" item="item" separator="," >
+      	(#{item.afterSaleCode}, #{item.skuCode}, #{item.deliveryQty}, #{item.returnQty}, #{item.unit}, #{item.unitCode})
+      </foreach>
+  </insert>
+  
+  <!-- 根据售后单号查询退货单详情列表 -->
+  <select id="queryOrderReturnDetailByAfterSaleCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select 
+    <include refid="Base_Column_List" />
+    from scm_order_return_detail
+    where after_sale_code = #{afterSaleCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据售后单号列表统计退货单详情skuCode退货数量 -->
+  <select id="countDetailReturnQty" resultType="java.util.Map" >
+  	select 
+   	sku_code skuCode, IFNULL(SUM(return_qty), 0) qtySum
+    from scm_order_return_detail 
+    where is_available = 1 and is_deleted = 0
+    and after_sale_code in
+    <foreach collection="list" item="item" open="(" separator="," close=")" >
+        #{item}
+    </foreach>
+    group by sku_code
+  </select>
+  
+  <!-- 根据售后单号列表统计退货单详情skuCode实际收货数量 -->
+  <select id="countDetailEntryQty" resultType="java.util.Map" >
+  	select 
+   	sku_code skuCode, IFNULL(SUM(entry_qty), 0) qtySum
+    from scm_order_return_detail 
+    where is_available = 1 and is_deleted = 0
+    and after_sale_code in
+    <foreach collection="list" item="item" open="(" separator="," close=")" >
+        #{item}
+    </foreach>
+    group by sku_code
+  </select>
+  
+  <!-- 根据售后单号、商品编码修改实际收货数量 -->
+  <update id="updateEntryQtyByAfterSaleCodeAndSkuCode">
+  	 update scm_order_return_detail
+  	 set entry_qty = #{entryQty}
+  	 where after_sale_code = #{afterSaleCode} and sku_code = #{skuCode} and is_available = 1 and is_deleted = 0 
+  </update>
+  
+</mapper>

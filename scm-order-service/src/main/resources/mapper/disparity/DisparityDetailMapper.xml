@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.disparity.DisparityDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.disparity.DisparityDetailE" >
+        <result column="id" property="id" />
+        <result column="disparity_id" property="disparityId" />
+        <result column="sku_id" property="skuId" />
+        <result column="sku_code" property="skuCode" />
+        <result column="unit" property="unit" />
+        <result column="unit_code" property="unitCode" />
+        <result column="sku_qty" property="skuQty" />
+        <result column="out_sku_qty" property="outSkuQty" />
+        <result column="in_sku_qty" property="inSkuQty" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="is_available" property="isAvailable" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="version_no" property="versionNo" />
+        <result column="tenant_id" property="tenantId" />
+        <result column="app_id" property="appId" />
+        <result column="responsible" property="responsible" />
+        <result column="responsible_type" property="responsibleType" />
+        <result column="reasons" property="reasons" />
+        <result column="handler_in_real_warehouse_id" property="handlerInRealWarehouseId" />
+        <result column="handler_in_real_warehouse_out_code" property="handlerInRealWarehouseOutCode" />
+        <result column="handler_in_factory_code" property="handlerInFactoryCode" />
+        <result column="remark" property="remark" />
+        <result column="cost_center" property="costCenter" />
+        <result column="line_no" property="lineNo" />
+        <result column="delivery_line_no" property="deliveryLineNo" />
+        <result column="sap_po_no" property="sapPoNo" />
+        <result column="front_record_id" property="frontRecordId" />
+        <result column="front_record_code" property="frontRecordCode" />
+        <result column="record_status" property="recordStatus" />
+        <result column="real_unit" property="realUnit" />
+        <result column="real_unit_code" property="realUnitCode" />
+        <result column="scale" property="scale" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id,
+		disparity_id,
+		sku_id,
+		sku_code,
+		unit,
+		unit_code,
+		sku_qty,
+		out_sku_qty,
+		in_sku_qty,
+		create_time,
+		update_time,
+		creator,
+		modifier,
+		is_available,
+		is_deleted,
+		version_no,
+		tenant_id,
+		app_id,
+		responsible,
+		responsible_type,
+		reasons,
+		handler_in_real_warehouse_id,
+		handler_in_real_warehouse_out_code,
+		handler_in_factory_code,
+		remark,
+		cost_center,
+		line_no,
+		delivery_line_no,
+		sap_po_no,
+		front_record_id,
+		front_record_code,
+		record_status,
+		real_unit,
+		real_unit_code,
+		scale
+	</sql>
+	
+	<!-- 批量插入差异订单明细信息 -->
+	<insert id="insertBatch" >
+	    INSERT INTO sc_disparity_detail
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	        <if test ='null != disparityId'>
+	            disparity_id,
+	        </if>
+	        <if test ='null != skuId'>
+	            sku_id,
+	        </if>
+	        <if test ='null != skuCode'>
+	            sku_code,
+	        </if>
+	        <if test ='null != unit'>
+	            unit,
+	        </if>
+	        <if test ='null != unitCode'>
+	            unit_code,
+	        </if>
+	        <if test ='null != skuQty'>
+	            sku_qty,
+	        </if>
+	        <if test ='null != outSkuQty'>
+	            out_sku_qty,
+	        </if>
+	        <if test ='null != inSkuQty'>
+	            in_sku_qty,
+	        </if>
+	        <if test ='null != createTime'>
+	            create_time,
+	        </if>
+	        <if test ='null != updateTime'>
+	            update_time,
+	        </if>
+	        <if test ='null != creator'>
+	            creator,
+	        </if>
+	        <if test ='null != modifier'>
+	            modifier,
+	        </if>
+	        <if test ='null != isAvailable'>
+	            is_available,
+	        </if>
+	        <if test ='null != isDeleted'>
+	            is_deleted,
+	        </if>
+	        <if test ='null != versionNo'>
+	            version_no,
+	        </if>
+	        <if test ='null != tenantId'>
+	            tenant_id,
+	        </if>
+	        <if test ='null != appId'>
+	            app_id,
+	        </if>
+	        <if test ='null != responsible'>
+	            responsible,
+	        </if>
+	        <if test ='null != responsibleType'>
+	            responsible_type,
+	        </if>
+	        <if test ='null != reasons'>
+	            reasons,
+	        </if>
+	        <if test ='null != handlerInRealWarehouseId'>
+	            handler_in_real_warehouse_id,
+	        </if>
+	        <if test ='null != handlerInRealWarehouseOutCode'>
+	            handler_in_real_warehouse_out_code,
+	        </if>
+	        <if test ='null != handlerInFactoryCode'>
+	            handler_in_factory_code,
+	        </if>
+	        <if test ='null != remark'>
+	            remark,
+	        </if>
+	        <if test ='null != costCenter'>
+	            cost_center,
+	        </if>
+	        <if test ='null != lineNo'>
+	            line_no,
+	        </if>
+	        <if test ='null != deliveryLineNo'>
+	            delivery_line_no,
+	        </if>
+	        <if test ='null != sapPoNo'>
+	            sap_po_no,
+	        </if>
+	        <if test ='null != frontRecordId'>
+	            front_record_id,
+	        </if>
+	        <if test ='null != frontRecordCode'>
+	            front_record_code,
+	        </if>
+	        <if test ='null != recordStatus'>
+	            record_status,
+	        </if>
+	        <if test ='null != realUnit'>
+	            real_unit,
+	        </if>
+	        <if test ='null != realUnitCode'>
+	            real_unit_code,
+	        </if>
+	        <if test ='null != scale'>
+	            scale
+	        </if>
+	    </trim>
+	    <foreach collection="list" item="detail" separator="," close=";">
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+	        <if test ='null != disparityId'>
+	            #{disparityId},
+	        </if>
+	        <if test ='null != skuId'>
+	            #{skuId},
+	        </if>
+	        <if test ='null != skuCode'>
+	            #{skuCode},
+	        </if>
+	        <if test ='null != unit'>
+	            #{unit},
+	        </if>
+	        <if test ='null != unitCode'>
+	            #{unitCode},
+	        </if>
+	        <if test ='null != skuQty'>
+	            #{skuQty},
+	        </if>
+	        <if test ='null != outSkuQty'>
+	            #{outSkuQty},
+	        </if>
+	        <if test ='null != inSkuQty'>
+	            #{inSkuQty},
+	        </if>
+	        <if test ='null != createTime'>
+	            #{createTime},
+	        </if>
+	        <if test ='null != updateTime'>
+	            #{updateTime},
+	        </if>
+	        <if test ='null != creator'>
+	            #{creator},
+	        </if>
+	        <if test ='null != modifier'>
+	            #{modifier},
+	        </if>
+	        <if test ='null != isAvailable'>
+	            #{isAvailable},
+	        </if>
+	        <if test ='null != isDeleted'>
+	            #{isDeleted},
+	        </if>
+	        <if test ='null != versionNo'>
+	            #{versionNo},
+	        </if>
+	        <if test ='null != tenantId'>
+	            #{tenantId},
+	        </if>
+	        <if test ='null != appId'>
+	            #{appId},
+	        </if>
+	        <if test ='null != responsible'>
+	            #{responsible},
+	        </if>
+	        <if test ='null != responsibleType'>
+	            #{responsibleType},
+	        </if>
+	        <if test ='null != reasons'>
+	            #{reasons},
+	        </if>
+	        <if test ='null != handlerInRealWarehouseId'>
+	            #{handlerInRealWarehouseId},
+	        </if>
+	        <if test ='null != handlerInRealWarehouseOutCode'>
+	            #{handlerInRealWarehouseOutCode},
+	        </if>
+	        <if test ='null != handlerInFactoryCode'>
+	            #{handlerInFactoryCode},
+	        </if>
+	        <if test ='null != remark'>
+	            #{remark},
+	        </if>
+	        <if test ='null != costCenter'>
+	            #{costCenter},
+	        </if>
+	        <if test ='null != lineNo'>
+	            #{lineNo},
+	        </if>
+	        <if test ='null != deliveryLineNo'>
+	            #{deliveryLineNo},
+	        </if>
+	        <if test ='null != sapPoNo'>
+	            #{sapPoNo},
+	        </if>
+	        <if test ='null != frontRecordId'>
+	            #{frontRecordId},
+	        </if>
+	        <if test ='null != frontRecordCode'>
+	            #{frontRecordCode},
+	        </if>
+	        <if test ='null != recordStatus'>
+	            #{recordStatus},
+	        </if>
+	        <if test ='null != realUnit'>
+	            #{realUnit},
+	        </if>
+	        <if test ='null != realUnitCode'>
+	            #{realUnitCode},
+	        </if>
+	        <if test ='null != scale'>
+	            #{scale}
+	        </if>
+	    </trim>
+	    </foreach>
+	</insert>
+
+    <!--批量保存定责责任原因-->
+    <update id="updateReasonsById">
+        <bind name="beforeRecordStatus1" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@INIT"/>
+        <bind name="beforeRecordStatus2" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@HAS_DUTY"/>
+        <bind name="afterRecordStatus" value="@com.lyf.scm.core.common.constant.DisparityStatusVO@HAS_DUTY"/>
+        <foreach collection="list" item="detail" index="index" open=""   separator=";" close="">
+        update sc_disparity_detail
+            set responsible = #{detail.responsible},
+            responsible_type=#{detail.responsibleType},
+            record_status = #{afterRecordStatus.status},
+            reasons=#{detail.reasons},
+            modifier = #{detail.modifier},
+            remark = #{detail.remark},
+            cost_center = #{detail.costCenter},
+            handler_in_real_warehouse_id = #{detail.handlerInRealWarehouseId}
+            WHERE id =#{detail.id}
+            and is_deleted=0
+            and is_available=1
+            and record_status in(#{beforeRecordStatus1.status},#{beforeRecordStatus2.status})
+            and   sku_qty > 0
+        </foreach>
+    </update>
+
+	<!-- 查询还未定责的明细 -->
+    <select id="selectHasNotDutyDetails" resultType="long">
+      select 
+      	id 
+      from sc_disparity_detail
+      where disparity_id = #{disparityId}
+	      and responsible_type is null
+	      and is_deleted=0
+	      and is_available=1
+	      and sku_qty > 0
+    </select>
+
+	<!-- 根据差异单id查询差异明细[只查询差异为正值的] -->
+    <select id="selectDisparityDetailByDisparityId" resultMap="BaseResultMap">
+        select
+        	<include refid="Base_Column_List"/>
+        from sc_disparity_detail
+        where disparity_id = #{disparityId}
+	        and is_deleted=0
+	        and is_available=1
+	        and sku_qty > 0
+    </select>
+
+	<!-- 根据差异明细id查询明细[只查询差异为正值的] -->
+    <select id="selectDisparityDetailByIds" resultMap="BaseResultMap">
+        select
+        	<include refid="Base_Column_List"/>
+        from sc_disparity_detail
+        where is_deleted=0
+	        and is_available=1
+	        and  id in
+	        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+	            #{id}
+	        </foreach>
+	        and sku_qty > 0
+    </select>
+    
+</mapper>

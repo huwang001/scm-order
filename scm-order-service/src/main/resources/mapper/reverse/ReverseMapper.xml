@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.reverse.ReverseMapper" >
+  <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.reverse.ReverseE">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+    <result column="record_type" property="recordType" jdbcType="TINYINT" />
+    <result column="record_status" property="recordStatus" jdbcType="TINYINT" />
+    <result column="origin_record_code" property="originRecordCode" jdbcType="VARCHAR" />
+    <result column="out_record_code" property="outRecordCode" jdbcType="VARCHAR" />
+    <result column="receipt_record_code" property="receiptRecordCode" jdbcType="VARCHAR" />
+    <result column="voucher_code" property="voucherCode" jdbcType="VARCHAR" />
+    <result column="real_warehouse_code" property="realWarehouseCode" jdbcType="VARCHAR" />
+    <result column="factory_code" property="factoryCode" jdbcType="VARCHAR" />
+    <result column="reverse_date" property="reverseDate" jdbcType="DATE" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="BIGINT" />
+    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, record_code, record_type, record_status, origin_record_code, out_record_code, 
+    receipt_record_code, voucher_code, real_warehouse_code, factory_code, reverse_date, remark, create_time, 
+    update_time, creator, modifier, is_available, is_deleted, version_no, tenant_id, 
+    app_id
+  </sql>
+  
+  <!-- 保存冲销单 -->
+  <insert id="insertReverse" parameterType="com.lyf.scm.core.domain.entity.reverse.ReverseE" useGeneratedKeys="true" keyProperty="id">
+    insert into scm_reverse
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordCode != null" >
+        record_code,
+      </if>
+      <if test="recordType != null" >
+        record_type,
+      </if>
+      <if test="recordStatus != null" >
+        record_status,
+      </if>
+      <if test="originRecordCode != null" >
+        origin_record_code,
+      </if>
+      <if test="outRecordCode != null" >
+        out_record_code,
+      </if>
+      <if test="receiptRecordCode != null" >
+        receipt_record_code,
+      </if>
+      <if test="voucherCode != null" >
+        voucher_code,
+      </if>
+      <if test="realWarehouseCode != null" >
+        real_warehouse_code,
+      </if>
+      <if test="factoryCode != null" >
+        factory_code,
+      </if>
+      <if test="reverseDate != null" >
+        reverse_date,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+      <if test="isAvailable != null" >
+        is_available,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="versionNo != null" >
+        version_no,
+      </if>
+      <if test="tenantId != null" >
+        tenant_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordCode != null" >
+        #{recordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="recordType != null" >
+        #{recordType,jdbcType=TINYINT},
+      </if>
+      <if test="recordStatus != null" >
+        #{recordStatus,jdbcType=TINYINT},
+      </if>
+      <if test="originRecordCode != null" >
+        #{originRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outRecordCode != null" >
+        #{outRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptRecordCode != null" >
+        #{receiptRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="voucherCode != null" >
+        #{voucherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="realWarehouseCode != null" >
+        #{realWarehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryCode != null" >
+        #{factoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reverseDate != null" >
+        #{reverseDate,jdbcType=DATE},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 修改冲销单 -->
+  <update id="updateReverse" parameterType="com.lyf.scm.core.domain.entity.reverse.ReverseE">
+    update scm_reverse
+    <set >
+      <if test="recordCode != null" >
+        record_code = #{recordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="recordType != null" >
+        record_type = #{recordType,jdbcType=TINYINT},
+      </if>
+      <if test="recordStatus != null" >
+        record_status = #{recordStatus,jdbcType=TINYINT},
+      </if>
+      <if test="originRecordCode != null" >
+        origin_record_code = #{originRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outRecordCode != null" >
+        out_record_code = #{outRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptRecordCode != null" >
+        receipt_record_code = #{receiptRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="voucherCode != null" >
+        voucher_code = #{voucherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="realWarehouseCode != null" >
+        real_warehouse_code = #{realWarehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryCode != null" >
+        factory_code = #{factoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reverseDate != null" >
+        reverse_date = #{reverseDate,jdbcType=DATE},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        is_available = #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        version_no = #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and is_available = 1 and is_deleted = 0
+  </update>
+  
+  <!-- 根据ID查询冲销单 -->
+  <select id="queryById" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from scm_reverse
+    where id = #{id,jdbcType=BIGINT} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据单据编号查询冲销单 -->
+  <select id="queryByRecordCode" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from scm_reverse
+    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+  </select>
+
+
+
+  <!-- 根据收货单据编号和入库冲销类型查询冲销单 -->
+  <select id="queryByReceiptRecordCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from scm_reverse
+    where receipt_record_code = #{receiptRecordCode} and record_type = 2 and is_available = 1 and is_deleted = 0
+  </select>
+
+  <!-- 分页查询冲销单 -->
+  <select id="queryReversePage" resultMap="BaseResultMap" parameterType="com.lyf.scm.core.api.dto.reverse.QueryReverseDTO">
+    select
+    <include refid="Base_Column_List" />
+    from scm_reverse
+    WHERE is_available = 1 AND is_deleted = 0
+    <if test="queryReverseDTO.recordCodes != null and queryReverseDTO.recordCodes.size() > 0">
+      AND record_code IN
+      <foreach collection="queryReverseDTO.recordCodes" separator="," index="index" item="item" open="(" close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="queryReverseDTO.recordStatus != null">
+      AND record_status = #{queryReverseDTO.recordStatus}
+    </if>
+    <if test="queryReverseDTO.recordType != null">
+      AND record_type = #{queryReverseDTO.recordType}
+    </if>
+    <if test="queryReverseDTO.originRecordCodes != null and queryReverseDTO.originRecordCodes.size() > 0">
+      AND origin_record_code IN
+      <foreach collection="queryReverseDTO.originRecordCodes" separator="," index="index" item="item" open="(" close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="queryReverseDTO.outRecordCodes != null and queryReverseDTO.outRecordCodes.size() > 0">
+      AND out_record_code IN
+      <foreach collection="queryReverseDTO.outRecordCodes" separator="," index="index" item="item" open="(" close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="queryReverseDTO.warehouseCodes != null and queryReverseDTO.warehouseCodes .size() > 0">
+      AND
+      <foreach collection="queryReverseDTO.warehouseCodes" separator="or" index="index" item="item" open="(" close=")">
+        (factory_code like CONCAT('%',#{item},'%' ) or real_warehouse_code like CONCAT('%',#{item},'%' ))
+      </foreach>
+    </if>
+    <if test="queryReverseDTO.creator != null">
+      AND creator = #{queryReverseDTO.creator}
+    </if>
+    <if test="queryReverseDTO.startTime != null">
+      AND #{queryReverseDTO.startTime} &lt;= create_time
+    </if>
+    <if test="queryReverseDTO.endTime!= null">
+      AND #{queryReverseDTO.endTime} &gt;= create_time
+    </if>
+    order by create_time desc
+  </select>
+
+  <!-- 根据单据编号更新单据状态 -->
+  <update id="updateRecordStatusByRecordCode">
+    	update scm_reverse
+    	set record_status = 2
+        where record_code = #{recordCode} and record_status = 1 and is_available = 1 and is_deleted = 0
+    </update>
+
+
+  <!-- 更新单据状态为已确认状态 -->
+  <update id="updateRecordStatusToConfirmedByRecordCode">
+    	update scm_reverse
+    	set record_status = 3 , modifier = #{userId}
+        where record_code = #{recordCode} and record_status = 1  and is_available = 1 and is_deleted = 0
+    </update>
+
+
+  <!-- 根据原始出/入库单据编号查询冲销单 -->
+  <select id="queryByOriginRecordCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from scm_reverse
+    where origin_record_code = #{originRecordCode}  and is_available = 1 and is_deleted = 0
+  </select>
+
+</mapper>

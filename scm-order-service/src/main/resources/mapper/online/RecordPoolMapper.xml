@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.online.RecordPoolMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.online.RecordPoolE">
+        <result column="id" property="id"/>
+        <result column="front_record_code" property="frontRecordCode"/>
+        <result column="warehouse_record_code" property="warehouseRecordCode"/>
+        <result column="front_record_id" property="frontRecordId"/>
+        <result column="warehouse_record_id" property="warehouseRecordId"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="real_warehouse_id" property="realWarehouseId"/>
+        <result column="factory_code" property="factoryCode"/>
+        <result column="real_warehouse_code" property="realWarehouseCode"/>
+        <result column="virtual_warehouse_id" property="virtualWarehouseId"/>
+        <result column="virtual_warehouse_code" property="virtualWarehouseCode"/>
+        <result column="merge_fingerprint" property="mergeFingerprint"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="record_status" property="recordStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+        <result column="do_code" property="doCode"/>
+        <result column="logistics_code" property="logisticsCode"/>
+        <result column="record_type" property="recordType"/>
+        <result column="need_combine" property="needCombine"/>
+        <result column="sync_status" property="syncStatus"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`, `front_record_code`, `warehouse_record_code`, `front_record_id`, `warehouse_record_id`, `channel_code`,
+        `real_warehouse_id`, `factory_code`, `real_warehouse_code`, `virtual_warehouse_id`, `virtual_warehouse_code`, `merge_fingerprint`,
+        `merchant_id`, `record_status`, `create_time`, `update_time`, `creator`, `modifier`, `is_available`, `is_deleted`, `version_no`,
+        `tenant_id`, `app_id`, `do_code`, `logistics_code`, `record_type`, `need_combine`, `sync_status`
+    </sql>
+
+    <insert id="insertRecordPool" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.lyf.scm.core.domain.entity.online.RecordPoolE">
+      insert into `sc_rw_record_pool`(`do_code`,`record_type`,
+        `front_record_code`, `warehouse_record_code`, `front_record_id`, `warehouse_record_id`, `channel_code`,
+        `real_warehouse_id`, `virtual_warehouse_id`, `merchant_id`, `record_status`,`creator`, `modifier`, `is_available`,
+        `is_deleted`, `version_no`, `merge_fingerprint`, `need_combine`,`sync_status`,`logistics_code`)
+      values(
+        #{doCode},#{recordType},#{frontRecordCode},#{warehouseRecordCode},#{frontRecordId},#{warehouseRecordId},#{channelCode},
+        #{realWarehouseId},#{virtualWarehouseId},#{merchantId},#{recordStatus},#{creator},#{creator},1,0,0,#{mergeFingerprint},#{needCombine},#{syncStatus},#{logisticsCode}
+      )
+    </insert>
+
+    <select id="queryByFrontRecordId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `front_record_code` = #{frontRecordCode}
+            and `is_deleted` = 0
+            and `is_available` = 1
+        </where>
+    </select>
+
+    <select id="queryByDoCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `do_code` = #{doCode}
+            and `is_deleted` = 0
+            and `is_available` = 1
+        </where>
+    </select>
+
+    <select id="queryByDoCodes" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `do_code` in
+            <foreach item="item" index="index" collection="doCodes" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and `is_deleted` = 0
+            and `is_available` = 1
+        </where>
+    </select>
+
+    <select id="queryByDoCodesForMerge" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `do_code` in
+            <foreach item="item" index="index" collection="doCodes" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and `is_deleted` = 0
+            and `is_available` = 1
+            and record_status = 99
+            and `create_time` &lt;= DATE_SUB(current_timestamp,INTERVAL 7 DAY)
+        </where>
+    </select>
+
+    <select id="queryNotCanceledByFrontRecordId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `front_record_code` = #{frontRecordCode}
+            and `record_status` != 2
+            and `is_deleted` = 0
+            and `is_available` = 1
+        </where>
+    </select>
+
+    <select id="queryNotCanceledByFrontRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `front_record_code` = #{frontRecordCode}
+            and `record_status` != 2
+            and `is_deleted` = 0
+            and `is_available` = 1
+        </where>
+    </select>
+
+    <select id="queryAllPreMerged" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `record_status` = 99
+            and `is_deleted` = 0
+            and `is_available` = 1
+            and `create_time` &gt; DATE_SUB(current_timestamp,INTERVAL 7 DAY)
+            <if test="needCombine != null and  needCombine == 1">
+                and need_combine = 1
+            </if>
+            <if test="needCombine != null and  needCombine == 0">
+                and need_combine = 0
+            </if>
+        </where>
+        limit #{page},#{maxResult}
+    </select>
+
+    <select id="queryKeysByWarehouseId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool`
+        <where>
+            `warehouse_record_id` = #{warehouseRecordId}
+            AND is_deleted = 0
+            AND is_available = 1
+        </where>
+    </select>
+
+    <select id="queryKeysByWarehouseIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        `sc_rw_record_pool`
+        where
+        record_status != 2
+        AND is_deleted = 0
+        AND is_available = 1
+        and warehouse_record_id in
+        <foreach collection="onlineIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryKeysByWarehouseCodes" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        `sc_rw_record_pool`
+        where
+        record_status != 2
+        AND is_deleted = 0
+        AND is_available = 1
+        and warehouse_record_code in
+        <foreach collection="codes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--更新DO单池状态为待合单-->
+    <update id="updateToPreMerge">
+        update `sc_rw_record_pool` set `record_status` = 99
+        where `front_record_code` = #{frontRecordCode} and `record_status` = 0
+    </update>
+
+    <!--更新DO单池状态为待合单,从已合单状态更新为待合单-->
+    <update id="updateToPreMergeById">
+        update `sc_rw_record_pool` set `record_status` = 99
+        where `id` = #{id} and `record_status` = 100
+    </update>
+
+    <!--更新DO单池状态为待合单-->
+    <update id="updateToPreMergeAndLogisticInfo" parameterType="com.lyf.scm.core.domain.entity.online.RecordPoolE">
+        update `sc_rw_record_pool` set `record_status` = 99,
+        <if test="logisticsCode != null and  '' !=logisticsCode">
+            logistics_code = #{logisticsCode},
+        </if>
+        merge_fingerprint = #{mergeFingerprint}
+        where `id` = #{id} and `record_status` = 0
+    </update>
+
+    <!--更新DO单池状态为已取消-->
+    <update id="updateToCanceled">
+        update `sc_rw_record_pool` set `record_status` = 2
+        where `front_record_code` = #{frontRecordCode}
+    </update>
+
+    <!--更新DO单池状态为已取消-->
+    <update id="updateToCanceledById">
+        update `sc_rw_record_pool` set `record_status` = 2
+        where `id` = #{id}
+    </update>
+
+    <!--取消订单，解锁库存，根据出入库单主键，将已合单DO池数据状态更新为待合单-->
+    <update id="updateToPreMergeByWarehouseRecordId">
+        update `sc_rw_record_pool` set `record_status` = 99
+        where `warehouse_record_id` = #{warehouseRecordId} and `record_status` = 100
+    </update>
+
+    <!-- 修改MD5指纹信息 -->
+    <update id="updateMergeFingerprint">
+        update `sc_rw_record_pool` set `merge_fingerprint` = #{mergeFingerprint}
+        where `id` = #{id}
+        and `is_available` = 1
+        and `is_deleted` = 0
+    </update>
+
+    <!-- 合单后，回写Do池数据 -->
+    <update id="updateToMerged">
+        update `sc_rw_record_pool`
+        set `record_status` = 100,
+        `warehouse_record_id` = #{warehouseRecordId},
+        `warehouse_record_code` = #{warehouseRecordCode},
+        `version_no` = #{versionNo} + 1
+        where `id` = #{id} and `record_status` = 99 and `version_no` = #{versionNo}
+    </update>
+
+    <update id="updateVersionNo">
+        update `sc_rw_record_pool`
+        set `version_no` = #{versionNo} + 1
+        where `id` = #{id}
+        and `version_no` = #{versionNo}
+    </update>
+
+    <select id="queryWaitSyncDoCodes" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_rw_record_pool
+        where sync_status = 1  <!--  0-无需同步 1-待同步交货信息 2-已同步 -->
+        and is_available = 1
+        and is_deleted = 0
+        and record_status!=2
+        and create_time > DATE_SUB(NOW(),INTERVAL 15 DAY)
+        limit #{page},#{maxResult}
+    </select>
+
+    <update id="updateTohasSync">
+        update `sc_rw_record_pool`
+        set sync_status = 2
+        where `id` = #{id}
+        and sync_status = 1
+    </update>
+
+    <update id="batchUpdateTohasSync">
+        update `sc_rw_record_pool`
+        set sync_status = 2
+        where sync_status = 1
+        and id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!-- 合单后，回写Do池数据 -->
+    <update id="updateNewRecordInfo" parameterType="com.lyf.scm.core.domain.entity.online.RecordPoolE">
+        update sc_rw_record_pool
+        set warehouse_record_id = #{warehouseRecordId},
+        warehouse_record_code = #{warehouseRecordCode},
+        real_warehouse_id = #{realWarehouseId},
+        virtual_warehouse_id =#{virtualWarehouseId},
+        <if test="null != logisticsCode and  ''!= logisticsCode">
+            logistics_code = #{logisticsCode},
+        </if>
+        modifier = #{modifier}
+        where warehouse_record_id = #{beforeRecordId}
+    </update>
+
+    <!--更新DO单池状态为待合单 修改物流信息和仓库信息-->
+    <update id="updateRwInfoAndLogisticInfo" parameterType="com.lyf.scm.core.domain.entity.online.RecordPoolE">
+        update `sc_rw_record_pool` set
+        <if test="null != logisticsCode and  ''!= logisticsCode">
+            logistics_code = #{logisticsCode},
+        </if>
+        merge_fingerprint = #{mergeFingerprint},
+        real_warehouse_id = #{realWarehouseId},
+        virtual_warehouse_id = #{virtualWarehouseId}
+        where id = #{id}
+        and
+        record_status = 99
+    </update>
+
+    <select id="queryPoolByWarehouseRecordCodes" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        `sc_rw_record_pool`
+        where is_deleted = 0
+        AND is_available = 1
+        and warehouse_record_code in
+        <foreach collection="warehouseRecordCodes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryPoolWarehouseRecordIdByLogisticsCodeList" resultType="java.lang.Long">
+        select warehouse_record_id
+        from
+        `sc_rw_record_pool`
+        where is_deleted = 0
+        AND is_available = 1
+        and logistics_code in
+        <foreach collection="logisticsCodeList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

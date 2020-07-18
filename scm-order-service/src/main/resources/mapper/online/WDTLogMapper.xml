@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.online.WDTLogMapper">
+
+
+    <resultMap id="SaleLogMap" type="com.lyf.scm.core.domain.entity.online.WDTLogE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="out_record_code" property="outRecordCode"/>
+        <result column="origin_order_code" property="originOrderCode"/>
+        <result column="type" property="type"/>
+        <result column="before_value" property="beforeValue"/>
+        <result column="after_value" property="afterValue"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+
+    <!--保存 -->
+    <insert id="saveLog" parameterType="com.lyf.scm.core.domain.entity.online.WDTLogE"
+            useGeneratedKeys="true" keyProperty="id">
+		insert into sc_wdt_operate_log(record_code,origin_order_code,out_record_code,type,before_value,after_value,creator)
+		values(#{recordCode},#{originOrderCode},#{outRecordCode},#{type},#{beforeValue},#{afterValue},#{creator})
+	</insert>
+
+   <!-- <select id="queryOperateLog" resultMap="SaleLogMap">
+        select id , record_code , origin_order_code ,out_record_code ,type,before_value,after_value,creator,create_time
+        from sc_wdt_operate_log
+        where `is_deleted`= 0
+        and `is_available` = 1
+        <if test="null != startTime">
+            and `create_time` >= #{startTime}
+        </if>
+        <if test="null != endTime">
+            <![CDATA[ 	and `create_time`  <= #{endTime} ]]>
+        </if>
+        <if test="null != userId">
+            and `creator` = #{userId}
+        </if>
+        <if test="null != type">
+            and `type` = #{type}
+        </if>
+
+        <if test="null != recordCode and '' != recordCode">
+            and `record_code` = #{recordCode}
+        </if>
+        <if test="null != outRecordCode and '' != outRecordCode">
+            and `out_record_code` = #{outRecordCode}
+        </if>
+        <if test="null != originOrderCode and '' != originOrderCode">
+            and `origin_order_code` = #{originOrderCode}
+        </if>
+        <if test="null != type">
+            and `type` = #{type}
+        </if>
+        <if test="null != type">
+            and `type` = #{type}
+        </if>
+    </select>-->
+
+
+</mapper>

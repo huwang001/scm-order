@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.order.OrderDetailMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.order.OrderDetailE" >
+		<id column="id" property="id" jdbcType="BIGINT" />
+	   <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+	   <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+	   <result column="order_qty" property="orderQty" jdbcType="DECIMAL" />
+	   <result column="require_qty" property="requireQty" jdbcType="DECIMAL" />
+	   <result column="has_lock_qty" property="hasLockQty" jdbcType="DECIMAL" />
+	   <result column="delivery_unit_code" property="deliveryUnitCode" jdbcType="VARCHAR" />
+	   <result column="scale" property="scale" jdbcType="DECIMAL" />
+	   <result column="unit" property="unit" jdbcType="VARCHAR" />
+	   <result column="unit_code" property="unitCode" jdbcType="VARCHAR" />
+	   <result column="lock_status" property="lockStatus" jdbcType="TINYINT" />
+	   <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	   <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	   <result column="creator" property="creator" jdbcType="BIGINT" />
+	   <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	   <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	   <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	   <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+	   <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+	   <result column="app_id" property="appId" jdbcType="VARCHAR" />
+	 </resultMap>
+	 
+	 <sql id="Base_Column_List" >
+	   id, order_code, sku_code, order_qty, require_qty, has_lock_qty, delivery_unit_code, 
+	   scale, unit, unit_code, lock_status, create_time, update_time, creator, modifier, 
+	   is_available, is_deleted, version_no, tenant_id, app_id
+	 </sql>
+
+    <sql id="where_base_column">
+      and `is_deleted` = 0 and `is_available` = 1
+    </sql>
+
+    <select id="queryOrderDetailByRecordCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order_detail
+        where order_code = #{orderCode}
+        <include refid="where_base_column"/>
+    </select>
+
+    <insert id="batchInsertOrderDetail" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        insert into scm_order_detail(order_code, sku_code, order_qty, require_qty, has_lock_qty, delivery_unit_code,
+        `scale`, unit, unit_code, creator, tenant_id, app_id)
+        values
+        <foreach collection="batchList" item="item" separator="," close=";">
+            (#{item.orderCode}, #{item.skuCode}, #{item.orderQty}, #{item.requireQty}, #{item.hasLockQty}, #{item.deliveryUnitCode},
+            #{item.scale}, #{item.unit}, #{item.unitCode}, #{item.creator}, #{item.tenantId}, #{item.appId})
+        </foreach>
+    </insert>
+
+    <update id="batchUpdateOrderDetail" parameterType="java.util.List">
+        update scm_order_detail
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="has_lock_qty =(case" suffix="end),">
+                <foreach collection="batchList" item="item">
+                    <if test="item.hasLockQty != null">
+                        when id = #{item.id} then #{item.hasLockQty}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="lock_status =(case" suffix="end),">
+                <foreach collection="batchList" item="item">
+                    <if test="item.lockStatus != null">
+                        when id = #{item.id} then #{item.lockStatus}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="modifier =(case" suffix="end),">
+                <foreach collection="batchList" item="item">
+                    <if test="item.modifier != null">
+                        when id = #{item.id} then #{item.modifier}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        <where>
+            id in
+            <foreach collection="batchList" item="item" index="index" open="(" separator="," close=")">
+                #{item.id}
+            </foreach>
+            AND is_available = 1 AND is_deleted = 0
+        </where>
+    </update>
+
+    <select id="findByOrderCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order_detail
+        where order_code = #{orderCode}
+        <include refid="where_base_column"/>
+    </select>
+
+    <select id="findPageByOrderCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from scm_order_detail
+        where order_code = #{orderCode}
+        <include refid="where_base_column"/>
+    </select>
+    
+    <!-- 根据预约单号查询预约单明细列表 -->
+    <select id="queryByOrderCode" resultMap="BaseResultMap">
+    	select <include refid="Base_Column_List" />
+        from scm_order_detail
+        where order_code = #{orderCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+</mapper>

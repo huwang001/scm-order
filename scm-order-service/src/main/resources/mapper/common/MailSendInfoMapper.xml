@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.common.MailSendInfoMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.common.MailSendInfoE">
+		<id column="id" property="id"/>
+		<result column="send_user_mail" property="sendUserMail"/>
+		<result column="receive_user_mail" property="receiveUserMail"/>
+		<result column="mail_title" property="mailTitle"/>
+		<result column="mail_content" property="mailContent"/>
+		<result column="send_status" property="sendStatus"/>
+		<result column="send_times" property="sendTimes"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="is_available" property="isAvailable"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="version_no" property="versionNo"/>
+	</resultMap>
+
+	<sql id="BASE_COLUMN">
+		id
+		,send_user_mail
+		,receive_user_mail
+		,mail_title
+		,mail_content
+		,send_status
+		,send_times
+		,create_time
+		,update_time
+		,is_available
+		,is_deleted
+    </sql>
+
+    <select id="queryMailByStatus" resultMap="BaseResultMap">
+		select
+			<include refid="BASE_COLUMN" />
+		from
+			scm_mail_send_info
+		where
+			is_deleted = 0 and is_available = 1
+			and send_status= 1
+		    and create_time &gt;= #{startTime}
+			and create_time &lt;= #{endTime}
+	</select>
+
+	<update id="updateStatusToComplete">
+		update
+			scm_mail_send_info
+		set
+			send_status= 2,
+			send_times= send_times + 1
+		where
+			is_deleted = 0 and is_available = 1
+			and id = #{id}
+			and send_status = 1
+	</update>
+
+	<insert id="saveSendMail" parameterType="com.lyf.scm.core.api.dto.common.MailSendInfoDTO">
+		insert into scm_mail_send_info(send_user_mail,receive_user_mail,mail_title,mail_content,send_status)
+		values(#{sendUserMail},#{receiveUserMail},#{mailTitle},#{mailContent},#{sendStatus})
+	</insert>
+
+</mapper>

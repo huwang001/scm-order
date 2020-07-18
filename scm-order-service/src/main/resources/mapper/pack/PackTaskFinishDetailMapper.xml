@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.pack.PackTaskFinishDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.pack.PackTaskFinishDetailE">
+        <id column="id" property="id"/>
+        <result column="record_code" property="recordCode"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="sku_qty" property="skuQty"/>
+        <result column="unit" property="unit"/>
+        <result column="unit_code" property="unitCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="remark" property="remark"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, record_code, sku_code, sku_qty, unit, unit_code, create_time,
+        update_time, creator, modifier, remark, is_available, is_deleted, version_no, tenant_id, app_id
+    </sql>
+
+    <insert id="saveTaskFinishDetail" parameterType="com.lyf.scm.core.domain.entity.pack.PackTaskFinishDetailE"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into scm_pack_task_fininsh_detail (record_code, sku_code, sku_qty, unit, unit_code)
+        values
+        <foreach collection="list" item="detail" separator="," close=";">
+            (#{detail.recordCode}, #{detail.skuCode}, #{detail.skuQty}, #{detail.unit}, #{detail.unitCode})
+        </foreach>
+    </insert>
+
+    <select id="queryFinishDetailListByFrontRecordCodeList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_task_fininsh_detail
+        where is_available = 1 and is_deleted = 0 and record_code in
+        <foreach item="recordCode" index="index" collection="list" open="(" separator="," close=")">
+            #{recordCode}
+        </foreach>
+    </select>
+</mapper>

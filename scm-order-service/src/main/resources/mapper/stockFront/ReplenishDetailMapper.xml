@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.ReplenishRecordDetailMapper">
+    <resultMap id="baseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.ReplenishDetailE">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode" />
+        <result column="front_record_id" jdbcType="BIGINT" property="frontRecordId" />
+        <result column="sku_id" jdbcType="BIGINT" property="skuId" />
+        <result column="sku_code" jdbcType="VARCHAR" property="skuCode" />
+        <result column="sap_po_no" jdbcType="VARCHAR" property="sapPoNo" />
+        <result column="line_no" jdbcType="VARCHAR" property="lineNo" />
+        <result column="sku_qty" jdbcType="DECIMAL" property="skuQty" />
+        <result column="left_basic_sku_qty" jdbcType="DECIMAL" property="leftBasicSkuQty" />
+        <result column="allot_qty" jdbcType="DECIMAL" property="allotQty" />
+        <result column="unit" jdbcType="VARCHAR" property="unit" />
+        <result column="unit_code" jdbcType="VARCHAR" property="unitCode" />
+        <result column="sku_scale" jdbcType="DECIMAL" property="skuScale" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="creator" jdbcType="BIGINT" property="creator" />
+        <result column="modifier" jdbcType="BIGINT" property="modifier" />
+        <result column="is_available" jdbcType="BIT" property="isAvailable" />
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="version_no" jdbcType="INTEGER" property="versionNo" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="app_id" jdbcType="VARCHAR" property="appId" />
+        <result column="real_out_qty" jdbcType="DECIMAL" property="realOutQty" />
+        <result column="real_in_qty" jdbcType="DECIMAL" property="realInQty" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, record_code, front_record_id, sku_id, sku_code, sap_po_no, line_no, sku_qty,
+      left_basic_sku_qty, allot_qty, unit, unit_code, sku_scale, create_time, update_time,
+      creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id, real_out_qty,
+      real_in_qty
+    </sql>
+
+    <insert id="insertDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into `sc_fr_replenish_detail`
+          ( record_code, front_record_id, sku_id, sku_code, sku_qty, unit, unit_code,
+          creator, modifier, is_available, is_deleted,
+          version_no,left_basic_sku_qty, sku_scale, line_no, sap_po_no)
+        values
+            (#{detail.recordCode}, #{detail.frontRecordId}, #{detail.skuId}, #{detail.skuCode},
+            #{detail.skuQty},#{detail.unit},#{detail.unitCode}, #{detail.creator},
+            #{detail.creator}, 1, #{detail.isDeleted},0,
+            #{detail.leftBasicSkuQty}, #{detail.skuScale},  #{detail.lineNo}, #{detail.sapPoNo})
+    </insert>
+
+    <update id="updateDetailSapPoCode">
+        update sc_fr_replenish_detail
+          set sap_po_no = #{sapPoNo}
+        where
+          front_record_id = #{recordId}
+    </update>
+
+    <update id="updateAllotDetail">
+        <foreach collection="replenishDetailEList" item="frd" separator=";" close=";">
+            update
+            sc_fr_replenish_detail
+            set
+            allot_qty = allot_qty + #{frd.allotQty},
+            left_basic_sku_qty = #{frd.leftBasicSkuQty}
+            where
+            id = #{frd.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+
+    <update id="updateRealOutQty">
+        <foreach collection="frontRecordDetails" item="frd" separator=";" close=";">
+            update
+            sc_fr_replenish_detail
+            set
+            real_out_qty = ifnull(real_out_qty, 0) + #{frd.skuQty}
+            where
+            id = #{frd.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+
+    <update id="updateRealInQty">
+        <foreach collection="frontRecordDetails" item="frd" separator=";" close=";">
+            update
+            sc_fr_replenish_detail
+            set
+            real_in_qty = ifnull(real_in_qty, 0) + #{frd.skuQty}
+            where
+            id = #{frd.id}
+            and is_available = 1
+            and is_deleted = 0
+        </foreach>
+    </update>
+
+    <!-- 寻源结果报表 -->
+    <!--修改-->
+    <select id="queryReplenishReportCondition" parameterType="com.lyf.scm.core.api.dto.stockFront.ShopReplenishReportDTO"
+            resultType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+        select
+        rd.id,
+        rd.sku_code,
+        rd.unit,
+        rd.create_time,
+        rd.unit_code,
+        rd.sku_id,
+        rr.factory_code,
+        rr.record_code,
+        rr.sap_po_no,
+        rd.sku_qty,
+        rd.allot_qty,
+        rd.real_out_qty,
+        rd.real_in_qty,
+        rd.line_no,
+        rr.out_factory_code,
+        rr.out_real_warehouse_code,
+        rr.in_factory_code,
+        rr.in_real_warehouse_code,
+        rr.record_type,
+        rr.require_type,
+        rr.record_status
+        from sc_fr_replenish_detail rd
+        left join sc_fr_replenish_record rr on rd.front_record_id = rr.id
+        where rd.is_available = 1 and rd.is_deleted = 0
+        AND rr.is_available = 1 AND rr.is_deleted = 0
+        <if test="condition.sapPoNo != null and condition.sapPoNo != ''">
+            and rr.sap_po_no = #{condition.sapPoNo}
+        </if>
+        <if test="condition.factoryCode != null and condition.factoryCode != ''">
+            and rr.factory_code = #{condition.factoryCode}
+        </if>
+        <if test="condition.skuCode != null and condition.skuCode != ''">
+            and rd.sku_code = #{condition.skuCode}
+        </if>
+        <if test="condition.startTime != null">
+            and rr.out_create_time <![CDATA[  >=  ]]> #{condition.startTime}
+        </if>
+        <if test="condition.endTime != null">
+            and rr.out_create_time <![CDATA[  <=  ]]> #{condition.endTime}
+        </if>
+        <if test="condition.recordStatus != null">
+            and rr.record_status = #{condition.recordStatus}
+        </if>
+        <if test="condition.frontRecordCodeList != null and condition.frontRecordCodeList .size() > 0">
+            and rr.record_code in
+            <foreach collection="condition.frontRecordCodeList" item="recordCode" separator="," open="(" close=")">
+                #{recordCode}
+            </foreach>
+        </if>
+        <if test="condition.outRWId != null">
+            and rr.out_real_warehouse_id = #{condition.outRWId}
+        </if>
+        <if test="condition.inRWId != null">
+            and rr.in_real_warehouse_id = #{condition.inRWId}
+        </if>
+        <if test="condition.frontRecordType != null">
+            and rr.record_type = #{condition.frontRecordType}
+        </if>
+        order by rd.id desc
+    </select>
+
+    <!-- 交货单汇总 -->
+    <select id="statReplenishReport" parameterType="com.lyf.scm.core.api.dto.stockFront.ShopReplenishReportDTO"
+            resultType="com.lyf.scm.core.domain.entity.stockFront.ShopReplenishReportStatE">
+        select rr.factory_code, rr.record_type, rr.require_type,out_wr.real_warehouse_code realWarehouseOutCode,
+        count(distinct rr.id) poCount, count(distinct out_wr.id) outRecordCount, count(distinct out_wr.sap_order_code) sapOrderCount
+        from sc_fr_replenish_detail rd join sc_fr_replenish_record rr on rd.front_record_id = rr.id
+        join sc_front_warehouse_record_relation rela on rr.id = rela.front_record_id
+        join sc_warehouse_record out_wr on rela.warehouse_record_id = out_wr.id and out_wr.business_type = 1
+        where rd.is_available = 1 and rd.is_deleted = 0
+        and out_wr.is_available = 1 and out_wr.is_deleted = 0
+        <if test="condition.sapPoNo != null and condition.sapPoNo != ''">
+            and rr.sap_po_no = #{condition.sapPoNo}
+        </if>
+        <if test="condition.sapOrderCode != null and condition.sapOrderCode != ''">
+            and out_wr.sap_order_code = #{condition.sapOrderCode}
+        </if>
+        <if test="condition.factoryCode != null and condition.factoryCode != ''">
+            and rr.factory_code = #{condition.factoryCode}
+        </if>
+        <if test="condition.skuCode != null and condition.skuCode != ''">
+            and rd.sku_code = #{condition.skuCode}
+        </if>
+        <if test="condition.startTime != null">
+            <![CDATA[ and rr.out_create_time   >=  date_format(#{condition.startTime},'%Y-%m-%d %H:%i:%s') ]]>
+        </if>
+        <if test="condition.endTime != null">
+            <![CDATA[ and rr.out_create_time   <=  date_format(#{condition.endTime},'%Y-%m-%d %H:%i:%s') ]]>
+        </if>
+        group by rr.factory_code, rr.record_type, rr.require_type
+    </select>
+
+    <delete id="deleteDetailByFrontId">
+        update
+          sc_fr_replenish_detail
+        SET
+          is_deleted = 1
+        WHERE
+          front_record_id = #{frontId}
+          and is_available = 1
+          and is_deleted = 0
+    </delete>
+
+    <select id="queryDetailByRecordIds" resultMap="baseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_replenish_detail
+        where
+        is_available = 1
+        and is_deleted = 0
+        and front_record_id in
+        <foreach collection="recordIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryDetailByRecordId" resultMap="baseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          sc_fr_replenish_detail
+        where
+          is_available = 1
+          and is_deleted = 0
+          and front_record_id = #{recordId}
+    </select>
+
+</mapper>

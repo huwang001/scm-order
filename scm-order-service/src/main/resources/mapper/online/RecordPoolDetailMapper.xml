@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.online.RecordPoolDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.online.RecordPoolDetailE">
+        <result column="id" property="id"/>
+        <result column="record_pool_id" property="recordPoolId"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="sku_qty" property="skuQty"/>
+        <result column="unit" property="unit"/>
+        <result column="unit_code" property="unitCode"/>
+        <result column="real_warehouse_id" property="realWarehouseId"/>
+        <result column="factory_code" property="factoryCode"/>
+        <result column="real_warehouse_code" property="realWarehouseCode"/>
+        <result column="virtual_warehouse_id" property="virtualWarehouseId"/>
+        <result column="virtual_warehouse_code" property="virtualWarehouseCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="is_available" property="isAvailable"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="version_no" property="versionNo"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="app_id" property="appId"/>
+        <result column="basic_sku_qty" property="basicSkuQty"/>
+        <result column="basic_unit" property="basicUnit"/>
+        <result column="basic_unit_code" property="basicUnitCode"/>
+        <result column="do_code" property="doCode"/>
+        <result column="line_no" property="lineNo"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,`record_pool_id`,`sku_id`,`sku_code`,`sku_qty`,`unit`,`unit_code`,`real_warehouse_id`,`factory_code`,`real_warehouse_code`,
+        `virtual_warehouse_id`,`virtual_warehouse_code`,`create_time`, `update_time`, `creator`,`modifier`,`is_available`,`is_deleted`,
+        `version_no`,`tenant_id`,`app_id`,`basic_sku_qty`,`basic_unit`,`basic_unit_code`,`do_code`,`line_no`
+    </sql>
+
+    <insert id="insertAllRwRecordPoolDetail" parameterType="java.util.List">
+        insert into `sc_rw_record_pool_detail`(`do_code`,
+        `record_pool_id`, `sku_id`, `sku_code`, `sku_qty`, `unit`, `unit_code`,`basic_sku_qty`, `basic_unit`,
+        `basic_unit_code`, `real_warehouse_id`, `virtual_warehouse_id`,
+        `creator`, `modifier`, `is_available`, `is_deleted`, `version_no`,`line_no`
+        ) values
+        <foreach collection="rwRecordPoolDetails" item="detail" separator="," close=";">
+            (#{detail.doCode},#{detail.recordPoolId},#{detail.skuId},#{detail.skuCode},#{detail.skuQty},#{detail.unit},#{detail.unitCode},
+            #{detail.basicSkuQty},#{detail.basicUnit},#{detail.basicUnitCode},#{detail.realWarehouseId},#{detail.virtualWarehouseId},#{detail.creator},
+            #{detail.creator},1,0,0,#{detail.lineNo})
+        </foreach>
+    </insert>
+
+    <select id="queryByRecordPoolIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `sc_rw_record_pool_detail`
+        <where>
+            `record_pool_id` in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND is_deleted = 0
+            AND is_available = 1
+        </where>
+    </select>
+
+    <update id="updateQty">
+        update sc_rw_record_pool_detail
+        set sku_qty = #{skuQty},basic_sku_qty=#{basicSkuQty}
+        where id = #{id}
+        AND is_deleted = 0
+        AND is_available = 1
+    </update>
+
+    <!--根据前置单ID批量修改明细的实仓和虚仓-->
+    <update id="updateDetailRwInfo">
+        update sc_rw_record_pool_detail
+        set
+        real_warehouse_id = #{realWarehouseId},
+        virtual_warehouse_id = #{virtualWarehouseId}
+        where
+        record_pool_id = #{recordPoolId}
+    </update>
+</mapper>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.FrReplenishRecordMapper">
+    <resultMap id="baseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+    </resultMap>
+
+    <sql id="select_base_column">
+    id, record_code, out_record_code, channel_code, shop_code, shop_name,
+    shop_type, require_type, record_type, record_status, out_real_warehouse_id,
+     in_real_warehouse_id, out_create_time, replenish_time, create_time,
+     update_time, creator, modifier, is_available, is_deleted, tenant_id, app_id,
+     is_need_allot,is_need_dispatch,sap_po_no,factory_code
+  </sql>
+
+    <!--查询： outRecordCode-->
+    <select id="queryNumByOutRecordCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(out_record_code)
+        from sc_fr_replenish_record
+        where
+		 out_record_code =#{outRecordCode} and is_deleted  = 0
+    </select>
+
+    <insert id="insert" parameterType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE"
+            useGeneratedKeys="true" keyProperty="id">
+    insert into `sc_fr_replenish_record` (   record_code, out_record_code, channel_code,
+    shop_code, shop_name,shop_type, require_type, record_type, record_status, out_real_warehouse_id,
+     in_real_warehouse_id, out_create_time, replenish_time,
+     creator, modifier, is_available, is_deleted,is_need_allot,is_need_dispatch,sap_po_no,factory_code)
+    values (
+      #{recordCode},#{outRecordCode},#{channelCode},#{shopCode},#{shopName},#{shopType},
+      #{requireType},#{recordType},#{recordStatus},#{outRealWarehouseId},#{inRealWarehouseId},
+      #{outCreateTime},#{replenishTime},#{creator},#{creator},
+      1,0,#{isNeedAllot},#{isNeedDispatch},#{sapPoNo},#{factoryCode}
+    )
+  </insert>
+
+    <select id="queryByRecordCode"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE"
+            resultMap="baseResultMap">
+        select
+        <include refid="select_base_column"/>
+        from `sc_fr_replenish_record`
+        <where>
+            record_code = #{recordCode}
+            <include refid="where_base_column"/>
+        </where>
+    </select>
+
+    <select id="queryByOutRecordCode"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE"
+            resultMap="baseResultMap">
+        select
+        <include refid="select_base_column"/>
+        from `sc_fr_replenish_record`
+        <where>
+            out_record_code = #{outRecordCode}
+            <include refid="where_base_column"/>
+        </where>
+    </select>
+
+    <!--根据内采单号查询补货单【内采前置单】-->
+    <select id="queryBySapPoNo" resultMap="baseResultMap">
+        select
+        <include refid="select_base_column"/>
+        from `sc_fr_replenish_record`
+        <where>
+            sap_po_no = #{sapPoNo}
+            <include refid="where_base_column"/>
+        </where>
+    </select>
+
+    <select id="queryByWhere" resultMap="baseResultMap">
+        SELECT fr.`record_code`, fr.`out_record_code`, fr.`shop_code`, fr.`record_type`, fr.`record_status`,
+        fr.`in_real_warehouse_id`, fr.`out_real_warehouse_id`, fr.`create_time`,
+        rw1.`real_warehouse_name` `in_rw_name`, rw2.`real_warehouse_name` `out_rw_name`, rw2.`real_warehouse_code`
+        FROM `sc_fr_replenish_record` fr, `sc_real_warehouse` rw1, `sc_real_warehouse` rw2
+        <where>
+            fr.`in_real_warehouse_id` = rw1.`id` and fr.`out_real_warehouse_id` = rw2.`id`
+            and fr.`is_deleted` = 0 and rw1.`is_deleted` = 0 and rw2.`is_deleted` = 0
+            <if test="null != recordCode and  '' != recordCode">
+                and fr.`record_code` = #{recordCode}
+            </if>
+            <if test="null != inRealWarehouseId and  0 != inRealWarehouseId">
+                and fr.`in_real_warehouse_id` = #{inRealWarehouseId}
+            </if>
+            <if test="null != outRealWarehouseId and  0 != outRealWarehouseId">
+                and fr.`out_real_warehouse_id` = #{outRealWarehouseId}
+            </if>
+            <if test="null != recordType">
+                and fr.`record_type` = #{recordType}
+            </if>
+            <if test="null != recordStatus">
+                and fr.`record_status` = #{recordStatus}
+            </if>
+            <if test="null != startTime and  '' != startTime">
+                and fr.`create_time` &gt; #{startTime}
+            </if>
+            <if test="null != endTime and  '' != endTime">
+                and fr.`create_time` &lt; #{endTime}
+            </if>
+        </where>
+        order by fr.`create_time` DESC
+    </select>
+
+    <!--更新直送补货前置单状态为已入库-->
+    <update id="updateInitToAllocation">
+        <bind name="beforeRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@INIT"/>
+        <bind name="afterRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@IN_ALLOCATION"/>
+        update `sc_fr_replenish_record` set `record_status` = #{afterRecordStatus.status}
+        where `id` = #{id} and `record_status` = #{beforeRecordStatus.status}
+    </update>
+
+    <!--更新加盟门店补货前置单状态为已派车-->
+    <update id="updateToTMS">
+        <bind name="beforeRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@INIT"/>
+        <bind name="afterRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@TMS"/>
+        update `sc_fr_replenish_record` set `record_status` = #{afterRecordStatus.status},
+        is_need_dispatch = #{ isNeedDispatch }
+        where `id` = #{id} and `record_status` = #{beforeRecordStatus.status}
+        and is_need_dispatch = 0
+    </update>
+
+    <!--更新门店补货前置单状态为已出库-->
+    <update id="updateToOutAllocation">
+        <bind name="beforeRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@TMS"/>
+        <bind name="afterRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@OUT_ALLOCATION"/>
+        update `sc_fr_replenish_record` set `record_status` = #{afterRecordStatus.status}
+        where `id` = #{id} and `record_status` = #{beforeRecordStatus.status}
+    </update>
+
+    <sql id="where_base_column">
+    AND `is_deleted` = 0
+  </sql>
+
+    <select id="getById" parameterType="java.lang.Long"
+            resultType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+        SELECT
+        <include refid="select_base_column"/>
+        from
+        sc_fr_replenish_record
+        where
+        is_available = 1
+        and is_deleted = 0
+        and id = #{id}
+    </select>
+
+    <select id="getByIds" resultType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+        SELECT
+        <include refid="select_base_column"/>
+        from
+        sc_fr_replenish_record
+        where
+        is_available = 1
+        and is_deleted = 0
+        and id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateToDelivery" parameterType="java.lang.Long">
+    update sc_fr_replenish_record
+    set record_status = 11
+    where
+    is_available = 1
+    and is_deleted = 0
+    and id = #{id}
+    and record_status = 10
+  </update>
+
+    <!--分页获取待分配的订单-->
+    <select id="getWaitAllotRecord" resultMap="baseResultMap">
+        select
+        <include refid="select_base_column"/>
+        from
+        sc_fr_replenish_record
+        where is_available = 1
+        and is_deleted = 0
+        and record_type in(15, 45)
+        and record_status != 2
+        and is_need_allot = 1
+        <choose>
+          <when test="allotDTO.channelCode != null and allotDTO.channelCode != ''">
+              AND channel_code = #{allotDTO.channelCode}  AND factory_code = #{allotDTO.factoryCode}
+          </when>
+            <otherwise>
+                <if test="allotDTO.factoryCode != null and allotDTO.factoryCode != ''">
+                    AND factory_code = #{allotDTO.factoryCode} and channel_code != #{allotDTO.defaultChannelCode}
+                </if>
+          </otherwise>
+        </choose>
+        <choose>
+          <when test="allotDTO.poList != null and allotDTO.poList.size > 0">
+                and out_create_time >= curdate() - 7
+                AND out_record_code in
+                <foreach collection="allotDTO.poList" item="po" open="(" separator="," close=")">
+                    #{po}
+                </foreach>
+            </when>
+            <otherwise>
+                and out_create_time >= curdate() - #{allotValue}
+            </otherwise>
+        </choose>
+        ORDER BY id ASC
+        limit #{page}, #{rows}
+    </select>
+
+    <!--修改前置单单据为分配成功-->
+    <update id="updateToAllotSucc" parameterType="java.lang.Long">
+    update sc_fr_replenish_record
+      set record_status = 15
+    where
+    is_available = 1
+    and is_deleted = 0
+    and id = #{id}
+    and record_status = 0
+  </update>
+
+    <!--修改前置单单据为分配失败-->
+    <update id="updateToAllotFailList" parameterType="java.util.List">
+        update sc_fr_replenish_record
+        set record_status = 16
+        where
+        is_available = 1
+        and is_deleted = 0
+        and id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        and record_status = 0
+    </update>
+
+    <!--修改前置单单据为取消-->
+    <update id="updateToCancle" parameterType="list">
+        <bind name="beforeRecordStatus1" value="@com.rome.stock.core.constant.FrontRecordStatusVO@INIT"/>
+        <bind name="beforeRecordStatus2" value="@com.rome.stock.core.constant.FrontRecordStatusVO@TMS"/>
+        <bind name="afterRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@DISABLED"/>
+        update sc_fr_replenish_record
+        set record_status = #{afterRecordStatus.status}
+        where
+        is_available = 1
+        and is_deleted = 0
+        and id in
+        <foreach collection="idList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and record_status in(#{beforeRecordStatus1.status},#{beforeRecordStatus2.status} )
+    </update>
+
+    <!--更新出库仓库ID-->
+    <update id="updateOutWarehouseId">
+    update sc_fr_replenish_record
+    set out_real_warehouse_id = #{realWarehouse.id},
+    factory_code = #{realWarehouse.factoryCode}
+    where
+    id = #{id}
+    and out_real_warehouse_id is null
+  </update>
+
+    <!--更新出库仓库ID和寻源状态-->
+    <update id="updateOutWhIdAndAllotStatus">
+    update sc_fr_replenish_record
+    set out_real_warehouse_id = #{outWarehouseId},
+    is_need_allot = #{allotStatus}
+    where
+    id = #{id}
+    and out_real_warehouse_id is null
+  </update>
+
+    <!--修改sapPoCode-->
+    <update id="updateSapPoCode">
+        <bind name="beforeRecordStatus" value="@com.rome.stock.core.constant.FrontRecordStatusVO@INIT"/>
+        update sc_fr_replenish_record
+        set sap_po_no = #{sapPoNo}
+        where
+        id = #{id}
+        and record_status = #{beforeRecordStatus.status}
+    </update>
+    <select id="queryFrontRecordByIds"
+            resultType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+        select id,record_code,out_record_code,record_type from sc_fr_replenish_record where is_available = 1 and
+        is_deleted = 0
+        <if test="idList != null and idList.size()>0">
+            and id in
+            <foreach collection="idList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="queryFrontRecordCodesByInShopCode"
+            resultType="java.lang.String">
+        select DISTINCT record_code from sc_fr_replenish_record where is_available = 1 and is_deleted = 0
+        <if test="inShopCode != null and inShopCode != ''">
+            AND shop_code = #{inShopCode}
+        </if>
+        <if test="sapPoNos != null and sapPoNos.size > 0">
+            AND sap_po_no in
+            <foreach collection="sapPoNos" item="sapPoNo" open="(" close=")" separator=",">
+                #{sapPoNo}
+            </foreach>
+        </if>
+        <if test="outRecordCode != null and outRecordCode != ''">
+            AND out_record_code = #{outRecordCode}
+        </if>
+    </select>
+    <select id="queryFrontRecordByRecordCodes" parameterType="java.util.List"
+            resultType="com.lyf.scm.core.domain.entity.stockFront.ReplenishRecordE">
+        SELECT * FROM sc_fr_replenish_record WHERE is_available = 1 AND is_deleted = 0
+        <if test="frontRecordCodes != null and frontRecordCodes.size()>0">
+            AND record_code IN
+            <foreach collection="frontRecordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="getShopInfo" resultType="java.util.Map">
+        SELECT DISTINCT shop_name,shop_code FROM sc_fr_replenish_record WHERE is_available = 1 AND is_deleted = 0
+    </select>
+</mapper>

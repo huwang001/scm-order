@@ -1,0 +1,25 @@
+#仅保留配置中心及eureka配置，其他配置已迁移到配置中心
+spring:
+  profiles: dev-zt
+  zipkin:
+    kafka:
+      topic: zipkin
+  cloud:
+    config:
+      name: ${spring.application.name}
+      profile: ${spring.profiles}
+      label: master
+      discovery:
+        service-id: CONFIG-SERVER
+        enabled: true
+
+eureka:
+  instance:
+    health-check-url-path: /actuator/health
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    metadata-map:
+      startup: ${random.int}
+  client:
+    serviceUrl:
+      defaultZone: http://zhongtai-dev.eureka.arch.lyf.intl:8761/eureka/

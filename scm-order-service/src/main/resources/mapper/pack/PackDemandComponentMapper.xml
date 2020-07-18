@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.pack.PackDemandComponentMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.pack.PackDemandComponentE">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode"/>
+        <result column="parent_sku_code" jdbcType="VARCHAR" property="parentSkuCode"/>
+        <result column="sku_code" jdbcType="VARCHAR" property="skuCode"/>
+        <result column="bom_qty" jdbcType="DECIMAL" property="bomQty"/>
+        <result column="require_qty" jdbcType="DECIMAL" property="requireQty"/>
+        <result column="actual_move_qty" jdbcType="DECIMAL" property="actualMoveQty"/>
+        <result column="require_box_qty" jdbcType="DECIMAL" property="requireBoxQty"/>
+        <result column="box_unit_rate" jdbcType="DECIMAL" property="boxUnitRate"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="unit_code" jdbcType="VARCHAR" property="unitCode"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="move_type" jdbcType="TINYINT" property="moveType"/>
+        <result column="is_pick" jdbcType="BIT" property="isPick"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+        <result column="modifier" jdbcType="BIGINT" property="modifier"/>
+        <result column="is_available" jdbcType="TINYINT" property="isAvailable"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="version_no" jdbcType="INTEGER" property="versionNo"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, record_code, parent_sku_code, sku_code, bom_qty, require_qty,
+        actual_move_qty, require_box_qty, box_unit_rate, unit, unit_code, remark, move_type,
+        is_pick, creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id,
+        create_time, update_time
+    </sql>
+
+    <select id="queryDemandComponentByPackedType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from scm_pack_demand_component where is_available = 1 and is_deleted = 0
+        and record_code = #{recordCode} and parent_sku_code = #{skuCode}
+    </select>
+
+    <!-- 根据需求编码查询需求单明细原料列表 -->
+    <select id="queryDemandComponentByRecordCode" resultMap="BaseResultMap">
+    	select <include refid="Base_Column_List"/>
+        from scm_pack_demand_component
+    	where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </select>
+
+    <!-- 批量新增原料 -->
+    <insert id="batchInsertPackDemandComponent">
+        insert into scm_pack_demand_component(
+            record_code,
+            parent_sku_code,
+            sku_code,
+            bom_qty,
+            require_qty,
+            actual_move_qty,
+            require_box_qty,
+            box_unit_rate,
+            unit,
+            unit_code,
+            remark,
+            move_type,
+            is_pick,
+            creator,
+            modifier
+        ) values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.recordCode, jdbcType=VARCHAR},
+            #{item.parentSkuCode, jdbcType=VARCHAR},
+            #{item.skuCode, jdbcType=VARCHAR},
+            #{item.bomQty, jdbcType=DECIMAL},
+            #{item.requireQty, jdbcType=DECIMAL},
+            #{item.actualMoveQty, jdbcType=DECIMAL},
+            #{item.requireBoxQty, jdbcType=DECIMAL},
+            #{item.boxUnitRate, jdbcType=DECIMAL},
+            #{item.unit, jdbcType=VARCHAR},
+            #{item.unitCode, jdbcType=VARCHAR},
+            #{item.remark, jdbcType=VARCHAR},
+            #{item.moveType, jdbcType=TINYINT},
+            #{item.isPick, jdbcType=BIT},
+            #{item.creator, jdbcType=BIGINT},
+            #{item.modifier, jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+    
+    <!-- 修改实际移库数量 -->
+    <update id="updateActualMoveQty">
+    	update scm_pack_demand_component
+    	set actual_move_qty = IFNULL(actual_move_qty, 0) + #{actualQty}
+    	where id = #{orderLineNo} and sku_code = #{skuCode} and is_available = 1 AND is_deleted = 0
+    </update>
+    
+    <!-- 根据ID查询需求单明细原料 -->
+   	<select id="queryById" resultMap="BaseResultMap">
+   		select <include refid="Base_Column_List"/>
+        from scm_pack_demand_component
+    	where id = #{id} and is_available = 1 and is_deleted = 0
+   	</select>
+
+    <!-- 根据包装需求单编号删除组件明细(物理删除) -->
+    <delete id="deleteByRecordCode">
+        delete from scm_pack_demand_component where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </delete>
+    
+</mapper>

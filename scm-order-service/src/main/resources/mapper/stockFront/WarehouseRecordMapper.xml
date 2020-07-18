@@ -1,0 +1,1056 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.WarehouseRecordMapper">
+    <resultMap id="WarehouseRecordMap" type="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordE">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode" />
+        <result column="sap_order_code" jdbcType="VARCHAR" property="sapOrderCode" />
+        <result column="business_type" jdbcType="TINYINT" property="businessType" />
+        <result column="record_status" jdbcType="TINYINT" property="recordStatus" />
+        <result column="record_type" jdbcType="TINYINT" property="recordType" />
+        <result column="user_code" jdbcType="VARCHAR" property="userCode" />
+        <result column="virtual_warehouse_id" jdbcType="BIGINT" property="virtualWarehouseId" />
+        <result column="real_warehouse_id" jdbcType="BIGINT" property="realWarehouseId" />
+        <result column="merchant_id" jdbcType="BIGINT" property="merchantId" />
+        <result column="channel_type" jdbcType="BIGINT" property="channelType" />
+        <result column="channel_code" jdbcType="VARCHAR" property="channelCode" />
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+        <result column="real_warehouse_code" jdbcType="VARCHAR" property="realWarehouseCode" />
+        <result column="virtual_warehouse_code" jdbcType="VARCHAR" property="virtualWarehouseCode" />
+        <result column="order_remark_user" jdbcType="VARCHAR" property="orderRemarkUser" />
+        <result column="out_create_time" jdbcType="TIMESTAMP" property="outCreateTime" />
+        <result column="tms_record_code" jdbcType="VARCHAR" property="tmsRecordCode" />
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+        <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+        <result column="reason" jdbcType="VARCHAR" property="reason" />
+        <result column="expect_receive_date_start" jdbcType="TIMESTAMP" property="expectReceiveDateStart" />
+        <result column="expect_receive_date_end" jdbcType="TIMESTAMP" property="expectReceiveDateEnd" />
+        <result column="reasons" jdbcType="VARCHAR" property="reasons" />
+        <result column="error_message" jdbcType="VARCHAR" property="errorMessage" />
+        <result column="relinquish_time" jdbcType="TIMESTAMP" property="relinquishTime" />
+        <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
+        <result column="receiver_time" jdbcType="TIMESTAMP" property="receiverTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="creator" jdbcType="BIGINT" property="creator" />
+        <result column="modifier" jdbcType="BIGINT" property="modifier" />
+        <result column="is_available" jdbcType="BIT" property="isAvailable" />
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="version_no" jdbcType="INTEGER" property="versionNo" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="app_id" jdbcType="VARCHAR" property="appId" />
+        <result column="sync_wms_status" jdbcType="TINYINT" property="syncWmsStatus" />
+        <result column="sync_dispatch_status" jdbcType="TINYINT" property="syncDispatchStatus" />
+        <result column="batch_status" jdbcType="INTEGER" property="batchStatus" />
+        <result column="sync_transfer_status" jdbcType="INTEGER" property="syncTransferStatus" />
+        <result column="cmp_status" jdbcType="INTEGER" property="cmpStatus" />
+        <result column="sync_trade_status" jdbcType="INTEGER" property="syncTradeStatus" />
+        <result column="sync_wms_fail_time" jdbcType="TIMESTAMP" property="syncWmsFailTime" />
+        <result column="sync_fulfillment_status" jdbcType="INTEGER" property="syncFulfillmentStatus" />
+        <result column="sync_stock_status" jdbcType="TINYINT" property="syncStockStatus" />
+        <result column="sync_tmsb_status" jdbcType="TINYINT" property="syncTmsbStatus" />
+        <result column="self_takeout" jdbcType="TINYINT" property="selfTakeout" />
+        <result column="out_or_in_time" jdbcType="TIMESTAMP" property="outOrInTime" />
+    </resultMap>
+
+    <sql id="BASE_COLUMN">
+       id, record_code, sap_order_code, business_type, record_status, record_type, user_code,
+      virtual_warehouse_id, real_warehouse_id, merchant_id, channel_type, channel_code,
+      factory_code, factory_name, real_warehouse_code, virtual_warehouse_code, order_remark_user,
+      out_create_time, tms_record_code, pay_time, mobile, reason, expect_receive_date_start,
+      expect_receive_date_end, reasons, error_message, relinquish_time, delivery_time,
+      receiver_time, create_time, update_time, creator, modifier, is_available, is_deleted,
+      version_no, tenant_id, app_id, sync_wms_status, sync_dispatch_status, batch_status,
+      sync_transfer_status, cmp_status, sync_trade_status, sync_wms_fail_time, sync_fulfillment_status,
+      sync_stock_status, sync_tmsb_status, self_takeout, out_or_in_time
+    </sql>
+
+	<!-- 保存出入库单 -->
+    <insert id="insertWarehouseRecord" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordE">
+        insert into sc_warehouse_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="recordCode != null">
+                record_code,
+            </if>
+            <if test="sapOrderCode != null">
+                sap_order_code,
+            </if>
+            <if test="businessType != null">
+                business_type,
+            </if>
+            <if test="recordStatus != null">
+                record_status,
+            </if>
+            <if test="recordType != null">
+                record_type,
+            </if>
+            <if test="userCode != null">
+                user_code,
+            </if>
+            <if test="virtualWarehouseId != null">
+                virtual_warehouse_id,
+            </if>
+            <if test="realWarehouseId != null">
+                real_warehouse_id,
+            </if>
+            <if test="merchantId != null">
+                merchant_id,
+            </if>
+            <if test="channelType != null">
+                channel_type,
+            </if>
+            <if test="channelCode != null">
+                channel_code,
+            </if>
+            <if test="factoryCode != null">
+                factory_code,
+            </if>
+            <if test="factoryName != null">
+                factory_name,
+            </if>
+            <if test="realWarehouseCode != null">
+                real_warehouse_code,
+            </if>
+            <if test="virtualWarehouseCode != null">
+                virtual_warehouse_code,
+            </if>
+            <if test="orderRemarkUser != null">
+                order_remark_user,
+            </if>
+            <if test="outCreateTime != null">
+                out_create_time,
+            </if>
+            <if test="tmsRecordCode != null">
+                tms_record_code,
+            </if>
+            <if test="payTime != null">
+                pay_time,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="expectReceiveDateStart != null">
+                expect_receive_date_start,
+            </if>
+            <if test="expectReceiveDateEnd != null">
+                expect_receive_date_end,
+            </if>
+            <if test="reasons != null">
+                reasons,
+            </if>
+            <if test="errorMessage != null">
+                error_message,
+            </if>
+            <if test="relinquishTime != null">
+                relinquish_time,
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time,
+            </if>
+            <if test="receiverTime != null">
+                receiver_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="modifier != null">
+                modifier,
+            </if>
+            <if test="isAvailable != null">
+                is_available,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="versionNo != null">
+                version_no,
+            </if>
+            <if test="tenantId != null">
+                tenant_id,
+            </if>
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="syncWmsStatus != null">
+                sync_wms_status,
+            </if>
+            <if test="syncDispatchStatus != null">
+                sync_dispatch_status,
+            </if>
+            <if test="batchStatus != null">
+                batch_status,
+            </if>
+            <if test="syncTransferStatus != null">
+                sync_transfer_status,
+            </if>
+            <if test="cmpStatus != null">
+                cmp_status,
+            </if>
+            <if test="syncTradeStatus != null">
+                sync_trade_status,
+            </if>
+            <if test="syncWmsFailTime != null">
+                sync_wms_fail_time,
+            </if>
+            <if test="syncFulfillmentStatus != null">
+                sync_fulfillment_status,
+            </if>
+            <if test="syncStockStatus != null">
+                sync_stock_status,
+            </if>
+            <if test="syncTmsbStatus != null">
+                sync_tmsb_status,
+            </if>
+            <if test="selfTakeout != null">
+                self_takeout,
+            </if>
+            <if test="outOrInTime != null">
+                out_or_in_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="recordCode != null">
+                #{recordCode,jdbcType=VARCHAR},
+            </if>
+            <if test="sapOrderCode != null">
+                #{sapOrderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="businessType != null">
+                #{businessType,jdbcType=TINYINT},
+            </if>
+            <if test="recordStatus != null">
+                #{recordStatus,jdbcType=TINYINT},
+            </if>
+            <if test="recordType != null">
+                #{recordType,jdbcType=TINYINT},
+            </if>
+            <if test="userCode != null">
+                #{userCode,jdbcType=VARCHAR},
+            </if>
+            <if test="virtualWarehouseId != null">
+                #{virtualWarehouseId,jdbcType=BIGINT},
+            </if>
+            <if test="realWarehouseId != null">
+                #{realWarehouseId,jdbcType=BIGINT},
+            </if>
+            <if test="merchantId != null">
+                #{merchantId,jdbcType=BIGINT},
+            </if>
+            <if test="channelType != null">
+                #{channelType,jdbcType=BIGINT},
+            </if>
+            <if test="channelCode != null">
+                #{channelCode,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryCode != null">
+                #{factoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="factoryName != null">
+                #{factoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="realWarehouseCode != null">
+                #{realWarehouseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="virtualWarehouseCode != null">
+                #{virtualWarehouseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderRemarkUser != null">
+                #{orderRemarkUser,jdbcType=VARCHAR},
+            </if>
+            <if test="outCreateTime != null">
+                #{outCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tmsRecordCode != null">
+                #{tmsRecordCode,jdbcType=VARCHAR},
+            </if>
+            <if test="payTime != null">
+                #{payTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="expectReceiveDateStart != null">
+                #{expectReceiveDateStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="expectReceiveDateEnd != null">
+                #{expectReceiveDateEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="reasons != null">
+                #{reasons,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMessage != null">
+                #{errorMessage,jdbcType=VARCHAR},
+            </if>
+            <if test="relinquishTime != null">
+                #{relinquishTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deliveryTime != null">
+                #{deliveryTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="receiverTime != null">
+                #{receiverTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=BIGINT},
+            </if>
+            <if test="modifier != null">
+                #{modifier,jdbcType=BIGINT},
+            </if>
+            <if test="isAvailable != null">
+                #{isAvailable,jdbcType=BIT},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=BIT},
+            </if>
+            <if test="versionNo != null">
+                #{versionNo,jdbcType=INTEGER},
+            </if>
+            <if test="tenantId != null">
+                #{tenantId,jdbcType=BIGINT},
+            </if>
+            <if test="appId != null">
+                #{appId,jdbcType=VARCHAR},
+            </if>
+            <if test="syncWmsStatus != null">
+                #{syncWmsStatus,jdbcType=TINYINT},
+            </if>
+            <if test="syncDispatchStatus != null">
+                #{syncDispatchStatus,jdbcType=TINYINT},
+            </if>
+            <if test="batchStatus != null">
+                #{batchStatus,jdbcType=INTEGER},
+            </if>
+            <if test="syncTransferStatus != null">
+                #{syncTransferStatus,jdbcType=INTEGER},
+            </if>
+            <if test="cmpStatus != null">
+                #{cmpStatus,jdbcType=INTEGER},
+            </if>
+            <if test="syncTradeStatus != null">
+                #{syncTradeStatus,jdbcType=INTEGER},
+            </if>
+            <if test="syncWmsFailTime != null">
+                #{syncWmsFailTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="syncFulfillmentStatus != null">
+                #{syncFulfillmentStatus,jdbcType=INTEGER},
+            </if>
+            <if test="syncStockStatus != null">
+                #{syncStockStatus,jdbcType=TINYINT},
+            </if>
+            <if test="syncTmsbStatus != null">
+                #{syncTmsbStatus,jdbcType=TINYINT},
+            </if>
+            <if test="selfTakeout != null">
+                #{selfTakeout,jdbcType=TINYINT},
+            </if>
+            <if test="outOrInTime != null">
+                #{outOrInTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+	<!-- 更新仓库单完成状态 -->
+    <update id="updateCompleteStatus">
+        update sc_warehouse_record 
+        set real_warehouse_id = #{realWarehouseId},
+		real_warehouse_code = #{realWarehouseCode},
+        factory_code = #{factoryCode},
+        virtual_warehouse_id = #{virtualWarehouseId},
+        virtual_warehouse_code = #{virtualWarehouseCode},
+        record_status = 15 where id = #{id}
+    </update>
+
+    <!-- 根据页面查询条件查询出库单 -->
+    <select id="queryWarehouseRecordList" resultMap="WarehouseRecordMap"
+            parameterType="com.lyf.scm.core.api.dto.stockFront.SaleWarehouseRecordCondition">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record record
+        where record.is_deleted = 0
+        and business_type = 1
+        and record.record_type = 1
+        <if test="recordType!=null">
+            and record.record_type = #{recordType}
+        </if>
+        <if test="userCode!=null and '' !=userCode">
+            and record.user_code = #{userCode}
+        </if>
+        <if test="recordCode!=null and '' !=recordCode">
+            and record.record_code = #{recordCode}
+        </if>
+		<if test="realWarehouseId!=null ">
+            and record.real_warehouse_id = #{realWarehouseId}
+        </if>
+        <if test="realWarehouseCode != null and realWarehouseCode != ''">
+            and record.real_warehouse_code = #{realWarehouseCode}
+        </if>
+        <if test="factoryCode != null and factoryCode != ''">
+            and record.factory_code = #{factoryCode}
+        </if>
+        <if test="recordStatus!=null ">
+            and record.record_status = #{recordStatus}
+        </if>
+        <if test="startTime!=null ">
+            and record.create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime!=null ">
+            and record.create_time &lt;= #{endTime}
+        </if>
+        <if test="null != startPayTime and null != endPayTime">
+            and pay_time between #{startPayTime} and #{endPayTime}
+        </if>
+        <if test="syncWmsStatus!=null ">
+            and record.sync_wms_status = #{syncWmsStatus}
+        </if>
+        <if test="syncFulfillmentStatus!=null ">
+            and record.sync_fulfillment_status = #{syncFulfillmentStatus}
+        </if>
+        <if test="channelCodeList != null and channelCodeList.size()>0 ">
+            and record.channel_code in
+            <foreach item="item" index="index" collection="channelCodeList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="warehouseRecordIds != null and warehouseRecordIds.size()>0">
+            and record.id in
+            <foreach item="item" index="index" collection="warehouseRecordIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="skuCode!=null and '' !=skuCode">
+            and exists (select detail.warehouse_record_id
+            from sc_warehouse_record_detail detail
+            where record.id = detail.warehouse_record_id and detail.is_deleted=0
+            and detail.sku_code = #{skuCode})
+        </if>
+        order by id desc
+    </select>
+
+	<!-- 查询退货单 -->
+    <select id="querySalesReturnWarehouseRecordList" resultMap="WarehouseRecordMap"
+            parameterType="com.lyf.scm.core.api.dto.stockFront.SalesReturnRecordParamDTO">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0
+        and business_type =2
+        <if test="null != recordCode and '' != recordCode">
+            and record_code = #{recordCode}
+        </if>
+        <if test="null != recordType">
+            and record_type = #{recordType}
+        </if>
+        <if test="channelCodeList != null">
+            and channel_code in
+            <foreach item="item" index="index" collection="channelCodeList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+		<if test="realWarehouseId!=null">
+            and real_warehouse_id = #{realWarehouseId}
+        </if>
+        <if test="factoryCode != null and factoryCode != ''">
+            and factory_code = #{factoryCode}
+        </if>
+        <if test="realWarehouseCode != null and realWarehouseCode != ''">
+            and real_warehouse_code = #{realWarehouseCode}
+        </if>
+        <if test="null != recordStatus">
+            and record_status = #{recordStatus}
+        </if>
+        <if test="null != startCrateTime and null != endCreateTime">
+            and create_time between #{startCrateTime} and #{endCreateTime}
+        </if>
+        <if test="null != reason and '' != reason   ">
+            and reason like CONCAT('%',#{reason},'%' )
+        </if>
+        <if test="warehouseRecordIds != null">
+            and id in
+            <foreach item="item" index="index" collection="warehouseRecordIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by id desc
+    </select>
+
+    <select id="queryInWarehouseRecordList" resultMap="WarehouseRecordMap"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordE">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0 and is_available = 1
+        and business_type = 2
+        ORDER BY id desc
+    </select>
+
+	<!-- 查询入库单页面 -->
+    <select id="queryInWarehouseRecordPage" resultMap="WarehouseRecordMap"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordE">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0 and is_available = 1
+        and record_type in
+        <foreach collection="types" item="recordType" open="(" close=")" separator=",">
+            #{recordType}
+        </foreach>
+        <if test="ids.size()>0">
+            and id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+		<if test="realWarehouseIds.size()>0">
+            and real_warehouse_id in
+            <foreach collection="realWarehouseIds" item="realWarehouseId" open="(" close=")" separator=",">
+                #{realWarehouseId}
+            </foreach>
+        </if>
+        <if test="warehouseRecord.recordCode != null and warehouseRecord.recordCode != '' ">
+            and record_code = #{warehouseRecord.recordCode}
+        </if>
+        <if test="warehouseRecord.recordStatus != null">
+            and record_status = #{warehouseRecord.recordStatus}
+        </if>
+        <if test="warehouseRecord.startDate != null ">
+            <![CDATA[ AND create_time >= date_format(#{warehouseRecord.startDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="warehouseRecord.endDate != null ">
+            <![CDATA[ AND create_time <= date_format(#{warehouseRecord.endDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        ORDER BY id desc
+    </select>
+
+	<!-- 查询出库单页面 -->
+    <select id="queryOutWarehouseRecordPage"
+            resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0 and is_available = 1
+        and record_type in
+        <foreach collection="types" item="recordType" open="(" close=")" separator=",">
+            #{recordType}
+        </foreach>
+        <if test="ids.size()>0">
+            and id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="realWarehouseIds.size()>0">
+            and real_warehouse_id in
+            <foreach collection="realWarehouseIds" item="realWarehouseId" open="(" close=")" separator=",">
+                #{realWarehouseId}
+            </foreach>
+        </if>
+        <if test="warehouseRecord.recordCode != null and warehouseRecord.recordCode != '' ">
+            and record_code = #{warehouseRecord.recordCode}
+        </if>
+        <if test="warehouseRecord.recordStatus != null">
+            and record_status = #{warehouseRecord.recordStatus}
+        </if>
+        <if test="warehouseRecord.startDate != null">
+            <![CDATA[ AND create_time >= date_format(#{warehouseRecord.startDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="warehouseRecord.endDate != null ">
+            <![CDATA[ AND create_time <= date_format(#{warehouseRecord.endDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        ORDER BY id desc
+    </select>
+
+	<!-- 查询出库单 -->
+    <select id="queryOutWarehouseRecordList"
+            resultMap="WarehouseRecordMap"
+            parameterType="com.lyf.scm.core.domain.entity.stockFront.WarehouseRecordE">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0 and is_available = 1
+        and business_type = 1
+        <if test="syncWmsStatus != null">
+            and sync_wms_status= #{syncWmsStatus}
+        </if>
+        ORDER BY id desc
+    </select>
+
+	<!-- 修改后置单同步交易状态 -->
+    <update id="updateSyncTradeStatus">
+        update `sc_warehouse_record`
+        set `sync_trade_status` = 2
+        where id = #{id}
+        AND is_deleted = 0
+        AND is_available = 1
+    </update>
+
+    <select id="queryWareHouseRecordList" resultMap="WarehouseRecordMap"
+    parameterType="com.lyf.scm.core.api.dto.stockFront.WareHouseRecordCondition">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_available = 1 and is_deleted = 0
+        and sync_wms_status = 1
+        and business_type = #{businessType}
+        and real_warehouse_id in
+        <foreach item="item" index="index" collection="realWareHouseIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by id asc
+    </select>
+
+    <!-- 根据id批量查询出入库单数据 -->
+    <select id="queryWarehouseRecordByIds" resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from `sc_warehouse_record`
+        <where>
+            `id` in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND is_deleted = 0
+            AND is_available = 1
+        </where>
+    </select>
+
+    <!-- 更新出库单状态为已取消，wms同步状态为无需同步 -->
+    <update id="updateToCanceled">
+        update `sc_warehouse_record`
+        set `record_status` = 2,
+        `sync_wms_status` = 0
+        where id = #{id}
+    </update>
+
+    <!-- 更新出库单状态为已取消，wms同步状态为无需同步 -->
+    <update id="updateToCanceledFromComplete">
+        update `sc_warehouse_record`
+        set `record_status` = 2,
+        `sync_wms_status` = 0
+        where id = #{id}
+         and record_status = 11
+    </update>
+
+    <!-- 更新叫货出库单状态为已取消，wms同步状态为无需同步 -->
+    <update id="updateReplenishToCanceled">
+        update sc_warehouse_record
+        set
+          record_status = 2,
+          modifier = #{userId}
+        where
+          id = #{id}
+          and record_status = 0
+          and is_available = 1
+          and is_deleted = 0
+    </update>
+
+	<!-- 查询未推送cmp出入库单 -->
+    <select id="queryAllocationWarehouseCmpList"
+            resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from
+        sc_warehouse_record
+        where
+        is_deleted = 0
+        and is_available = 1
+        and cmp_status = 1
+        and record_type = #{type}
+        <![CDATA[ AND create_time >= date_format(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+        <![CDATA[ AND create_time <= date_format(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+    </select>
+
+	<!-- 更新cmp完成状态 -->
+    <update id="updateCmpStatusComplete" parameterType="java.lang.Long">
+        update sc_warehouse_record set cmp_status = 2 where id = #{id} and cmp_status = 1
+    </update>
+
+	<!-- 更新未同步派车单号 -->
+   	<update id="updateUnSyncWmsRecord">
+    	update
+        	sc_warehouse_record
+      	set
+        	tms_record_code= #{tmsCode},
+        	modifier= #{userId}
+      	where
+        	is_deleted = 0
+        	and is_available = 1
+        	and record_code in
+        <foreach collection="unSyncCodes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+	<!-- 更新同步成功派车单号 -->
+    <update id="updateSyncWmsRecord">
+        update
+          sc_warehouse_record
+        set
+          tms_record_code= #{tmsCode},
+          modifier= #{userId}
+        where
+          is_deleted = 0
+          and is_available = 1
+          and sync_wms_status= 2
+          and record_code in
+          <foreach collection="syncCodes" item="item" open="(" separator="," close=")">
+            #{item}
+          </foreach>
+    </update>
+
+	<!-- 查询待推送到交易中心订单 -->
+    <select id="queryBySyncTradeStatus" resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0 and sync_trade_status = 1
+        and `create_time` >  DATE_SUB(CURRENT_TIMESTAMP,INTERVAL 7 DAY)
+        limit #{page},#{maxResult}
+    </select>
+
+	<!-- 查询待推送到交易中心订单,不限定时间 -->
+    <select id="queryAllBySyncTradeStatus" resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        where is_deleted = 0 and sync_trade_status = 1
+        order by id
+        limit #{page},#{maxResult}
+    </select>
+
+    <sql id="SALETOB_COLUMN">
+       id,record_code,record_status,record_type,tms_record_code,create_time,channel_code,real_warehouse_id outRealWarehouseId,
+       real_warehouse_code outRealWarehouseCode,factory_code outFactoryCode, sync_dispatch_status, sync_transfer_status, modifier,update_time
+    </sql>
+
+	<!-- 根据查询条件查找列表 -->
+    <select id="queryWarehouseRecordListByCondition" resultType="com.lyf.scm.core.api.dto.stockFront.SaleTobWarehouseRecordDTO"
+    	parameterType="com.lyf.scm.core.api.dto.stockFront.SaleTobWarehouseRecordCondition">
+        SELECT
+        <include refid="SALETOB_COLUMN"/>
+        FROM sc_warehouse_record record WHERE is_available = 1 AND is_deleted = 0
+		<if test="condition.outRealWarehouseId != null">
+            AND record.real_warehouse_id = #{condition.outRealWarehouseId}
+        </if>
+		<if test="condition.outRealWarehouseCode != null and condition.outRealWarehouseCode != ''">
+            AND record.real_warehouse_code = #{condition.outRealWarehouseCode}
+        </if>
+        <if test="condition.outFactoryCode != null and condition.outFactoryCode != ''">
+            AND record.factory_code = #{condition.outFactoryCode}
+        </if>
+        <if test="condition.recordStatus != null">
+            AND record.record_status = #{condition.recordStatus}
+        </if>
+        <if test="condition.recordType != null">
+            AND record.record_type = #{condition.recordType}
+        </if>
+        <if test="condition.tmsRecordCode != null and condition.tmsRecordCode != ''">
+            AND record.tms_record_code = #{condition.tmsRecordCode}
+        </if>
+        <if test="condition.ids != null and condition.ids.size() > 0">
+            AND record.id IN
+            <foreach collection="condition.ids" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.channelCodeList != null and condition.channelCodeList.size() > 0">
+            AND record.channel_code IN
+            <foreach collection="condition.channelCodeList" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="condition.recordCodes != null and condition.recordCodes.size() > 0">
+            AND record.record_code IN
+            <foreach collection="condition.recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND record.record_type IN
+        <foreach collection="types" separator="," index="index" item="item" open="(" close=")">
+            #{item}
+        </foreach>
+        AND #{condition.startTime} &lt; record.create_time
+        AND #{condition.endTime} &gt; record.create_time
+        <if test="condition.skuCode!=null and '' !=condition.skuCode">
+            and exists (select detail.warehouse_record_id
+            from sc_warehouse_record_detail detail
+            where record.id = detail.warehouse_record_id and detail.is_deleted=0
+            and detail.sku_code= #{condition.skuCode})
+        </if>
+        ORDER BY id DESC
+    </select>
+
+	<!-- 根据单据编号查询出入库单据列表 -->
+    <select id="queryWarehouseRecordByRecordCode" resultMap="WarehouseRecordMap">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM sc_warehouse_record WHERE is_deleted = 0 AND is_available = 1
+        <if test="recordCodes != null and recordCodes.size()>0">
+            AND record_code IN
+            <foreach collection="recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+	<!-- 查询未处理门店批次出入库单 -->
+    <select id="queryWarehouseBatchList" resultType="java.lang.Long">
+        select id from sc_warehouse_record
+        where batch_status = 0
+         <!-- and business_type = #{businessType.type} -->
+        <![CDATA[ and create_time >= date_format(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+        <![CDATA[ and create_time <= date_format(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+        and is_available = 1 and is_deleted = 0 limit 0,#{rows}
+    </select>
+
+    <select id="queryWarehouseRecordByTmsRecordCode" resultMap="WarehouseRecordMap">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM sc_warehouse_record WHERE is_deleted = 0 AND is_available = 1
+       	AND tms_record_code = #{tmsRecordCode}
+    </select>
+
+    <!-- 根据单据编号查询出入库单 -->
+    <select id="queryByRecordCode" resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        WHERE
+        is_available = 1 and is_deleted = 0
+        and record_code = #{recordCode}
+    </select>
+
+    <!-- 根据出入库单据编号修改TMS派车单号、 派车状态 -->
+    <update id="updateTmsRecordCodeAndDispatchStatus">
+    	update sc_warehouse_record
+    	set
+        tms_record_code = #{tmsRecordCode},
+        sync_dispatch_status = #{isDispatch}
+        where record_code = #{recordCode}
+        and sync_dispatch_status = 1
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 根据出入库单据编号修改TMS派车单号 -->
+    <update id="updateNotifyTmsRecordCode">
+    	update sc_warehouse_record
+    	set
+        tms_record_code = #{tmsRecordCode}
+        where record_code = #{recordCode}
+        and sync_dispatch_status = 2
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 根据单据编号取消出库单 -->
+    <update id="updateCancelOutRecord">
+        update sc_warehouse_record
+        set record_status = 2,
+        modifier = #{userId}
+        where record_code = #{recordCode}
+        and record_status = 0
+    	and is_available = 1 and is_deleted = 0
+    </update>
+
+     <!-- 修改同步派车系统状态、同步库存状态 -->
+    <update id="updateSyncTmsbAndStockStatus">
+        update sc_warehouse_record
+        set sync_tmsb_status = #{syncTmsbStatus},
+        sync_stock_status = #{syncStockStatus}
+        where record_code = #{recordCode}
+        and sync_tmsb_status = 0
+        and sync_stock_status in (0, 1)
+        and is_available = 1
+        and is_deleted = 0 
+    </update>
+
+    <!-- 查询待推送给库存中心的poNo列表 -->
+    <select id="queryPoNoToStock" resultType="java.lang.String">
+        select
+        record_code
+        from sc_warehouse_record
+        where sync_stock_status = 1
+        <if test="startTime != null ">
+	    	and create_time &gt;= #{startTime}
+	    </if>
+	    <if test="endTime != null ">
+	        and create_time &lt;= #{endTime}
+	    </if>
+    	and is_available = 1 and is_deleted = 0
+    	order by id desc
+    </select>
+
+    <select id="getWarehouseRecordById" resultMap="WarehouseRecordMap">
+      select
+        <include refid="BASE_COLUMN"/>
+      from
+        sc_warehouse_record
+      where
+        is_available = 1
+        and is_deleted = 0
+        and id = #{id}
+    </select>
+
+    <!-- 根据出入库单据编号修改派车状态 -->
+    <update id="updateDispatchStatus">
+    	update sc_warehouse_record
+    	set
+        sync_dispatch_status = #{status}
+        where record_code = #{recordCode}
+        and sync_dispatch_status = 1
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!-- 根据出入库单据编号修改TMS派车单号 -->
+    <update id="updateTmsRecordCode">
+        update sc_warehouse_record
+    	set
+        tms_record_code = #{updateTmsRecordCode}
+        where record_code = #{recordCode}
+        and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateRecordInfoToOut">
+        update
+          sc_warehouse_record
+        set
+          record_status = 11,
+          delivery_time = #{operateTime},
+          out_or_in_time = now()
+        where
+          record_code = #{recordCode}
+          and record_status = 0 and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateRecordInfoToIn">
+        update
+          sc_warehouse_record
+        set
+          record_status = 12,
+          delivery_time = #{operateTime},
+          out_or_in_time = now()
+        where
+          record_code = #{recordCode}
+          and record_status = 0 and is_available = 1 and is_deleted = 0
+    </update>
+
+    <select id="queryNeedSynTmsBWarehouseRecordByPage" resultType="java.lang.Long">
+        select id from sc_warehouse_record
+        where is_deleted = 0 and is_available = 1 and sync_tmsb_status = 1 and business_type = 1 and record_status = 0
+        and create_time > DATE_SUB(CURRENT_TIMESTAMP,INTERVAL 7 day)
+        and ( sync_wms_fail_time &lt; DATE_SUB(CURRENT_TIMESTAMP,INTERVAL 3 MINUTE) or sync_wms_fail_time is null)
+        order by id desc
+        limit #{startPage},#{endPage}
+    </select>
+
+    <update id="updateWarehouseRecordSynTmsBStatusComplete">
+        update
+          sc_warehouse_record
+        set
+          sync_tmsb_status = 2
+        where
+          id = #{id} and sync_tmsb_status = 1 and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateRecordInfoToSyncTmsb">
+        update
+          sc_warehouse_record
+        set
+          sync_tmsb_status = 1,
+          sap_order_code = #{sapPoNo}
+        where
+          id = #{id}
+          and sync_tmsb_status = 0
+          and is_available = 1
+          and is_deleted = 0
+    </update>
+
+
+    <select id="getRecordTypeByRecordCodes" resultMap="WarehouseRecordMap">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM sc_warehouse_record WHERE is_deleted = 0 AND is_available = 1
+        <if test="recordCodes != null and recordCodes.size()>0">
+            AND record_code IN
+            <foreach collection="recordCodes" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 修改sapPoNo -->
+    <update id="updateSapPoNo">
+    	update sc_warehouse_record
+    	set sap_order_code = #{sapPoNo}
+    	where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <update id="updateSyncTmsBFailTime">
+        update sc_warehouse_record set sync_wms_fail_time = CURRENT_TIMESTAMP where id = #{id} and is_available = 1 and is_deleted = 0
+    </update>
+
+    <!--保存出入库单包含派车状态-->
+    <insert id="insertWrWithDispatchInfo" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.lyf.scm.core.domain.model.stockFront.WarehouseRecordDO">
+        insert into sc_warehouse_record(record_code,business_type,record_status,record_type,
+        real_warehouse_id,channel_type,channel_code,merchant_id,user_code,mobile,
+        out_create_time,sync_wms_status,sap_order_code,
+        sync_dispatch_status, tms_record_code, sync_transfer_status,
+         sync_trade_status,batch_status, delivery_time, out_or_in_time)
+        values(#{recordCode},#{businessType},#{recordStatus},#{recordType},#{realWarehouseId},
+        #{channelType},#{channelCode},#{merchantId},#{userCode},#{mobile},
+        #{outCreateTime},#{syncWmsStatus},#{sapOrderCode},
+         #{syncDispatchStatus}, #{tmsRecordCode}, #{syncTransferStatus},
+         #{syncTradeStatus},#{batchStatus}, #{deliveryTime}, #{outOrInTime})
+    </insert>
+    
+    <update id="updateRecordAndSyncTmsbStatus" parameterType="java.util.List">
+        <foreach collection="whRecordS" item="item" index="index" open="" close="" separator=";">
+            update sc_warehouse_record
+            set  record_status = 2,
+                sync_tmsb_status = 0
+            where  is_available = 1 and is_deleted = 0
+            and record_code = #{item.recordCode}
+            and record_status = 0
+            and sync_tmsb_status = 1
+        </foreach>
+    </update>
+
+
+    <!-- 根据单据编号和单据类型查询出入库单 -->
+    <select id="queryByRecordCodeAndBusinessType" resultMap="WarehouseRecordMap">
+        select
+        <include refid="BASE_COLUMN"/>
+        from sc_warehouse_record
+        WHERE
+        is_available = 1 and is_deleted = 0
+        and record_code = #{recordCode} and business_type = #{businessType}
+    </select>
+
+
+</mapper>

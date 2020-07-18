@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.orderReturn.OrderReturnMapper" >
+  <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.orderReturn.OrderReturnE" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+    <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+    <result column="sale_code" property="saleCode" jdbcType="VARCHAR" />
+    <result column="after_sale_code" property="afterSaleCode" jdbcType="VARCHAR" />
+    <result column="return_entry_code" property="returnEntryCode" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    <result column="custom_name" property="customName" jdbcType="VARCHAR" />
+    <result column="custom_mobile" property="customMobile" jdbcType="VARCHAR" />
+    <result column="province_code" property="provinceCode" jdbcType="VARCHAR" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="county_code" property="countyCode" jdbcType="VARCHAR" />
+    <result column="county_name" property="countyName" jdbcType="VARCHAR" />
+    <result column="custom_address" property="customAddress" jdbcType="VARCHAR" />
+    <result column="factory_code" property="factoryCode" jdbcType="VARCHAR" />
+    <result column="real_warehouse_code" property="realWarehouseCode" jdbcType="VARCHAR" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="sync_trade_status" property="syncTradeStatus" jdbcType="TINYINT" />
+    <result column="sync_stock_status" property="syncStockStatus" jdbcType="TINYINT" />
+    <result column="express_no" property="expressNo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="BIGINT" />
+    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, record_code, order_code, sale_code, after_sale_code, return_entry_code, order_status, custom_name,
+    custom_mobile, province_code, province_name, city_code, city_name, county_code, county_name, 
+    custom_address, factory_code, real_warehouse_code, reason, sync_trade_status, 
+    sync_stock_status, express_no, create_time, update_time, creator, modifier, is_available, 
+    is_deleted, version_no, tenant_id, app_id
+  </sql>
+  
+  <!-- 保存退货单 -->
+  <insert id="insertOrderReturn" useGeneratedKeys="true" keyProperty="id" parameterType="com.lyf.scm.core.domain.entity.orderReturn.OrderReturnE" >
+    insert into scm_order_return
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="recordCode != null" >
+        record_code,
+      </if>
+      <if test="orderCode != null" >
+        order_code,
+      </if>
+      <if test="saleCode != null" >
+        sale_code,
+      </if>
+      <if test="afterSaleCode != null" >
+        after_sale_code,
+      </if>
+      <if test="returnEntryCode != null" >
+        return_entry_code,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="customName != null" >
+        custom_name,
+      </if>
+      <if test="customMobile != null" >
+        custom_mobile,
+      </if>
+      <if test="provinceCode != null" >
+        province_code,
+      </if>
+      <if test="provinceName != null" >
+        province_name,
+      </if>
+      <if test="cityCode != null" >
+        city_code,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="countyCode != null" >
+        county_code,
+      </if>
+      <if test="countyName != null" >
+        county_name,
+      </if>
+      <if test="customAddress != null" >
+        custom_address,
+      </if>
+      <if test="factoryCode != null" >
+        factory_code,
+      </if>
+      <if test="realWarehouseCode != null" >
+        real_warehouse_code,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="syncTradeStatus != null" >
+        sync_trade_status,
+      </if>
+      <if test="syncStockStatus != null" >
+        sync_stock_status,
+      </if>
+      <if test="expressNo != null" >
+        express_no,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+      <if test="isAvailable != null" >
+        is_available,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="versionNo != null" >
+        version_no,
+      </if>
+      <if test="tenantId != null" >
+        tenant_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="recordCode != null" >
+        #{recordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCode != null" >
+        #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="saleCode != null" >
+        #{saleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="afterSaleCode != null" >
+        #{afterSaleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="returnEntryCode != null" >
+        #{returnEntryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="customName != null" >
+        #{customName,jdbcType=VARCHAR},
+      </if>
+      <if test="customMobile != null" >
+        #{customMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null" >
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null" >
+        #{countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countyName != null" >
+        #{countyName,jdbcType=VARCHAR},
+      </if>
+      <if test="customAddress != null" >
+        #{customAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryCode != null" >
+        #{factoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="realWarehouseCode != null" >
+        #{realWarehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTradeStatus != null" >
+        #{syncTradeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="syncStockStatus != null" >
+        #{syncStockStatus,jdbcType=TINYINT},
+      </if>
+      <if test="expressNo != null" >
+        #{expressNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 修改退货单 -->
+  <update id="updateOrderReturn" parameterType="com.lyf.scm.core.domain.entity.orderReturn.OrderReturnE" >
+    update scm_order_return
+    <set >
+      <if test="orderCode != null" >
+        order_code = #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="saleCode != null" >
+        sale_code = #{saleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="afterSaleCode != null" >
+        after_sale_code = #{afterSaleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="returnEntryCode != null" >
+        return_entry_code = #{returnEntryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="customName != null" >
+        custom_name = #{customName,jdbcType=VARCHAR},
+      </if>
+      <if test="customMobile != null" >
+        custom_mobile = #{customMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        province_code = #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null" >
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        city_code = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null" >
+        county_code = #{countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countyName != null" >
+        county_name = #{countyName,jdbcType=VARCHAR},
+      </if>
+      <if test="customAddress != null" >
+        custom_address = #{customAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryCode != null" >
+        factory_code = #{factoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="realWarehouseCode != null" >
+        real_warehouse_code = #{realWarehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTradeStatus != null" >
+        sync_trade_status = #{syncTradeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="syncStockStatus != null" >
+        sync_stock_status = #{syncStockStatus,jdbcType=TINYINT},
+      </if>
+      <if test="expressNo != null" >
+        express_no = #{expressNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=BIGINT},
+      </if>
+      <if test="isAvailable != null" >
+        is_available = #{isAvailable,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="versionNo != null" >
+        version_no = #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null" >
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and is_available = 1 and is_deleted = 0 
+  </update>
+  
+  <!-- 根据条件查询退货单列表 -->
+  <select id="queryOrderReturnByCondition" resultMap="BaseResultMap" parameterType="com.lyf.scm.core.api.dto.orderReturn.OrderReturnDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from scm_order_return
+    where is_available = 1 and is_deleted = 0
+    <if test="afterSaleCode != null and afterSaleCode != ''">
+    	and after_sale_code = #{afterSaleCode}
+    </if>
+    <if test="returnEntryCode != null and returnEntryCode != ''">
+    	and return_entry_code = #{returnEntryCode}
+    </if>
+    <if test="orderStatus != null">
+    	and order_status = #{orderStatus}
+    </if>
+    <if test="startTime!=null ">
+    	and create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime!=null ">
+        and create_time &lt;= #{endTime}
+    </if>
+    order by id desc
+  </select>
+  
+  <!-- 根据售后单查询退货单 -->
+  <select id="queryOrderReturnByAfterSaleCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select 
+    <include refid="Base_Column_List" />
+    from scm_order_return
+    where after_sale_code = #{afterSaleCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据销售单号查询退货单列表 -->
+  <select id="queryOrderReturnBySaleCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select 
+    <include refid="Base_Column_List" />
+    from scm_order_return
+    where sale_code = #{saleCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据销售单号查询售后单号列表 -->
+  <select id="queryAfterSaleCodeListBySaleCode" resultType="java.util.Map" parameterType="java.lang.String" >
+  	select 
+    after_sale_code afterSaleCode,
+    order_status orderStatus
+    from scm_order_return
+    where sale_code = #{saleCode} and is_available = 1 and is_deleted = 0
+  </select>
+  
+  <!-- 根据售后单号修改团购入库单号、通知库存中心状态=2（已通知） -->
+  <update id="updateSyncStockStatusAndReturnEntryCode">
+  	update scm_order_return
+  	set return_entry_code = #{returnEntryCode}, sync_stock_status = 2
+  	where after_sale_code = #{afterSaleCode} 
+  	<if test="status != null">
+  		and sync_stock_status = #{status}
+  	</if>
+  	and is_available = 1 and is_deleted = 0
+  </update>
+  
+  <!-- 根据售后单号修改通知库存中心状态=1（待通知） -->
+  <update id="updateSyncStockStatus">
+  	update scm_order_return
+  	set sync_stock_status = 1
+  	where after_sale_code = #{afterSaleCode} and sync_stock_status = 0 and is_available = 1 and is_deleted = 0
+  </update>
+  
+  <!-- 根据售后单号修改退货单单据状态=2（已入库） -->
+  <update id="updateOrderStatusByAfterSaleCode">
+  	update scm_order_return
+  	set order_status = 2
+  	where after_sale_code = #{afterSaleCode} and order_status = 1 and is_available = 1 and is_deleted = 0
+  </update>
+  
+  <!-- 根据售后单号、状态修改通知交易中心状态 -->
+  <update id="updateSyncTradeStatus">
+  	update scm_order_return
+  	set sync_trade_status = #{status}
+  	where after_sale_code = #{afterSaleCode} 
+  	<if test="oldStatus != null">
+  		and sync_trade_status = #{oldStatus}
+  	</if>
+  	and is_available = 1 and is_deleted = 0
+  </update>
+  
+   <!-- 查询待推送给交易中心的退库单列表 -->
+  <select id="queryOrderReturnToTrade" resultMap="BaseResultMap" >
+  	select 
+    <include refid="Base_Column_List" />
+    from scm_order_return
+    where sync_trade_status = 1
+    <if test="startTime!=null ">
+    	and create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime!=null ">
+        and create_time &lt;= #{endTime}
+    </if>
+    and is_available = 1 and is_deleted = 0
+    order by id desc
+  </select>
+
+  <!-- 根据单据编号查询退货单 -->
+  <select id="queryReturnByRecordCode" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from scm_order_return
+    where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+  </select>
+
+  <select id="queryOrderReturnByIds" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from scm_order_return
+    where is_available = 1 and is_deleted = 0
+    <if test="idList != null and idList.size() > 0">
+      AND id IN
+      <foreach collection="idList" separator="," index="index" item="item" open="(" close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+  
+  
+</mapper>

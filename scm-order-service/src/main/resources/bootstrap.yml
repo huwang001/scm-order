@@ -1,0 +1,67 @@
+spring:
+  profiles:
+    active: dev-zt
+  application:
+    name: scm-order-service
+  main:
+    allow-bean-definition-overriding: true
+
+  mail:
+    properties:
+      mail:
+        smtp:
+          timeout: 10000
+          connectiontimeout: 2000
+          writetimeout: 5000
+  boot:
+    admin:
+      client:
+        instance:
+          metadata:
+            tags:
+              environment: ${spring.profiles}
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    sender:
+      type: kafka
+    service:
+      name: ${spring.application.name}
+
+feign:
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+    max-connections: 200
+    max-connections-per-route: 50
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+
+server:
+  port: 8082
+  undertow:
+    io-threads: 8
+    worker-threads: 64
+    buffer-size: 1024
+    direct-buffers: true
+
+ribbon:
+  eager-load:
+    enabled: true
+    clients:
+      -  callback,service-cache,service-singlepoint
+  ReadTimeout: 5000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

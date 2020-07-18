@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.WhAllocationDetailMapper">
+	<resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.WhAllocationDetailE">
+		<id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
+	    <result column="front_record_id" property="frontRecordId" jdbcType="BIGINT" />
+	    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+	    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+	    <result column="orgin_qty" property="orginQty" jdbcType="DECIMAL" />
+	    <result column="line_no" property="lineNo" jdbcType="VARCHAR" />
+	    <result column="allot_qty" property="allotQty" jdbcType="DECIMAL" />
+	    <result column="reason_code" property="reasonCode" jdbcType="VARCHAR" />
+	    <result column="in_qty" property="inQty" jdbcType="DECIMAL" />
+	    <result column="out_qty" property="outQty" jdbcType="DECIMAL" />
+	    <result column="batch_remark" property="batchRemark" jdbcType="VARCHAR" />
+	    <result column="unit" property="unit" jdbcType="VARCHAR" />
+	    <result column="unit_code" property="unitCode" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="creator" property="creator" jdbcType="BIGINT" />
+	    <result column="modifier" property="modifier" jdbcType="BIGINT" />
+	    <result column="is_available" property="isAvailable" jdbcType="TINYINT" />
+	    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+	    <result column="tenant_id" property="tenantId" jdbcType="BIGINT" />
+	    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+	    <result column="origin_line_no" property="originLineNo" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+        id, record_code, front_record_id, sku_id, sku_code, orgin_qty, line_no, allot_qty, 
+	    reason_code, in_qty, out_qty, batch_remark, unit, unit_code, create_time, update_time, 
+	    creator, modifier, is_available, is_deleted, version_no, tenant_id, app_id, origin_line_no
+    </sql>
+
+	<!-- 批量保存仓库调拨单明细 -->
+	<insert id="saveWhAllocationDetail" parameterType="com.lyf.scm.core.domain.entity.stockFront.WhAllocationDetailE" useGeneratedKeys="true" keyProperty="id">
+		insert into sc_fr_wh_allocation_detail (
+		 	record_code, front_record_id, sku_id,sku_code, allot_qty, in_qty, out_qty,
+		 	batch_remark, unit, unit_code, creator,modifier, is_available, is_deleted,
+			version_no, tenant_id, app_id, reason_code, orgin_qty, line_no, origin_line_no
+		 ) values
+		<foreach collection="details" item="item" separator="," close=";">
+			( #{item.recordCode}, #{item.frontRecordId}, #{item.skuId}, #{item.skuCode}, #{item.allotQty},
+			0, 0, #{item.batchRemark}, #{item.unit}, #{item.unitCode}, #{item.creator}, #{item.creator},
+			1, 0, 0, #{item.tenantId}, #{item.appId}, #{item.reasonCode}, #{item.orginQty}, #{item.lineNo}, #{item.originLineNo})
+		</foreach>
+	</insert>
+
+	<!-- 根据仓库调拨单ID集合查询仓库调拨单明细列表 -->
+	<select id="queryDetailByFrontIds" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from sc_fr_wh_allocation_detail
+		where is_available = 1 and is_deleted = 0 and front_record_id in
+		<foreach item="item" index="index" collection="frontRecordIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		order by front_record_id desc
+	</select>
+
+	<!-- 根据仓库调拨单ID查询仓库调拨单明细列表（按数量排序） -->
+	<select id="queryDetailByFrontIdsOrderBySkuQty" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from sc_fr_wh_allocation_detail
+		where front_record_id = #{frontRecordId} and is_available = 1 and is_deleted = 0
+		order by allot_qty desc
+	</select>
+
+	<!-- 根据仓库调拨单ID删除仓库调拨单明细 -->
+	<update id="deleteDetailByFrontId">
+		update sc_fr_wh_allocation_detail
+		set is_deleted = 1, line_no = ''
+		where front_record_id = #{frontRecordId} and is_available = 1 and is_deleted = 0
+	</update>
+
+	<!-- 批量修改实出数量 -->
+	<update id="updateDetailOutQty">
+		<foreach collection="details" item="item" separator=";" close=";">
+			update sc_fr_wh_allocation_detail
+			set out_qty = #{item.outQty}
+			where id = #{item.id} and is_available = 1 and is_deleted = 0
+		</foreach>
+	</update>
+
+	<!-- 批量修改实入数量 -->
+	<update id="updateDetailInQty">
+		<foreach collection="details" item="item" separator=";" close=";">
+			update sc_fr_wh_allocation_detail
+			set in_qty = in_qty + #{item.inQty}
+			where id = #{item.id} and is_available = 1 and is_deleted = 0
+		</foreach>
+	</update>
+
+	<!-- 批量修改调拨数量 -->
+	<update id="updateDetailAllotQty">
+		<foreach collection="details" item="item" separator=";" close=";">
+			update sc_fr_wh_allocation_detail
+			set allot_qty = #{item.allotQty}
+			where id = #{item.id} and is_available = 1 and is_deleted = 0
+		</foreach>
+	</update>
+
+	<!-- 批量修改原始数量、调拨数量 -->
+	<update id="updateDetailOriginAndAllotQty">
+		<foreach collection="details" item="item" separator=";" close=";">
+			update sc_fr_wh_allocation_detail
+			set allot_qty = #{item.allotQty}, orgin_qty = #{item.orginQty}, unit = #{item.unit}, unit_code = #{item.unitCode}
+			where id = #{item.id} and is_available = 1 and is_deleted = 0
+		</foreach>
+	</update>
+	
+	<!-- 批量修改实入数量 -->
+	<update id="updateDetailLionNo">
+		<foreach collection="details" item="item" separator=";" close=";">
+			update sc_fr_wh_allocation_detail
+			set line_no = #{item.lineNo}
+			where id = #{item.id} and is_available = 1 and is_deleted = 0
+		</foreach>
+	</update>
+	
+	<!-- 根据商品编号查询单据编号列表 -->
+	<select id="queryRecordCodeBySkuCode" resultType="java.lang.String">
+		select distinct record_code
+		from sc_fr_wh_allocation_detail
+		where sku_code = #{skuCode} and is_available = 1 and is_deleted = 0
+	</select>
+	
+	<!-- 根据单据编号查询仓库调拨单明细列表 -->
+	<select id="queryDetailByRecordCode" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from sc_fr_wh_allocation_detail
+		where record_code = #{recordCode} and is_available = 1 and is_deleted = 0
+		order by front_record_id desc
+	</select>
+	
+	<!-- 根据ID集合查询仓库调拨单明细列表 -->
+	<select id="queryDetailByIds" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from sc_fr_wh_allocation_detail
+		where is_available = 1 and is_deleted = 0 and id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<!-- 根据单据编号集合查询仓库调拨单明细列表 -->
+	<select id="queryDetailByRecordCodes" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/>
+		from sc_fr_wh_allocation_detail
+		where is_available = 1 and is_deleted = 0 and record_code in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+</mapper>

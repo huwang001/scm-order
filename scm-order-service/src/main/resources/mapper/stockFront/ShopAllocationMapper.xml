@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.ShopAllocationMapper">
+
+    <resultMap id="AllocationMap" type="com.lyf.scm.core.domain.entity.stockFront.ShopAllocationE">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode" />
+        <result column="record_type" jdbcType="TINYINT" property="recordType" />
+        <result column="record_status" jdbcType="TINYINT" property="recordStatus" />
+        <result column="business_type" jdbcType="TINYINT" property="businessType" />
+        <result column="out_channel_code" jdbcType="VARCHAR" property="outChannelCode" />
+        <result column="in_shop_code" jdbcType="VARCHAR" property="inShopCode" />
+        <result column="out_shop_code" jdbcType="VARCHAR" property="outShopCode" />
+        <result column="out_record_code" jdbcType="VARCHAR" property="outRecordCode" />
+        <result column="in_real_warehouse_id" jdbcType="BIGINT" property="inRealWarehouseId" />
+        <result column="in_factory_code" jdbcType="VARCHAR" property="inFactoryCode" />
+        <result column="in_real_warehouse_code" jdbcType="VARCHAR" property="inRealWarehouseCode" />
+        <result column="out_real_warehouse_id" jdbcType="BIGINT" property="outRealWarehouseId" />
+        <result column="out_factory_code" jdbcType="VARCHAR" property="outFactoryCode" />
+        <result column="out_real_warehouse_code" jdbcType="VARCHAR" property="outRealWarehouseCode" />
+        <result column="out_create_time" jdbcType="TIMESTAMP" property="outCreateTime" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="merchant_id" jdbcType="BIGINT" property="merchantId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="creator" jdbcType="BIGINT" property="creator" />
+        <result column="modifier" jdbcType="BIGINT" property="modifier" />
+        <result column="is_available" jdbcType="BIT" property="isAvailable" />
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    </resultMap>
+
+    <sql id="Base_Column">
+    id, record_code, record_type, record_status, business_type, out_channel_code, in_shop_code,
+    out_shop_code, out_record_code, in_real_warehouse_id, in_factory_code, in_real_warehouse_code,
+    out_real_warehouse_id, out_factory_code, out_real_warehouse_code, out_create_time,
+    remark, merchant_id, create_time, update_time, creator, modifier, is_available, is_deleted,
+    tenant_id, app_id
+  </sql>
+
+    <select id="judgeExistByOutRecordCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select count(id) from sc_fr_shop_allocation where out_record_code=#{outRecordCode}
+    </select>
+
+    <insert id="saveShopAllocationRecord" useGeneratedKeys="true" keyProperty="id" parameterType="com.lyf.scm.core.domain.entity.stockFront.ShopAllocationE">
+      insert into sc_fr_shop_allocation(record_code,out_record_code,out_shop_code,in_shop_code,merchant_id,record_type,record_status,business_type,in_real_warehouse_id,in_factory_code,in_real_warehouse_code,out_real_warehouse_id,out_factory_code,out_real_warehouse_code,out_create_time,remark)
+      values(#{recordCode},#{outRecordCode},#{outShopCode},#{inShopCode},#{merchantId},#{recordType},#{recordStatus},#{businessType},#{inRealWarehouseId},#{inFactoryCode},#{inRealWarehouseCode},#{outRealWarehouseId},#{outFactoryCode},#{outRealWarehouseCode},#{outCreateTime},#{remark})
+    </insert>
+
+    <!--根据页面查询条件查询调拨单列表-->
+    <select id="queryShopAllocationList" parameterType="com.lyf.scm.core.domain.entity.stockFront.ShopAllocationE" resultMap="AllocationMap">
+        select
+         <include refid="Base_Column"/>
+        from sc_fr_shop_allocation
+        WHERE is_available = 1 and is_deleted = 0
+        <if test="recordCode != null and recordCode != '' ">
+            and record_code = #{recordCode}
+        </if>
+        <if test="outShopCode != null and outShopCode != '' ">
+            and out_shop_code = #{outShopCode}
+        </if>
+        <if test="inShopCode != null and inShopCode != '' ">
+            and in_shop_code = #{inShopCode}
+        </if>
+        <if test="businessType != null and businessType != ''">
+            and business_type = #{businessType}
+        </if>
+        <if test="startDate != null">
+            <![CDATA[ AND out_create_time >= date_format(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="endDate != null">
+            <![CDATA[ AND out_create_time <= date_format(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        order by id desc
+    </select>
+
+    <!--根据出入口库单据编号查询调拨单-->
+    <select id="queryFrontRecordByCode" resultMap="AllocationMap" >
+        select
+            <include refid="Base_Column"/>
+        from sc_fr_shop_allocation
+        where is_available = 1 and is_deleted = 0 and record_code = #{recordCode}
+
+    </select>
+
+    <select id="queryFrontRecordByIds" resultMap="AllocationMap" >
+        select
+            <include refid="Base_Column"/>
+        from sc_fr_shop_allocation
+        where is_available = 1 and is_deleted = 0 and id in
+        <foreach collection="idList" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </select>
+</mapper>

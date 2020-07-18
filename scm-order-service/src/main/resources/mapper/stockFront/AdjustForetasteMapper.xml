@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyf.scm.core.mapper.stockFront.AdjustForetasteMapper">
+
+    <resultMap id="BaseResultMap" type="com.lyf.scm.core.domain.entity.stockFront.AdjustForetasteE">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="record_code" jdbcType="VARCHAR" property="recordCode"/>
+        <result column="real_warehouse_id" jdbcType="BIGINT" property="realWarehouseId"/>
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+        <result column="real_warehouse_code" jdbcType="VARCHAR" property="realWarehouseCode"/>
+        <result column="shop_code" jdbcType="VARCHAR" property="shopCode"/>
+        <result column="merchant_id" jdbcType="BIGINT" property="merchantId"/>
+        <result column="record_type" jdbcType="TINYINT" property="recordType"/>
+        <result column="record_status" jdbcType="INTEGER" property="recordStatus"/>
+        <result column="out_record_code" jdbcType="VARCHAR" property="outRecordCode"/>
+        <result column="out_create_time" jdbcType="TIMESTAMP" property="outCreateTime"/>
+        <result column="sap_record_code" jdbcType="VARCHAR" property="sapRecordCode"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="creator" jdbcType="BIGINT" property="creator"/>
+        <result column="modifier" jdbcType="BIGINT" property="modifier"/>
+        <result column="is_available" jdbcType="BIT" property="isAvailable"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="reason" jdbcType="INTEGER" property="reason"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, record_code, real_warehouse_id, factory_code, real_warehouse_code, shop_code, merchant_id, record_type, record_status,
+        out_record_code, out_create_time, sap_record_code, create_time, update_time, creator,
+        modifier, is_available, is_deleted, tenant_id, app_id, reason
+    </sql>
+
+    <!--条件查询，运营后台，门店试吃单查询页面-->
+    <select id="selectShopAdjustForetasteList" resultMap="BaseResultMap"
+            parameterType="com.lyf.scm.core.api.dto.stockFront.ShopAdjustRecordDTO">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_adjust_foretaste
+        where
+        is_deleted=0 and is_available = 1
+        <if test="recordCode!=null and recordCode!=''">
+            and record_code=#{recordCode}
+        </if>
+        <if test="realWarehouseId !=null">
+            and real_warehouse_id=#{realWarehouseId}
+        </if>
+        <if test="shopCode!=null and shopCode!=''">
+            and shop_code=#{shopCode}
+        </if>
+        <if test="null != startCrateTime and null != endCreateTime">
+            and create_time between #{startCrateTime} and #{endCreateTime}
+        </if>
+        <if test="recordType!=null">
+            and record_type=#{recordType}
+        </if>
+        <if test="recordStatus != null">
+            and record_status = #{recordStatus}
+        </if>
+        <if test="reason != null">
+            and reason = #{reason}
+        </if>
+        order by id desc
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sc_fr_adjust_foretaste
+        where id = #{id,jdbcType=BIGINT} and is_deleted = 0 and is_available = 1
+    </select>
+
+    <insert id="insert" parameterType="com.lyf.scm.core.domain.entity.stockFront.AdjustForetasteE"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into sc_fr_adjust_foretaste (record_code, real_warehouse_id, factory_code, real_warehouse_code,
+          shop_code, merchant_id, record_type, record_status, out_record_code, out_create_time, sap_record_code, reason)
+        values (#{recordCode}, #{realWarehouseId}, #{factoryCode}, #{realWarehouseCode},
+          #{shopCode}, #{merchantId}, #{recordType}, #{recordStatus}, #{outRecordCode}, #{outCreateTime}, #{sapRecordCode}, #{reason})
+    </insert>
+
+    <!--根据外部单据号，查询试吃单数量-->
+    <select id="selectCountByOutRecordCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(out_record_code) FROM sc_fr_adjust_foretaste
+		WHERE is_available = 1 and is_deleted = 0
+		 and out_record_code = #{outRecordCode} and shop_code = #{shopCode}
+	</select>
+</mapper>
